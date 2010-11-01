@@ -664,4 +664,4 @@ private:
 Persistent<FunctionTemplate> ZooKeeper::constructor_template;
 }
 
-NODE_MODULE(node_zk, zk::ZooKeeper::Initialize);
+NODE_MODULE(node_zookeeper, zk::ZooKeeper::Initialize);
