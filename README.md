@@ -138,7 +138,7 @@ SEE ALSO
 - http://hadoop.apache.org/zookeeper/releases.html
 - http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API
 - http://github.com/kriszyp/node-promise
-
+- http://github.com/pgriess/node-webworker
 Acknowledgments
 ---------------
 
