@@ -36,6 +36,8 @@ DESCRIPTION
 This is an attempt to expose Hadoop Zookeeper to node.js client applications. The bindings are implemented in C++ for V8 and depend on zk C api library.
 
 API Reference
+--------------
+
 The following API calls closely follow ZK C API call. So, consult with ZK Reference for details.
 
 * init
@@ -100,7 +102,7 @@ Isn't the following looking nicer?
 
 
 * Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js 
-* tests/zk_master.js and tests/zk_worker.js illustrate lunching multiple ZK client workers using webworker library. You have to install it first with **"npm install webworker"**
+* tests/zk_master.js and tests/zk_worker.js illustrate launching multiple ZK client workers using webworker library. You have to install it first with **"npm install webworker"**
 
 
 Dependencies:
