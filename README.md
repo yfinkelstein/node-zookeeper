@@ -1,80 +1,155 @@
-NAME
-----
 
-node-zookeeper - A Node interface to Hadoop Zookeeper based on the native C-client API for Zookeeper
+MIT License.
 
-SYNOPSIS
---------
-  
-	var ZK = require ("node_zookeeper").ZooKeeper;
-	var zk = new ZK();
-	zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
-	zk.on (ZK.on_connected, function (zkk) {
-		console.log ("zk session established, id=%s", zkk.client_id);
-		zkk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path)  {
-			if (rc != 0) 
-				console.log ("zk node create result: %d, error: '%s', path=%s", rc, error, path);
-			else {
-				console.log ("created zk node %s", path);
-				process.nextTick(function () {
-					zkk.close ();
-				});
-			}
-		});
-	});
+The node-promise project provides a complete promise implementation (since
+Node's was removed), and provides a fs-promise module that wraps Node's
+fs module (which now uses callbacks), providing a promise-based
+interface for asynchronous file access. Promises provide a clean separation
+of concerns between asynchronous behavior and the interface so asynchronous
+functions can be called without callbacks, and callback interaction can be 
+done on the generic promise interface. The node-promise module now
+features a promise implementation with:
 
-DESCRIPTION
------------
+* Chainable promises
+* Promises throw errors if an error handler is not provided
+* CommonJS promise proposal [1] compliant
+* Immutable once fulfilled to reduce possible side-effects
+* Promises can be used securely (as separate resolver/promise pairs in
+ocap situations)
+* Backwards compatibility where possible (addCallback, addErrback,
+emitSuccess, and emitError should still behave as expected)
 
-This is an attempt to expose Hadoop Zookeeper to node.js client applications. The bindings are implemented in C++ for V8 and depend on zk C api library.
+Utility functions, including:
 
-Random notes on implementation
-------------------------------
+* when() - Normalization of sync (normal values) and async (promises)
+* all() - Create a promise that accumulate multiple concurrent promises
+* first() - Find the first promise to be fulfilled in a group of promises
+* seq() - Sequentially execute a set of promise returning functions
+* delay() - Returns a promise that is fulfilled after a given amount of time
+* execute() - Executes a function that takes a callback and returns a
+promise (thank you Benjamin Thomas for providing this)
 
-* Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
-* The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked in to this project. The file is considered ZK internal and is not installed into /usr/local/include
-* Multiple simultaneous ZK connections are supported and tested 
-* All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
-* Watchers are also supported.
+And:
+
+* fs-promise module for promise-based access to file system
+
+Much of this is adapted from Tyler Close's ref_send and Kris Kowal's work on promises. 
+
+Some quick examples from test-promise.js:
+    sys = require("sys");
+    var fs = require('./fs-promise');
+
+    // open a file and read it
+    fs.open("fs-promise.js", process.O_RDONLY).then(function(fd){
+      return fs.read(fd, 4096);
+    }).then(function(args){
+      sys.puts(args[0]); // print the contents of the file
+    });
+
+    // does the same thing
+    fs.readFile("fs-promise.js").addCallback(sys.puts);
+
+A default Promise constructor can be used to create a self-resolving deferred/promise:
+
+    var Promise = require("promise").Promise;
+    var promise = new Promise();
+    asyncOperation(function(){
+      Promise.resolve("succesful result");
+    });
+    promise -> given to the consumer
  
+A consumer can use the promise:
+
+    promise.then(function(result){
+       ... when the action is complete this is executed ...
+    },
+    function(error){
+        ... executed when the promise fails
+    });
+
+Alternately, a provider can create a deferred and resolve it when it completes an action. 
+The deferred object a promise object that provides a separation of consumer and producer to protect
+promises from being fulfilled by untrusted code.
+
+    var defer = require("promise").defer;
+    var deferred = defer();
+    asyncOperation(function(){
+      deferred.resolve("succesful result");
+    });
+    deferred.promise -> given to the consumer
+ 
+Another way that a consumer can use promises:
+
+    var when = require("promise").when;
+    when(promise,function(result){
+       ... when the action is complete this is executed ...
+    },
+    function(error){
+       ... executed when the promise fails
+    });
+
+More examples:
+
+    function printFirstAndList(itemsDeferred){
+      findFirst(itemsDeferred).then(sys.puts);
+      findLast(itemsDeferred).then(sys.puts);
+    }
+    function findFirst(itemsDeferred){
+      return itemsDeferred.then(function(items){
+        return items[0];
+      });
+    }
+    function findLast(itemsDeferred){
+      return itemsDeferred.then(function(items){
+        return items[items.length];
+      });
+    }
+
+And now you can do:
+
+    printFirstAndLast(someAsyncFunction());
 
 
-Installation
-------------
+The workhorse function of this library is the "when" function, which provides a means for normalizing interaction with values and functions that may be a normal synchronous value, or may be a promise (asynchronously fulfilled). The when() function takes a value that may be a promise or a normal value for the first function, and when the value is ready executes the function provided as the second argument (immediately in the case of a non-promise normal value). The value returned from when() is the result of the execution of the provided function, and returns a promise if provided a promise or synchronously returns a normal value if provided a non-promise value. This makes it easy to "chain" computations together. This allows us to write code that is agnostic to sync/async interfaces:
 
-Dependencies:
-* zookeeper version 3.3.1
-* zookeeper native client should be installed in your system:
-	(cd $ZK_HOME/src/c && configure && make && make install)
-	
-this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*
+    var when = require("promise").when;
+    function printFirstAndLast(items){
+      // print the first and last item
+      when(findFirst(items), sys.puts);
+      when(findLast(items), sys.puts);
+    }
+    function findFirst(items){
+       // return the first item
+       return when(items, function(items){
+         return items[0];
+       });
+    }
+    function findLast(items){
+       // return the last item
+       return when(items, function(items){
+         return items[items.length - 1];
+       });
+    }
 
-Build
------
-	
-- node-waf configure build
-- node demo1.js
+Now we can do:
+
+    > printFirstAndLast([1,2,3,4,5]);
+    1
+    5
+
+And we can also provide asynchronous promise:
+
+    var promise = new process.Promise();
+    > printFirstAndLast(promise);
+
+(nothing printed yet)
+
+    > promise.emitSuccess([2,4,6,8,10]);
+    2
+    10
 
 
-Limitations
------------
-* no zookeeper ACL support
-* no support for authentication
+The "all" function is intended to provide a means for waiting for the completion of an array of promises. The "all" function should be passed an array of promises, and it returns an promise that is fulfilled once all the promises in the array are fulfilled. The returned promise's resolved value will be an array with the resolved values of all of the promises in the passed in array.
 
+The "first" function is intended to provide a means for waiting for the completion of the first promise in an array of promises to be fulfilled. The "first" function should be passed an array of promises, and it returns an promise that is fulfilled once the first promise in the array is fulfilled. The returned promise's resolved value will be the resolved value of the first fulfilled promise.
 
-BUGS
-----
-
-This is the first version of the client. It works for me 
-
-
-SEE ALSO
---------
-
-- http://hadoop.apache.org/zookeeper/releases.html
-- http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API
-
-AUTHOR
-------
-
-Yuri Finkelstein (yurif2003 at yahoo dot com)
