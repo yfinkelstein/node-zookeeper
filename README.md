@@ -60,10 +60,11 @@ Random notes on implementation
 * Multiple simultaneous ZK connections are supported and tested 
 * All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
 * All ZK API methods including watchers are supported.
-* lib/zk_promise.js is an optional module that makes use of the very cool node-promise library; 
+* lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library; 
  see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding
 Isn't the following looking nicer?
 
+<code>
 	zk_r.on_connected().
 	then (
 		function (zkk){
@@ -95,6 +96,8 @@ Isn't the following looking nicer?
 			});
 		}
 	);
+</code>
+
 
 Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js 
 * tests/zk_master.js and tests/zk_worker.js illustrate lunching multiple ZK client workers using webworker library. You have to install it first with "npm install webworker""
@@ -139,8 +142,8 @@ SEE ALSO
 Acknowledgments
 ---------------
 
-- node-promise by kriszyp is a fantastic tool imho. I will it was distributed as a module so that I could easily 'require' it rather then 
- resorting to distribution by copy.  
+- node-promise by kriszyp is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
+ resort to distribution by copy.  
 
 AUTHOR
 ------
