@@ -102,10 +102,9 @@ Isn't the following looking nicer?
 * Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js 
 * tests/zk_master.js and tests/zk_worker.js illustrate lunching multiple ZK client workers using webworker library. You have to install it first with **"npm install webworker"**
 
-Installation
-------------
 
 Dependencies:
+------------
 
 * zookeeper version 3.3.1
 * zookeeper native client should be installed in your system:  
@@ -142,7 +141,7 @@ SEE ALSO
 Acknowledgments
 ---------------
 
-- node-promise by kriszyp is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
+- **node-promise by kriszyp** is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
  resort to distribution by copy.  
 
 AUTHOR
