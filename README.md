@@ -47,17 +47,17 @@ Regular async APIs:
 * a_create
 * a_exists
 * a_get
-* a`_get`_children
-* a`_get`_children2
+* a_get_children
+* a_get_children2
 * a_set
-* a`_delete`_  (trailing `_ is added to avoid conflict with reserved word _delete_ since zk`_promise.js strips off prefix `a_` from all operations)
+* a_delete_  (trailing `_` is added to avoid conflict with reserved word `_delete_`` since zk_promise.js strips off prefix `a_` from all operations)
 
 APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):
 
 * aw_exists
 * aw_get
-* aw`_get`_children
-* aw`_get`_children2
+* aw_get_children
+* aw_get_children2
 
 Session state machine is well described in Zookeeper docs, i.e.
 ![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
