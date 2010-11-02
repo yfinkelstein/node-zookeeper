@@ -89,18 +89,14 @@ function Game (game_number, base_path) {
 		
 		var Shoot = function () {
 			console.log ("====>player %s says: I made %d shots, he made %s shots", context.name, context.my_shots, context.his_shots);
-			//console.trace ("IN SHOOT")
-			setTimeout (
-				function () {
-					console.log ("player %s is about to attack", context.name);
-					zk.create (context.other_gate + "/attack", "kick", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL).then (
-						function (created_node) {
-							console.log ("player %s attacked with %s", context.name, created_node);
-							context.my_shots ++;
-							Shoot ();
-						}
-					)
-				}, 0);
+			console.log ("player %s is about to attack", context.name);
+			zk.create (context.other_gate + "/attack", "kick", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL).then (
+				function (created_node) {
+					console.log ("player %s attacked with %s", context.name, created_node);
+					context.my_shots ++;
+					Shoot ();
+				}
+			)
 		};
 		
 		var Defend = function () {

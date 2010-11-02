@@ -54,6 +54,9 @@ The following API calls closely follow ZK C API call. So, consult with ZK Refere
 * a_set
 * a_delete_
 
+Session state machine is well described in Zookeeper docs, i.e.
+![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
+
 Random notes on implementation
 ------------------------------
 
@@ -110,8 +113,8 @@ Dependencies:
 * zookeeper version 3.3.1
 * zookeeper native client should be installed in your system:  
 **cd $ZK_HOME/src/c && configure && make && make install**  
-this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*
-
+this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*  
+The build process is described in details [here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#C+Binding "C")
 Build
 -----
 	
@@ -135,15 +138,21 @@ This is the first version of the client. It works for me flawlessly though :)
 SEE ALSO
 --------
 
-- http://hadoop.apache.org/zookeeper/releases.html
-- http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API
-- http://github.com/kriszyp/node-promise
-- http://github.com/pgriess/node-webworker
+- [http://hadoop.apache.org/zookeeper/releases.html](http://hadoop.apache.org/zookeeper/releases.html)
+- [http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API)
+- [http://github.com/kriszyp/node-promise](http://github.com/kriszyp/node-promise)
+- [http://github.com/pgriess/node-webworker](http://github.com/pgriess/node-webworker)
+
 Acknowledgments
 ---------------
 
 - **node-promise by kriszyp** is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
  resort to distribution by copy.  
+- **node-webworker by pgriess** is used to spawn multiple ZK workers in one of the tests. 
+LICENSE
+-------
+
+See LICENSE-MIT.txt file in the top level folder.
 
 AUTHOR
 ------
