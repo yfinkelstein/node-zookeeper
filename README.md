@@ -50,7 +50,7 @@ Regular async APIs:
 * a_get_children
 * a_get_children2
 * a_set
-* a_delete_  (trailing `_` is added to avoid conflict with reserved word `_delete_`` since zk_promise.js strips off prefix `a_` from all operations)
+* a_delete`_` (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
 
 APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):
 
