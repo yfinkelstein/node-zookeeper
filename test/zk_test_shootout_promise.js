@@ -4,7 +4,7 @@ require.paths.unshift('../lib');
 
 /*
 Shootout is played by the following rules:
-- Each games has 2 players A and B that are "shooting"" at each other's gate"
+- Each games has 2 players A and B that are "shooting"" at each other's gate
 - Gate is a zookeeper namespace node with a known path: /shootout_<game index>_<A|B>
 - Shoot is an act of creating a child node in the opponent's gate
 - Defence is an act of deleting all nodes in the player's own gate
@@ -17,7 +17,7 @@ Shootout is played by the following rules:
 
 - The beauty of this implementation is that because of the async nature of both zookeeper and node.js 
  Defend () and Shoot() operations can run in parallel without blocking each other. This creates the effect of 
- concurrency althout only 1 thread is actually used. Here is what you can see what you start 3 games at the 
+ concurrency although only 1 thread is actually used. Here is what you can see when you start 3 games at the 
  same time and kill it with ^C after a while:
 
 ====> Game summary:
