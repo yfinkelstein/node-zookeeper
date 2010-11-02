@@ -99,17 +99,17 @@ Isn't the following looking nicer?
 </code>
 
 
-Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js 
-* tests/zk_master.js and tests/zk_worker.js illustrate lunching multiple ZK client workers using webworker library. You have to install it first with "npm install webworker""
+* Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js 
+* tests/zk_master.js and tests/zk_worker.js illustrate lunching multiple ZK client workers using webworker library. You have to install it first with **"npm install webworker"**
 
 Installation
 ------------
 
 Dependencies:
+
 * zookeeper version 3.3.1
-* zookeeper native client should be installed in your system:
-	(cd $ZK_HOME/src/c && configure && make && make install)
-	
+* zookeeper native client should be installed in your system:  
+**cd $ZK_HOME/src/c && configure && make && make install**  
 this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*
 
 Build
