@@ -58,13 +58,12 @@ Random notes on implementation
 ------------------------------
 
 * Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
-* The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked in to this project. The file is considered ZK internal and is not installed into /usr/local/include
+* The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZK internal and is not installed into /usr/local/include
 * Multiple simultaneous ZK connections are supported and tested 
 * All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
 * All ZK API methods including watchers are supported.
 * lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library; 
- see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding
-Isn't the following looking nicer?
+ see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding. Isn't the following looking nicer?
 
 <code>
 	zk_r.on_connected().
