@@ -5,9 +5,9 @@ node-zookeeper - A Node interface to Hadoop Zookeeper based on the native C-clie
 
 SYNOPSIS
 --------
+  
   var ZK = require ("node_zookeeper").ZooKeeper;
   var zk = new ZK();
-
   zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
   zk.on (ZK.on_connected, function (zkk) {
 		console.log ("zk session established, id=%s", zkk.client_id);
@@ -19,7 +19,6 @@ SYNOPSIS
 				process.nextTick(function () {
 					zkk.close ();
 				});
-
 			}
 		});
   });
@@ -45,9 +44,10 @@ Installation
 
 Dependencies:
 * zookeeper version 3.3.1
-* zookeeper native client shoud be installed in your system:
+* zookeeper native client should be installed in your system:
 	(cd $ZK_HOME/src/c && configure && make && make install)
-	this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*)
+	
+this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*
 
 Build
 -----
