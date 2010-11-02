@@ -40,19 +40,24 @@ API Reference
 
 The following API calls closely follow ZK C API call. So, consult with ZK Reference for details.
 
+Regular async APIs:
+
 * init
 * close
 * a_create
 * a_exists
-* aw_exists
 * a_get
-* aw_get
-* a_get_children
-* aw_get_children
-* a_get_children2
-* aw_get_children2
+* a`_get`_children
+* a`_get`_children2
 * a_set
-* a_delete_
+* a`_delete`_  (trailing `_ is added to avoid conflict with reserved word _delete_ since zk`_promise.js strips off prefix `a_` from all operations)
+
+APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):
+
+* aw_exists
+* aw_get
+* aw`_get`_children
+* aw`_get`_children2
 
 Session state machine is well described in Zookeeper docs, i.e.
 ![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
@@ -114,7 +119,8 @@ Dependencies:
 * zookeeper native client should be installed in your system:  
 **cd $ZK_HOME/src/c && configure && make && make install**  
 this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*  
-The build process is described in details [here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#C+Binding "C")
+The build process is described in details [here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#C+Binding "Build C client")
+
 Build
 -----
 	
@@ -146,9 +152,10 @@ SEE ALSO
 Acknowledgments
 ---------------
 
-- **node-promise by kriszyp** is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
+- **[node-promise](http://github.com/kriszyp/node-promise "node-promise") by kriszyp** is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then 
  resort to distribution by copy.  
-- **node-webworker by pgriess** is used to spawn multiple ZK workers in one of the tests. 
+- **[node-webworker](http://github.com/pgriess/node-webworker "node-webworker") by pgriess** is used to spawn multiple ZK workers in one of the tests. 
+
 LICENSE
 -------
 
