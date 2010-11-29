@@ -2,16 +2,17 @@ require.paths.unshift('../build/default');
 require.paths.unshift('../node-promise');
 require.paths.unshift('../lib');
 
-var promise = require("promise");
-var ZK = require("zk_promise").ZK;
+var promise = require("zookeeper/promise");
+var ZK = require("zookeeper/zk_promise").ZK;
 var assert = require ('assert');
 var sys = require ('sys');
 
+var connect  = (process.argv[2] || 'localhost:2181');
 //-------------------------------------------------------------------- operations begin ---------------------------------------
 var deferred_watcher_ready = promise.defer();
 var deferred_watcher_triggered = promise.defer();
 
-var zk_config = {connect:"localhost:2181", debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
+var zk_config = {connect:connect, debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
 
 //reader
 var zk_r = new ZK ().init (zk_config);

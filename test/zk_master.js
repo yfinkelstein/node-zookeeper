@@ -3,11 +3,13 @@ var net = require('net');
 
 var Worker = require("webworker").Worker;
 
+// N-nodes N-sessions connect
 if (process.argv.length < 3)
 	throw new Error ("must supply number of nodes to create and number of sessions (optionally)");
 
 var N = parseInt (process.argv[2]);
 var sessions = parseInt (process.argv[3] || 1);
+var connect = (process.argv[4] || 'localhost:2181');
 
 for (var i = 0; i < sessions; i++) {
     var w = new Worker(path.join(__dirname, 'zk_worker.js'));
@@ -25,7 +27,7 @@ for (var i = 0; i < sessions; i++) {
     }(w);
     w.index = i;
 
-    w.postMessage({ numnodes:N, your_index:i });
+    w.postMessage({ numnodes:N, your_index:i, connect:connect });
 }
 
 var numWorkersFinished = 0;
@@ -46,7 +48,7 @@ function workerDone (worker, crearedN)  {
 var server = net.createServer(function(s) {
 	console.log ("server created");
 });
-server.listen(7070)
+server.listen(7070);
 
 
 console.log ("master is listening ...");

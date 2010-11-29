@@ -1,5 +1,5 @@
 require.paths.unshift('../build/default');
-var ZK = require ("node_zookeeper").ZooKeeper;
+var ZK = require ("zookeeper").ZooKeeper;
 var sys = require("sys");
 
 if (process.argv.length < 3)
@@ -7,13 +7,14 @@ if (process.argv.length < 3)
 
 var N = parseInt (process.argv[2]);
 var sessions = parseInt (process.argv[3] || 1);
+var connect  = (process.argv[4] || 'localhost:2181');
 
 function zkTest (seq_, callback) {
 	this.zk = new ZK();
 	console.log ("myThis=%j", myThis);
 	console.log ("myHolder=%j", myHolder);
 	//console.log ("myCallee=%j", myCallee);
-	this.zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_INFO, host_order_deterministic:false});
+	this.zk.init ({connect:connect, timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_INFO, host_order_deterministic:false});
 	this.zk.on (ZK.on_connected, function (zkk, clientid) {
 		console.log ("session #%d connected ok", seq_);
 		var counter = 0;

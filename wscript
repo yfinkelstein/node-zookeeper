@@ -13,7 +13,9 @@ def configure(conf):
 def build(bld):
     obj = bld.new_task_gen("cxx", "shlib", "node_addon")
     obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0']
-    obj.target = "node_zookeeper"
+    # obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0', '-mmacosx-version-min=10.4']
+    # obj.ldflags = ['-mmacosx-version-min=10.4']
+    obj.target = "zookeeper"
     obj.source = "src/node-zk.cpp"
     obj.lib = ["zookeeper_st"]
     obj.includes = ["/usr/local/include/c-client-src"]

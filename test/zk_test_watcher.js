@@ -2,12 +2,13 @@ require.paths.unshift('../build/default');
 
 var assert = require ('assert');
 var sys = require ('sys');
-var ZK = require ("node_zookeeper").ZooKeeper;
+var ZK = require ("zookeeper").ZooKeeper;
 
 if (process.argv.length < 2)
 	throw new Error ("must supply number of  sessions (optionally)");
 
 var sessions = parseInt (process.argv[2] || 1);
+var connect  = (process.argv[3] || 'localhost:2181');
 var sessionsFinished = 0;
 //-------------------------------------------------------------------- operations begin ---------------------------------------
 
@@ -72,7 +73,7 @@ function completedStep (context, step) {
 	 context.callChain[step+1](context, step+1);
 }
 
-var zk_config = {connect:"localhost:2181", debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
+var zk_config = {connect:connect, debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
 
 
 var zk_r = new ZK ();

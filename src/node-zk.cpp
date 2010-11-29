@@ -297,7 +297,7 @@ public:
 	}
 
 	static void main_watcher(zhandle_t *zzh, int type, int state, const char *path, void* context) {
-		LOG_DEBUG(("main watcher event: type=%d, state = %d, path=%s", type, state, (path ? path: "null")));
+		LOG_DEBUG(("main watcher event: type=%d, state=%d, path=%s", type, state, (path ? path: "null")));
     	ZooKeeper *zk = static_cast<ZooKeeper *>(context);
 
 	    if (type == ZOO_SESSION_EVENT) {
@@ -381,6 +381,7 @@ public:
 		return scope.Close(Int32::New(ret))
 
 #define WATCHER_PROLOG(args) \
+        if (zoo_state(zh) == ZOO_EXPIRED_SESSION_STATE) { return; } \
 		HandleScope scope; \
 		Persistent<Function> *callback = cb_unwrap((void*)watcherCtx); \
 		assert (callback); \
@@ -613,6 +614,7 @@ public:
 			ev_timer_stop(EV_DEFAULT_UC_ &zk_timer);
 
 		if (zhandle) {
+		    LOG_DEBUG(("call zookeeper_close(%lp)", zhandle));
 			zookeeper_close(zhandle);
 			zhandle = 0;
 		}
@@ -658,4 +660,4 @@ private:
 Persistent<FunctionTemplate> ZooKeeper::constructor_template;
 }
 
-NODE_MODULE(node_zookeeper, zk::ZooKeeper::Initialize);
+NODE_MODULE(zookeeper, zk::ZooKeeper::Initialize);

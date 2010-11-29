@@ -34,12 +34,13 @@ game #2:
  Also note how the looping is implemented. Recursion in node.js does not cause stack growth. It's not a tail recursion either...
 */
 
-var promise = require("promise");
-var ZK = require("zk_promise").ZK;
+var promise = require("zookeeper/promise");
+var ZK = require("zookeeper/zk_promise").ZK;
 
 var NGames = parseInt (process.argv[2] || 1);
+var connect  = (process.argv[3] || 'localhost:2181');
 
-var zk_config = {connect:"localhost:2181", debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
+var zk_config = {connect:connect, debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
 
 function Game (game_number, base_path) {
 	var start_promise = promise.defer();

@@ -2,12 +2,13 @@ require.paths.unshift('../build/default');
 var assert = require ('assert');
 var sys = require ('sys');
 
-var ZK = require ("node_zookeeper").ZooKeeper;
+var ZK = require ("zookeeper").ZooKeeper;
 
 if (process.argv.length < 2)
 	throw new Error ("must supply number of  sessions (optionally)");
 
 var sessions = parseInt (process.argv[2] || 1);
+var connect = (process.argv[3] || 'localhost:2181');
 var sessionsFinished = 0;
 //-------------------------------------------------------------------- operations begin ---------------------------------------
 function createNode (context, step) {
@@ -138,7 +139,7 @@ function zkTest (session) {
 	var zk = new ZK ();
 	console.log ("session #%d before init: state=%j", session, zk);
 	assert.equal (ZK.ZOO_LOG_LEVEL_WARN, 2);
-	zk.init ({connect:"localhost:2181", timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
+	zk.init ({connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
 	console.log ("session #%d after init: zk=%j", session, zk);
 	zk.on (ZK.on_connected, function (zkk, clientid) {
 		console.log ("zk session %d on_connected: clientid=%s", session, clientid);
