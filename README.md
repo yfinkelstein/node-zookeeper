@@ -124,13 +124,13 @@ The build process is described in details [here](http://hadoop.apache.org/zookee
 
 Build
 -----
-	
+
 - node-waf configure build
 - node demo1.js
 - cd tests && node zk_test_XYZ.js
 
-- note: edit the includes/libpath if you've installed zookeeper C lib anywhere other than /usr/local/
-- note: if you're building on osx and you get a compile error regarding 'mmacosx-version-min', uncomment the cxxflags and ldflags for osx in the build function of wscript and try again. I'm not sure why this issue arrises for some and not others (anyone with the answer please explain/fix if possible).
+- note: edit the includes/libpath if you have installed zookeeper C lib anywhere other than /usr/local/
+- note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", uncomment the cxxflags and ldflags for osx in the build function of wscript and try again. I am not sure why this issue arrises for some and not others (anyone with the answer please explain/fix if possible).
 
 Limitations
 -----------
@@ -140,13 +140,11 @@ Limitations
 * only asynchronous ZK methods are implemented. Hey, this is node.js ... no sync calls are allowed
 
 BUGS & ISSUES
-----
+-------------
 
-This is the first version of the client. It works for me flawlessly though :)
-
-That being said:
 - The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
-- Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a 'real' watch event if that matters to your application.
+- Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
+- Otherwise, it just works!
 
 SEE ALSO
 --------
