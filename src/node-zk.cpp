@@ -338,7 +338,7 @@ public:
         Local<Value> argv[2];
         argv[0] = Local<Value>::New(handle_);
         if (path != 0)
-            argv[1] = String::NewSymbol(path);
+            argv[1] = String::New(path);
         else
             argv[1] = Local<Value>::New(Undefined());
         LOG_DEBUG (("calling Emit(%s, path=%s)", *String::Utf8Value(event_name), path ? path : "null"));
@@ -395,7 +395,7 @@ public:
         Local<Value> argv[args]; \
         argv[0] = Integer::New(type); \
         argv[1] = Integer::New(state); \
-        argv[2] = String::NewSymbol(path); \
+        argv[2] = String::New(path); \
         Local<Value> lv_hb = (*callback)->GetHiddenValue(HIDDEN_PROP_HANDBACK); \
         (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); \
         argv[3] = Local<Value>::New(Undefined ()); \
