@@ -23,8 +23,8 @@ onmessage = function(msg) {
     };
     
     var zk = new ZK;
-    //zk.init ({connect:"localhost:2181,localhost:2182,localhost:2183", timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
-    zk.init ({connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
+    //zk.init ({connect:"localhost:2181,localhost:2182,localhost:2183", timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
+    zk.init ({connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
     zk.on (ZK.on_connected, function (zk) {
         sys.debug ("[from worker #" + my_worker_index + "]session connected");
         for (var i = 0; i < N; i ++) {

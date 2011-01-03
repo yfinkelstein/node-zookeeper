@@ -3,7 +3,9 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <node.h>
+#include <node_buffer.h>
 #include <node_events.h>
+#include <node_object_wrap.h>
 #include <v8-debug.h>
 using namespace v8;
 using namespace node;
@@ -28,6 +30,7 @@ static Persistent<String> on_connected, on_closed, on_event_created, on_event_de
 
 static Persistent<Function> json_parse_func, json_stringify_func;
 static Persistent<String> HIDDEN_PROP_ZK, HIDDEN_PROP_HANDBACK;
+static Persistent<String> data_as_buffer;
 
 #define DEFINE_SYMBOL(ev)   ev = NODE_PSYMBOL(#ev)
 #define DEFINE_EVENT(t,ev) DEFINE_SYMBOL(ev); t->Set(ev, ev)
@@ -170,10 +173,11 @@ public:
         NODE_DEFINE_CONSTANT(constructor_template, ZSESSIONMOVED);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING,  ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING,  ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING,  ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING,  ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("data_as_buffer"), DataAsBufferPropertyGetter, DataAsBufferPropertySetter);
 
         target->Set(String::NewSymbol("ZooKeeper"), constructor_template->GetFunction());
 
@@ -287,8 +291,13 @@ public:
         int32_t session_timeout = arg->Get(String::NewSymbol("timeout"))->ToInt32()->Value();
         if (session_timeout == 0) session_timeout = 20000;
 
+        Local<Value> asBuffer = arg->Get(String::NewSymbol("data_as_buffer"));
+
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
+        if( asBuffer != Undefined() && asBuffer != Null() ) {
+            zk->data_as_buffer = asBuffer->ToBoolean()->Value();
+        }
 
         if (!zk->realInit(*_hostPort, session_timeout))
             return ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__);
@@ -337,11 +346,13 @@ public:
         HandleScope scope;
         Local<Value> argv[2];
         argv[0] = Local<Value>::New(handle_);
-        if (path != 0)
+        if (path != 0) {
             argv[1] = String::New(path);
-        else
+            LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
+        } else {
             argv[1] = Local<Value>::New(Undefined());
-        LOG_DEBUG (("calling Emit(%s, path=%s)", *String::Utf8Value(event_name), path ? path : "null"));
+            LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
+        }
         Emit(event_name, 2, argv);
     }
 
@@ -431,9 +442,14 @@ public:
     static Handle<Value> ACreate (const Arguments& args) {
         A_METHOD_PROLOG (4);
         String::Utf8Value _path (args[0]->ToString());
-        String::Utf8Value _data (args[1]->ToString());
         uint32_t flags = args[2]->ToUint32()->Uint32Value();
-        METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+        if( Buffer::HasInstance(args[1]) ) { // buffer
+            Buffer* _data = ObjectWrap::Unwrap<Buffer>(args[1]->ToObject());
+            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, _data->data(), _data->length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+        } else {    // other
+            String::Utf8Value _data (args[1]->ToString());
+            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+        }
     }
 
     static void void_completion (int rc, const void *data) {
@@ -488,11 +504,21 @@ public:
     }
 
     static void data_completion (int rc, const char *value, int value_len,
-            const struct Stat *stat, const void *data) {
+                                 const struct Stat *stat, const void *data) {
         CALLBACK_PROLOG (4);
         LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
-        argv[3] = value != 0 ? String::New(value, value_len) : String::Cast(*Null());
+        if( value != 0 ) {
+            if( zkk->data_as_buffer) {
+                Buffer* b = Buffer::New(value_len);
+                memcpy(b->data(), value, value_len);
+                argv[3] = Local<Value>::New(b->handle_);
+            } else {
+                argv[3] = String::New(value, value_len);
+            }
+        } else {
+            argv[3] = String::Cast(*Null());
+        }
         CALLBACK_EPILOG();
     }
 
@@ -512,15 +538,20 @@ public:
         AW_METHOD_PROLOG (3);
         String::Utf8Value _path (args[0]->ToString());
         METHOD_EPILOG (zoo_awget(zk->zhandle, *_path,
-                &watcher_fn, cbw,       &data_completion, cb));
+                &watcher_fn, cbw, &data_completion, cb));
     }
 
     static Handle<Value> ASet (const Arguments& args) {
         A_METHOD_PROLOG (4);
         String::Utf8Value _path (args[0]->ToString());
-        String::Utf8Value _value (args[1]->ToString());
         uint32_t version = args[2]->ToUint32()->Uint32Value();
-        METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, *_value, _value.length(), version, &stat_completion, cb));
+        if( Buffer::HasInstance(args[1]) ) { // buffer
+            Buffer* _data = ObjectWrap::Unwrap<Buffer>(args[1]->ToObject());
+            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, _data->data(), _data->length(), version, &stat_completion, cb));
+        } else {    // other
+            String::Utf8Value _data(args[1]->ToString());
+            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
+        }
     }
 
     static void strings_completion (int rc,
@@ -609,6 +640,21 @@ public:
         return Integer::New (zk->zhandle != 0? is_unrecoverable (zk->zhandle) : 0);
     }
 
+    static Handle<Value> DataAsBufferPropertyGetter(Local<String> property, const AccessorInfo &info) {
+        HandleScope scope;
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        assert(zk);
+        return Boolean::New (zk->data_as_buffer);
+    }
+
+    static void DataAsBufferPropertySetter(Local<String> property, Local<Value> value, const AccessorInfo& info) {
+        HandleScope scope;
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        assert(zk);
+
+        zk->data_as_buffer = value->BooleanValue();
+    }
+
     void realClose () {
         if (ev_is_active (&zk_timer))
             ev_timer_stop(EV_DEFAULT_UC_ &zk_timer);
@@ -640,7 +686,7 @@ public:
 
 #define ZERO_MEM(member) bzero(&(member), sizeof(member))
 
-    ZooKeeper () : EventEmitter(), zhandle(0), clientIdFile(0), fd(-1) {
+    ZooKeeper () : EventEmitter(), zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -655,6 +701,7 @@ private:
     int interest;
     timeval tv;
     ev_tstamp last_activity; // time of last zookeeper event loop activity
+    bool data_as_buffer;
 };
 
 Persistent<FunctionTemplate> ZooKeeper::constructor_template;

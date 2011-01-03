@@ -40,24 +40,62 @@ API Reference
 
 The following API calls closely follow ZK C API call. So, consult with ZK Reference for details.
 
+The following apply for these apis:
+* for inputs:
+ * path can be any object that will toString() appropriately
+ * data can be any object that will toString() appropriately or a Buffer object
+ * flags can be any object that will ToInt32() appropriately
+ * version can be any object that will ToInt32() appropriately
+ * watch can be any object that will ToBoolean() appropriately
+* for outputs:
+ * path is a string
+ * data is either a Buffer (default), or a string (this is controlled by data_as_buffer = true/false)
+ * children is an array of strings
+ * rc is an int (error codes from zk api)
+ * error is a string (error string from zk api)
+ * type is an int event type (from zk api)
+ * state is an int (state when the watcher fired from zk api)
+ * stat is an object with the following attributes:
+  * long czxid              // created zxid
+  * long mzxid              // last modified zxid
+  * long ctime              // created
+  * long mtime              // last modified
+  * int version             // version
+  * int cversion            // child version
+  * int aversion            // acl version
+  * string ephemeralOwner   // owner session id if ephemeral, 0 otw
+  * int dataLength          //length of the data in the node
+  * int numChildren         //number of children of this node
+  * long pzxid              // last modified children
+* callbacks
+ * path_cb : function ( rc, error, path )
+ * stat_cb : function ( rc, error, stat )
+ * data_cb : function ( rc, error, stat, data )
+ * child_cb : function ( rc, error, children )
+ * child2_cb : function ( rc, error, children, stat )
+ * void_cb : function ( rc, error )
+ * watch_cb : function ( type, state, path )
+
 Regular async APIs:
 
-* init
-* close
-* a_create
-* a_exists
-* a_get
-* a_get_children
-* a_get_children2
-* a_set
-* a_delete`_` (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
+* init ( object options ), valid options: connect, timeout, debug_level, host_order_deterministic, data_as_buffer
+* close ( )
+* a_create ( path, data, flags, path_cb )
+* a_exists ( path, watch, stat_cb )
+* a_get ( path, watch, data_cb )
+* a_get_children ( path, watch, child_cb )
+* a_get_children2 ( path, watch, child2_cb )
+* a_set ( path, data, version, stat_cb )
+* a_delete`_` ( path, version, void_cb ) 
+ * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
 
 APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):
 
-* aw_exists
-* aw_get
-* aw_get_children
-* aw_get_children2
+* aw_exists ( path, watch_cb, stat_cb ) 
+* aw_get ( path, watch_cb, data_cb )
+* aw_get_children ( path, watch_cb, child_cb )
+* aw_get_children2 ( path, watch_cb, child2_cb )
+
 
 Session state machine is well described in Zookeeper docs, i.e.
 ![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
@@ -93,7 +131,7 @@ Random notes on implementation
         }
     ).then (
         function (stat_and_value) { // this is the response from w_get above
-            console.log ("get node: stat=%j, value=%j", stat_and_value[0], stat_and_value[1]);
+            console.log ("get node: stat=%j, value=%s", stat_and_value[0], stat_and_value[1]);
             deferred_watcher_ready.resolve (zk_r.context.path);
             return deferred_watcher_triggered;
         }
@@ -145,6 +183,10 @@ BUGS & ISSUES
 - The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
 - Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
 - Otherwise, it just works!
+
+IMPORTANT CHANGES
+-----------------
+Data coming out of ZooKeepr (in callbacks) will now default to being Buffer objects. The main ZK handle now has a boolean attribute called 'data_as_buffer', which defaults to true. If you are storing strings only, as was only allowed in the initial implementation, or you wish to have data in callbacks arrive as strings, you add 'data_as_buffer:false' to the init options, or add 'zk.data_as_buffer = false;' before using the handle. The behavior defaults to Buffer objects because this aligns more closely with ZooKeeper itself which uses byte arrays. They are interchangable on input, if the input is a Buffer it'll be used directly, otherwise the toString() of the input is used (this will work with utf8 data as well) regardless of mode.
 
 SEE ALSO
 --------
