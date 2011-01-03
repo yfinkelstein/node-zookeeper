@@ -41,6 +41,7 @@ API Reference
 The following API calls closely follow ZK C API call. So, consult with ZK Reference for details.
 
 The following apply for these apis:
+
 * for inputs:
     * path can be any object that will toString() appropriately
     * data can be any object that will toString() appropriately or a Buffer object
@@ -76,7 +77,7 @@ The following apply for these apis:
     * void_cb : function ( rc, error )
     * watch_cb : function ( type, state, path )
 
-Regular async APIs:
+**Regular async APIs:**
 
 * init ( object options ), valid options: connect, timeout, debug_level, host_order_deterministic, data_as_buffer
 * close ( )
@@ -89,7 +90,7 @@ Regular async APIs:
 * a_delete`_` ( path, version, void_cb ) 
     * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
 
-APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):
+**APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):**
 
 * aw_exists ( path, watch_cb, stat_cb ) 
 * aw_get ( path, watch_cb, data_cb )
