@@ -3,7 +3,7 @@ import Options
 srcdir = "."
 blddir = "build"
 APPNAME = "zookeeper"
-VERSION = "3.3.2-1"
+VERSION = "3.3.2-2"
 
 includes = ['/usr/local/include/c-client-src']
 libpaths = ['/usr/local/lib']
