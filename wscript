@@ -5,15 +5,11 @@ srcdir = "."
 blddir = "build"
 APPNAME = "zookeeper"
 VERSION = "3.3.2-2"
-OSTYPE = ""
+OSTYPE = platform.system()
 
 
 includes = ['/usr/local/include/c-client-src']
 libpaths = ['/usr/local/lib']
-
-
-def detect_os():
-	OSTYPE = platform.system()
 
 def set_options(opt):
     opt.add_option('-z','--zookeeper', action='store', default='zookeeper-3.3.2', help='build zookeeper', dest='zookeeper')
@@ -40,7 +36,6 @@ def zookeeper(ctx, z):
         ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --disable-shared --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
-    detect_os()
     if Options.options.zookeeper != None:
         zookeeper(bld, Options.options.zookeeper)
 
@@ -48,7 +43,8 @@ def build(bld):
     if OSTYPE == 'Darwin':
         obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0', '-mmacosx-version-min=10.4']
         obj.ldflags = ['-mmacosx-version-min=10.4']
-    elif OSTYPE == 'Linux':
+    else:
+        # default build flags, add special cases if needed
         obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0']
         obj.ldflags = ['']
 
