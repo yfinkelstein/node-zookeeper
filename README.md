@@ -169,12 +169,14 @@ The build process is described in details [here](http://hadoop.apache.org/zookee
 Build
 -----
 
-- node-waf configure build [--zookeeper zookeeper-version|prefix-path]
+- node-waf configure build [--zookeeper zookeeper-version|prefix-path|'']
 - node demo1.js
 - cd tests && node zk_test_XYZ.js
 
-- note: edit the includes/libpath if you have installed zookeeper C lib anywhere other than /usr/local/
-- note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", uncomment the cxxflags and ldflags for osx in the build function of wscript and try again. I am not sure why this issue arrises for some and not others (anyone with the answer please explain/fix if possible).
+- node: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
+- note: if you wish to link against an existing zookeeper lib: use --zoookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
+- note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", you may need to edit the wscript and remove it  (anyone with the answer please explain/fix if possible).
+- note: if you are building on a platform for which the options are not working, please add a specific elif for that platform and create a pull request.
 
 Limitations
 -----------

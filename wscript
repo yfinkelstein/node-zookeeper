@@ -36,7 +36,7 @@ def zookeeper(ctx, z):
         ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --disable-shared --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
-    if Options.options.zookeeper != None:
+    if Options.options.zookeeper != '':
         zookeeper(bld, Options.options.zookeeper)
 
     obj = bld.new_task_gen("cxx", "shlib", "node_addon")
