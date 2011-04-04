@@ -159,7 +159,7 @@ Random notes on implementation
 Dependencies:
 ------------
 
-* zookeeper version 3.3.1 (or 3.3.2)
+* zookeeper version 3.3.x
 * zookeeper native client should be installed in your system:
 **cd $ZK_HOME/src/c && configure && make && make install**
 this puts *.h files under /usr/local/include/c-client-src/ and lib files in /usr/local/lib/libzookeeper_*

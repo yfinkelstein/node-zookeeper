@@ -1,7 +1,7 @@
 {
   "name": "zookeeper",
   "description": "apache zookeeper client for node.js (zookeeper async API >= 3.3.1)",
-  "version": "3.3.2-3",
+  "version": "3.3.2-4",
   "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
   "contributors": [
     { "name": "Woody Anderson", "email": "woody.anderson@gmail.com"}
@@ -25,5 +25,5 @@
      "test" : "node-waf test",
      "doc" : "node-waf doc"
   },
-  "engines": { "node": ">= 0.2.0" }
+  "engines": { "node": ">= 0.4.0" }
 }
