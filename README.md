@@ -160,6 +160,7 @@ Dependencies:
 ------------
 
 Note: these are handled internally by the build unless you desire to build and link against a specific version etc.
+
 * zookeeper version 3.3.x
 * zookeeper native client should be installed in your system:
 **cd $ZK_HOME/src/c && configure && make && make install**
