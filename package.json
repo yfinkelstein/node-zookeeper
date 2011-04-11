@@ -25,5 +25,5 @@
      "test" : "node-waf test",
      "doc" : "node-waf doc"
   },
-  "engines": { "node": ">= 0.4.0" }
+  "engines": { "node": ">= 0.3.0" }
 }

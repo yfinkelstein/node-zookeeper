@@ -1,4 +1,4 @@
-require.paths.unshift('./build/default');
+require.paths.unshift('./build/default', '../build/default');
 var ZK     = require('zookeeper').ZooKeeper,
     Buffer = require('buffer').Buffer,
     exec   = require('child_process').exec;
@@ -24,8 +24,9 @@ zk.on(ZK.on_connected, function (zkk) {
                 zkk.a_get(path, false, function(rc, error, stat, value) { // response
                     zkk.a_set(path, b2, 0, function(rc2, error2, stat2) { // response
                         zkk.a_get(path, false, function(rc3, error3, stat3, value3) { // response
-                            if( (value3 instanceof Buffer) === false ) {
-                                console.log('ERROR value3 is not a Buffer: ' + (typeof(value3)));
+                            if( Buffer.isBuffer(value3) === false ) {
+                                console.log('ERROR (p2) value3 is not a Buffer, is: ' + (typeof(value3)));
+                                console.log(require('sys').inspect(value3));
                                 err = true;
                             }
                             if( err == false ) {
@@ -40,7 +41,7 @@ zk.on(ZK.on_connected, function (zkk) {
     }
 
     zkk.a_create('/node.js1', b, ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function(rc, error, path) {
-        // console.log(require('sys').inspect(zkk));
+        console.log(require('sys').inspect(zkk));
         if (rc != 0) {
             console.log("zk node create result: %d, error: '%s', path=%s", rc, error, path);
         } else {
@@ -48,8 +49,9 @@ zk.on(ZK.on_connected, function (zkk) {
             zkk.a_get(path, false, function(rc, error, stat, value) { // response
                 zkk.a_set(path, b2, 0, function(rc2, error2, stat2) { // response
                     zkk.a_get(path, false, function(rc3, error3, stat3, value3) { // response
-                        if( (value3 instanceof Buffer) ) {
-                            console.log('ERROR value3 should be a Buffer: ' + (typeof(value3)));
+                        if( Buffer.isBuffer(value3) ) {
+                            console.log('ERROR (p1) value3 should be a Buffer, is: ' + (typeof(value3)));
+                            console.log(require('sys').inspect(value3));
                             err = true;
                         }
                         setTimeout(phase2, 1);

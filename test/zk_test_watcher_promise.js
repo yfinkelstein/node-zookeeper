@@ -1,6 +1,6 @@
-require.paths.unshift('../build/default');
-require.paths.unshift('../node-promise');
-require.paths.unshift('../lib');
+require.paths.unshift('./build/default', '../build/default');
+require.paths.unshift('./node-promise', '../node-promise');
+require.paths.unshift('./lib', '../lib');
 
 var promise = require("zookeeper/promise");
 var ZK = require("zookeeper/zk_promise").ZK;

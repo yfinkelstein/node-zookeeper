@@ -1,4 +1,4 @@
-require.paths.unshift('./build/default');
+require.paths.unshift('./build/default', '../build/default');
 var ZK   = require ("zookeeper").ZooKeeper,
     exec = require('child_process').exec;
 

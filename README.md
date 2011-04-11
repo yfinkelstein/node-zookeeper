@@ -159,6 +159,7 @@ Random notes on implementation
 Dependencies:
 ------------
 
+Note: these are handled internally by the build unless you desire to build and link against a specific version etc.
 * zookeeper version 3.3.x
 * zookeeper native client should be installed in your system:
 **cd $ZK_HOME/src/c && configure && make && make install**
@@ -173,7 +174,8 @@ Build
 - node demo1.js
 - cd tests && node zk_test_XYZ.js
 
-- node: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
+- note: node_compat.h (ala node-png) handles Buffer changes from .2 to .3+, so you should be able to build against older node versions.
+- note: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
 - note: if you wish to link against an existing zookeeper lib: use --zoookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
 - note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", you may need to edit the wscript and remove it  (anyone with the answer please explain/fix if possible).
 - note: if you are building on a platform for which the options are not working, please add a specific elif for that platform and create a pull request.
@@ -194,7 +196,10 @@ BUGS & ISSUES
 
 IMPORTANT CHANGES
 -----------------
-Data coming out of ZooKeepr (in callbacks) will now default to being Buffer objects. The main ZK handle now has a boolean attribute called 'data_as_buffer', which defaults to true. If you are storing strings only, as was only allowed in the initial implementation, or you wish to have data in callbacks arrive as strings, you add 'data_as_buffer:false' to the init options, or add 'zk.data_as_buffer = false;' before using the handle. The behavior defaults to Buffer objects because this aligns more closely with ZooKeeper itself which uses byte arrays. They are interchangable on input, if the input is a Buffer it'll be used directly, otherwise the toString() of the input is used (this will work with utf8 data as well) regardless of mode.
+
+Data coming out of ZooKeepr (in callbacks) will now default to being Buffer objects. The main ZK handle now has a boolean attribute called 'data_as_buffer', which defaults to true. If you are storing strings only, as was only allowed in the initial implementation, or you wish to have data in callbacks arrive as strings, you add 'data_as_buffer:false' to the init options, or add 'zk.data_as_buffer = false;' before using the handle. The behavior defaults to Buffer objects because this aligns more closely with ZooKeeper itself which uses byte arrays. They are interchangable on input, if the input is a Buffer it will be used directly, otherwise the toString() of the input is used (this will work with utf8 data as well) regardless of mode.
+
+With the new Buffer changes in the 0.3+ and 0.4+ branches, these will be internal 'SlowBuffer' objects, and you should use Buffer.isBuffer if you are checking the type, as 'instanceof Buffer' will return false.
 
 SEE ALSO
 --------

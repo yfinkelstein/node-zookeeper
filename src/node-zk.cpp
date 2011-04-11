@@ -12,6 +12,7 @@ using namespace node;
 #undef THREADED
 #include <zookeeper.h>
 #include "zk_log.h"
+#include "buffer_compat.h"
 
 namespace zk {
 #define _LL_CAST_ (long long)
@@ -444,8 +445,8 @@ public:
         String::Utf8Value _path (args[0]->ToString());
         uint32_t flags = args[2]->ToUint32()->Uint32Value();
         if( Buffer::HasInstance(args[1]) ) { // buffer
-            Buffer* _data = ObjectWrap::Unwrap<Buffer>(args[1]->ToObject());
-            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, Buffer::Data(_data), Buffer::Length(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+            Local<Object> _data = args[1]->ToObject();
+            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
             String::Utf8Value _data (args[1]->ToString());
             METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
@@ -511,7 +512,7 @@ public:
         if( value != 0 ) {
             if( zkk->data_as_buffer) {
                 Buffer* b = Buffer::New(value_len);
-                memcpy(Buffer::Data(b), value, value_len);
+                memcpy(BufferData(b), value, value_len);
                 argv[3] = Local<Value>::New(b->handle_);
             } else {
                 argv[3] = String::New(value, value_len);
@@ -546,8 +547,8 @@ public:
         String::Utf8Value _path (args[0]->ToString());
         uint32_t version = args[2]->ToUint32()->Uint32Value();
         if( Buffer::HasInstance(args[1]) ) { // buffer
-            Buffer* _data = ObjectWrap::Unwrap<Buffer>(args[1]->ToObject());
-            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, Buffer::Data(_data), Buffer::Length(_data), version, &stat_completion, cb));
+            Local<Object> _data = args[1]->ToObject();
+            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
             String::Utf8Value _data(args[1]->ToString());
             METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
