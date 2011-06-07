@@ -2,6 +2,7 @@
 
 # arg1 is the connection string
 
+node zk_test_a_get_children.js $1
 node zk_test_buffer.js $1
 node zk_test_chain.js 2 $1
 node zk_test_create.js 10 2 $1

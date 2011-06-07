@@ -559,11 +559,15 @@ public:
             const struct String_vector *strings, const void *data) {
         CALLBACK_PROLOG (3);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
-        Local<Array> ar = Array::New((uint32_t)strings->count);
-        for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-            ar->Set(i, String::New(strings->data[i]));
+        if (strings != NULL) {
+            Local<Array> ar = Array::New((uint32_t)strings->count);
+            for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
+                ar->Set(i, String::New(strings->data[i]));
+            }
+            argv[2] = ar;
+        } else {
+            argv[2] = Object::Cast(*Null());
         }
-        argv[2] = ar;
         CALLBACK_EPILOG();
     }
 
@@ -584,11 +588,15 @@ public:
             const struct Stat *stat, const void *data) {
         CALLBACK_PROLOG (4);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
-        Local<Array> ar = Array::New((uint32_t)strings->count);
-        for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-            ar->Set(i, String::New(strings->data[i]));
+        if (strings != NULL) {
+            Local<Array> ar = Array::New((uint32_t)strings->count);
+            for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
+                ar->Set(i, String::New(strings->data[i]));
+            }
+            argv[2] = ar;
+        } else {
+            argv[2] = Object::Cast(*Null());
         }
-        argv[2] = ar;
         argv[3] = (stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null()));
         CALLBACK_EPILOG();
     }

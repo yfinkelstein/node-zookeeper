@@ -7,7 +7,7 @@ var zk = new ZK();
 var connect  = (process.argv[2] || 'localhost:2181');
 var err = false;
 
-zk.init({connect:connect, timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false, data_as_buffer:false});
+zk.init({connect:connect, timeout:5000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false, data_as_buffer:false});
 zk.on(ZK.on_connected, function (zkk) {
     console.log('zk session established, id=%s', zkk.client_id);
     var b = new Buffer('\u00bd + \u00bc = \u00be');
