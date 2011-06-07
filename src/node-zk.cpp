@@ -559,9 +559,16 @@ public:
             const struct String_vector *strings, const void *data) {
         CALLBACK_PROLOG (3);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
-        Local<Array> ar = Array::New((uint32_t)strings->count);
-        for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
+
+        uint32_t size=0;
+        if(strings != NULL){
+          size=(uint32_t)strings->count;
+        }
+        Local<Array> ar = Array::New(size);
+        if(strings != NULL){
+          for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
             ar->Set(i, String::New(strings->data[i]));
+          }
         }
         argv[2] = ar;
         CALLBACK_EPILOG();
