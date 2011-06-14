@@ -6,7 +6,7 @@ blddir = "build"
 APPNAME = "zookeeper"
 VERSION = "3.3.3-1"
 OSTYPE = platform.system()
-
+VERSION = platform.release()
 
 includes = ['/usr/local/include/c-client-src']
 libpaths = ['/usr/local/lib']
@@ -47,6 +47,9 @@ def build(bld):
     if OSTYPE == 'Darwin':
         obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0', '-mmacosx-version-min=10.4']
         obj.ldflags = ['-mmacosx-version-min=10.4']
+    elif OSTYPE == 'Linux' and VERSION.endswith( 'el5' ):
+        obj.cxxflags = ["-Wall", '-DDEBUG', '-O0' ]
+        obj.ldflags = ['']
     else:
         # default build flags, add special cases if needed
         obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0']
