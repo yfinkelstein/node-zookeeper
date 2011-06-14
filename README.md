@@ -117,6 +117,7 @@ Random notes on implementation
 * lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library;
  see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding. Isn't the following looking nicer?
 
+<pre><code>
     zk_r.on_connected().
     then (
         function (zkk){
@@ -148,6 +149,7 @@ Random notes on implementation
             });
         }
     );
+</code></pre>
 
 
 * Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js
