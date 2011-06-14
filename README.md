@@ -117,7 +117,6 @@ Random notes on implementation
 * lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library;
  see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding. Isn't the following looking nicer?
 
-<code>
     zk_r.on_connected().
     then (
         function (zkk){
@@ -149,7 +148,6 @@ Random notes on implementation
             });
         }
     );
-</code>
 
 
 * Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js
@@ -177,7 +175,7 @@ Build
 
 - note: node_compat.h (ala node-png) handles Buffer changes from .2 to .3+, so you should be able to build against older node versions.
 - note: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
-- note: if you wish to link against an existing zookeeper lib: use --zoookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
+- note: if you wish to link against an existing zookeeper lib: use --zookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
 - note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", you may need to edit the wscript and remove it  (anyone with the answer please explain/fix if possible).
 - note: if you are building on a platform for which the options are not working, please add a specific elif for that platform and create a pull request.
 
