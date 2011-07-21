@@ -236,8 +236,12 @@ public:
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
             //return;
+            if( rc == ZCONNECTIONLOSS ) {
+              zk->realClose();							
+            }
+        } else {	
+	        zk->yield ();
         }
-        zk->yield ();
     }
 
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
@@ -320,6 +324,8 @@ public:
             } else if (state == ZOO_EXPIRED_SESSION_STATE) {
                 LOG_ERROR (("Session expired. Shutting down...\n"));
                 zk->realClose();
+            } else {
+                LOG_DEBUG (( "Unhandled SESSION_EVENT: %d\n", state ));
             }
         } else if (type == ZOO_CREATED_EVENT){
             zk->DoEmit (on_event_created, path);
