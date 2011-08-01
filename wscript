@@ -29,7 +29,7 @@ def zookeeper(ctx, z):
         z = 'zookeeper-3.3.3'
     if z.find('/') == -1:
         tgz = z + '.tar.gz'
-        r = ctx.exec_command("if [ ! -d '%s' -a ! -e '%s' ] ; then curl --silent --write-out '%%{http_code}' --output %s 'http://apache.mirrors.tds.net/zookeeper/%s/%s' | grep -v 404 ; fi" % (z,tgz,tgz,z,tgz))
+        r = ctx.exec_command("if [ ! -d '%s' -a ! -f '%s' ] ; then curl --silent --write-out '%%{http_code}' --output %s 'http://apache.mirrors.tds.net/zookeeper/%s/%s' | grep -v 404 ; fi" % (z,tgz,tgz,z,tgz))
         if r != 0:
             # probably building with an archive version, this is in a different directory
             print 'attempting to fetch from from archive location'
