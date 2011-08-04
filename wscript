@@ -35,7 +35,8 @@ def zookeeper(ctx, z):
             print 'attempting to fetch from from archive location'
             ctx.exec_command("curl --output %s 'http://apache.mirrors.tds.net/hadoop/zookeeper/%s/%s'" % (tgz,z,tgz))
         ctx.exec_command("if [ ! -d '%s' ] ; then tar -xzvf %s ; fi" % (z,tgz))
-    ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --with-pic --prefix=%s && make clean install"%(z,t))
+    # we use "--without-shared" to force building/linking only the static libzookeeper.a library, and "--with-pic" to make position-independent code that can be statically linked into a shared object file (zookeeper.node)
+	ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --without-shared --with-pic --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
     if Options.options.zookeeper != '':
