@@ -35,9 +35,7 @@ def zookeeper(ctx, z):
             print 'attempting to fetch from from archive location'
             ctx.exec_command("curl --output %s 'http://apache.mirrors.tds.net/hadoop/zookeeper/%s/%s'" % (tgz,z,tgz))
         ctx.exec_command("if [ ! -d '%s' ] ; then tar -xzvf %s ; fi" % (z,tgz))
-        ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi  --prefix=%s && make clean install"%(z,t))
-    else:
-        ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi  --prefix=%s && make clean install"%(z,t))
+    ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --with-pic --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
     if Options.options.zookeeper != '':
