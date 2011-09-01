@@ -17,10 +17,6 @@
   }
   ,"main": "build/default/zookeeper"
   ,"directories.lib": "build/default/"
-  ,"modules": {
-     "promise": "./node-promise/promise"
-     ,"zk_promise": "./lib/zk_promise"
-  }
   ,"scripts" : {
      "build" : "node-waf configure build"
      ,"test" : "node-waf test"
