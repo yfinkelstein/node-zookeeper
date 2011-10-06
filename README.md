@@ -10,23 +10,24 @@ npm install zookeeper
 
 SYNOPSIS
 --------
-
-    var ZK = require ("zookeeper").ZooKeeper;
-    var zk = new ZK();
-    zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
-    zk.on (ZK.on_connected, function (zkk) {
-        console.log ("zk session established, id=%s", zkk.client_id);
-        zkk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path)  {
-            if (rc != 0)
-                console.log ("zk node create result: %d, error: '%s', path=%s", rc, error, path);
-            else {
-                console.log ("created zk node %s", path);
-                process.nextTick(function () {
-                    zkk.close ();
-                });
-            }
-        });
+```javascript
+var ZK = require ("zookeeper").ZooKeeper;
+var zk = new ZK();
+zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
+zk.on (ZK.on_connected, function (zkk) {
+    console.log ("zk session established, id=%s", zkk.client_id);
+    zkk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path)  {
+        if (rc != 0)
+            console.log ("zk node create result: %d, error: '%s', path=%s", rc, error, path);
+        else {
+            console.log ("created zk node %s", path);
+            process.nextTick(function () {
+                zkk.close ();
+            });
+        }
     });
+});
+```
 
 This prints the following:
 
@@ -117,39 +118,39 @@ Random notes on implementation
 * lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library;
  see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding. Isn't the following looking nicer?
 
-<code>
-    zk_r.on_connected().
-    then (
-        function (zkk){
-            console.log ("reader on_connected: zk=%j", zkk);
-            return zkk.create ("/node.js2", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL);
-        }
-    ).then (
-        function (path) {
-            zk_r.context.path = path;
-            console.log ("node created path=%s", path);
-            return zk_r.w_get (path,
-                function (type, state, path_w) { // this is a watcher
-                    console.log ("watcher for path %s triggered", path_w);
-                    deferred_watcher_triggered.resolve (path_w);
-                }
-            );
-        }
-    ).then (
-        function (stat_and_value) { // this is the response from w_get above
-            console.log ("get node: stat=%j, value=%s", stat_and_value[0], stat_and_value[1]);
-            deferred_watcher_ready.resolve (zk_r.context.path);
-            return deferred_watcher_triggered;
-        }
-    ).then (
-        function () {
-            console.log ("zk_reader is finished");
-            process.nextTick( function () {
-                zk_r.close ();
-            });
-        }
-    );
-</code>
+```javascript
+zk_r.on_connected().
+then (
+    function (zkk){
+        console.log ("reader on_connected: zk=%j", zkk);
+        return zkk.create ("/node.js2", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL);
+    }
+).then (
+    function (path) {
+        zk_r.context.path = path;
+        console.log ("node created path=%s", path);
+        return zk_r.w_get (path,
+            function (type, state, path_w) { // this is a watcher
+                console.log ("watcher for path %s triggered", path_w);
+                deferred_watcher_triggered.resolve (path_w);
+            }
+        );
+    }
+).then (
+    function (stat_and_value) { // this is the response from w_get above
+        console.log ("get node: stat=%j, value=%s", stat_and_value[0], stat_and_value[1]);
+        deferred_watcher_ready.resolve (zk_r.context.path);
+        return deferred_watcher_triggered;
+    }
+).then (
+    function () {
+        console.log ("zk_reader is finished");
+        process.nextTick( function () {
+            zk_r.close ();
+        });
+    }
+);
+```
 
 
 * Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js
