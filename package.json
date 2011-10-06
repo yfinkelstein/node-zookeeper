@@ -1,29 +1,26 @@
 {
-  "name": "zookeeper",
-  "description": "apache zookeeper client for node.js (zookeeper async API >= 3.3.1)",
-  "version": "3.3.3-1",
-  "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
-  "contributors": [
-    { "name": "Woody Anderson", "email": "woody.anderson@gmail.com"}
-  ],
-  "repository": {
-      "type": "git",
-      "url": "https://github.com/yfinkelstein/node-zookeeper.git" 
-  },
-  "keywords": ["apache", "zookeeper", "client"],
-  "dependencies": {
+  "name": "zookeeper-ddopson"
+  ,"description": "apache zookeeper client for node.js (zookeeper async API >= 3.3.1)"
+  ,"version": "3.3.3-1"
+  ,"author": "Yuri Finkelstein <yurif2003@yahoo.com>"
+  ,"contributors": [
+    "Woody Anderson <woody.anderson@gmail.com>"
+    ,"Dave Dopson <ddopson@gmail.com>"
+  ]
+  ,"repository": {
+      "type": "git"
+      ,"url": "https://github.com/ddopson/node-zookeeper.git" 
+  }
+  ,"keywords": ["apache", "zookeeper", "client"]
+  ,"dependencies": {
     "webworker": ">=0.8.2"
-  },
-  "main": "build/default/zookeeper",
-  "directories.lib": "build/default/",
-  "modules": {
-     "promise": "./node-promise/promise",
-     "zk_promise": "./lib/zk_promise"
-  },
-  "scripts" : {
-     "build" : "node-waf configure build",
-     "test" : "node-waf test",
-     "doc" : "node-waf doc"
-  },
-  "engines": { "node": ">= 0.3.0" }
+  }
+  ,"main": "build/default/zookeeper"
+  ,"directories.lib": "build/default/"
+  ,"scripts" : {
+     "build" : "node-waf configure build"
+     ,"test" : "node-waf test"
+     ,"doc" : "node-waf doc"
+  }
+  ,"engines": { "node": ">= 0.3.0" }
 }
