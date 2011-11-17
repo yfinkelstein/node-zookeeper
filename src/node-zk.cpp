@@ -4,7 +4,6 @@
 #include <stdarg.h>
 #include <node.h>
 #include <node_buffer.h>
-#include <node_events.h>
 #include <node_object_wrap.h>
 #include <v8-debug.h>
 using namespace v8;
@@ -48,7 +47,7 @@ do {                                                                      \
                                   __callback##_TEM);                      \
 } while (0)
 
-class ZooKeeper: public EventEmitter {
+class ZooKeeper: public ObjectWrap {
 public:
     static Persistent<FunctionTemplate> constructor_template;
 
@@ -56,7 +55,6 @@ public:
         HandleScope scope;
         Local<FunctionTemplate> t = FunctionTemplate::New(New);
         constructor_template = Persistent<FunctionTemplate>::New(t);
-        constructor_template->Inherit(EventEmitter::constructor_template);
         constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
         constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -207,7 +205,9 @@ public:
     }
 
     void yield () {
-        last_activity = ev_now (EV_A);
+        // DDOPSON-2011-11-17 the line following this comment is breaking the build do to a redefinition of 'EV_A' in Node v0.5/6.x
+        // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
+        // last_activity = ev_now (EV_A);
         int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
@@ -345,16 +345,26 @@ public:
 
     void DoEmit (Handle<String> event_name, const char* path = NULL) {
         HandleScope scope;
-        Local<Value> argv[2];
-        argv[0] = Local<Value>::New(handle_);
+        Local<Value> argv[3];
+        argv[0] = Local<Value>::New(event_name);
+        argv[1] = Local<Value>::New(handle_);
         if (path != 0) {
-            argv[1] = String::New(path);
+            argv[2] = String::New(path);
             LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
         } else {
-            argv[1] = Local<Value>::New(Undefined());
+            argv[2] = Local<Value>::New(Undefined());
             LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
         }
-        Emit(event_name, 2, argv);
+        Local<Value> emit_v = handle_->Get(String::NewSymbol("emit"));
+        assert(emit_v->IsFunction());
+        Local<Function> emit_fn = emit_v.As<Function>();
+        
+
+        TryCatch tc;
+        emit_fn->Call(handle_, 3, argv);
+        if(tc.HasCaught()) {
+          FatalException(tc);
+        }
     }
 
 #define CALLBACK_PROLOG(args) \
@@ -695,7 +705,7 @@ public:
 
 #define ZERO_MEM(member) bzero(&(member), sizeof(member))
 
-    ZooKeeper () : EventEmitter(), zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
+    ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -716,4 +726,6 @@ private:
 Persistent<FunctionTemplate> ZooKeeper::constructor_template;
 }
 
-NODE_MODULE(zookeeper, zk::ZooKeeper::Initialize);
+extern "C" void init(Handle<Object> target) {
+  zk::ZooKeeper::Initialize(target);
+}

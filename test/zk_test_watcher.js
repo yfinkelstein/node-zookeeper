@@ -1,8 +1,7 @@
-require.paths.unshift('./build/default', '../build/default');
 
 var assert = require ('assert');
-var sys = require ('sys');
-var ZK = require ("zookeeper").ZooKeeper;
+var util = require('util');
+var ZK = require ("../lib/zookeeper").ZooKeeper;
 
 if (process.argv.length < 2)
     throw new Error ("must supply number of  sessions (optionally)");

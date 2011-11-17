@@ -35,6 +35,7 @@ def zookeeper(ctx, z):
             print 'attempting to fetch from from archive location'
             ctx.exec_command("curl --output %s 'http://apache.mirrors.tds.net/hadoop/zookeeper/%s/%s'" % (tgz,z,tgz))
         ctx.exec_command("if [ ! -d '%s' ] ; then tar -xzvf %s ; fi" % (z,tgz))
+    
     # We use "--without-shared" to force building/linking only the static libzookeeper.a library, else we would have unresolved runtime dependencies
     # We also use "--disable-shared" because on a newer version of the zk source (maybe 3.3.1 vs 3.3.0???), "--without-shared" is no longer recognized.  no idea why / wtf is going on here.  but it works.  and the other one gets silently ignored.  keeping both in the code to cover all our bases
     # We use "--with-pic" to make position-independent code that can be statically linked into a shared object file (zookeeper.node)
@@ -43,6 +44,10 @@ def zookeeper(ctx, z):
 def build(bld):
     if Options.options.zookeeper != '':
         zookeeper(bld, Options.options.zookeeper)
+    else:
+        # for quicker development, run with "--zookeeper=" to skip rebuilding the zookeeper source (99% of build time)
+        includes = [bld.bdir + '/zk/include/c-client-src']
+        libpaths = [bld.bdir + '/zk/lib']
 
     obj = bld.new_task_gen("cxx", "shlib", "node_addon")
     if OSTYPE == 'Darwin':
@@ -53,7 +58,7 @@ def build(bld):
         obj.cxxflags = ["-Wall", "-Werror", '-DDEBUG', '-O0']
         obj.ldflags = ['']
 
-    obj.target = "zookeeper"
+    obj.target = "zookeeper_native"
     obj.source = "src/node-zk.cpp"
     obj.lib = ["zookeeper_st"]
     obj.includes = includes

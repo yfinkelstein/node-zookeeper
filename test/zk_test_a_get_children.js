@@ -1,5 +1,4 @@
-require.paths.unshift('./build/default', '../build/default');
-var ZK     = require('zookeeper').ZooKeeper,
+var ZK     = require("../lib/zookeeper").ZooKeeper,
     Buffer = require('buffer').Buffer,
     exec   = require('child_process').exec;
 
@@ -25,7 +24,7 @@ zk.on(ZK.on_connected, function (zkk) {
         ++tests;
         zk.data_as_buffer = true;
         zkk.a_create('/zk_test_a_get_children.js1', b, ZK.ZOO_SEQUENCE, function(rc, error, path) {
-            // console.log(require('sys').inspect(zkk));
+            // console.log(util.inspect(zkk));
             if (rc != 0) {
                 console.log("ERROR zk node1 create result: %d, error: '%s', path=%s", rc, error, path);
                 zkk.a_delete_(path, 0, function(rcd, errord) { done(rc); });

@@ -15,7 +15,7 @@
   ,"dependencies": {
     "webworker": ">=0.8.2"
   }
-  ,"main": "build/default/zookeeper"
+  ,"main": "lib/zookeeper"
   ,"directories.lib": "build/default/"
   ,"scripts" : {
      "build" : "node-waf configure build"

@@ -1,0 +1,5 @@
+I did what I could to fix this tests, but most of them seem not to work.
+
+zk_test_buffer.js  -- that one works.  everything else, not so much.
+
+I"m not going to debug much further at this time, but I did fix the require statements so that all the tests load and execute.  Most of them just hang.  Unclear if that's because my ZK server is different or .... whatever.  The "promise" stuff is in especially bad shape.
