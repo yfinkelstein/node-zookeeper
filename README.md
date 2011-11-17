@@ -3,6 +3,16 @@ NAME
 
 node-zookeeper - A Node interface to Hadoop Zookeeper based on the native C-client API for Zookeeper
 
+NOTE on Module Status (DDOPSON-2011-11-17):
+I have hacked on this module a bit to make it work on v0.6.0 (and stay compatible with v0.4.9).  It should be working, but the test coverage is pretty spotty.  It would be really great if someone converted the tests to Vows and / or using a mock instead of depending on a live ZK server.  I can't test and don't really trust the "promise" stuff in this module, but the core module itself works and makes my tests pass on downstream dependencies.
+
+Given the time, I'd like to also update this to more current best practices for API design:
+* events can just be strings like 'connect' instead of ZK.on_connected.  follow convention here
+* no sense in require('zookeeper').ZooKeeper.  already fixed this.
+* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110)
+* method names should map to convention a_method is redundant in node
+* Init should be callect "connect", and should take a callback.  Forcing clients to use the events is awkward and error prone
+
 INSTALL
 -------
 
