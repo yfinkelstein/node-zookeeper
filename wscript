@@ -42,6 +42,8 @@ def zookeeper(ctx, z):
     ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --without-shared --disable-shared --with-pic --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
+    global includes
+    global libpaths
     if Options.options.zookeeper != '':
         zookeeper(bld, Options.options.zookeeper)
     else:
