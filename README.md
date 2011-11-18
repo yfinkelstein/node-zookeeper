@@ -8,10 +8,10 @@ I have hacked on this module a bit to make it work on v0.6.0 (and stay compatibl
 
 Given the time, I'd like to also update this to more current best practices for API design:
 
-* events can just be strings like 'connect' instead of ZK.on_connected.  follow convention here
+* events can just be strings like 'connect' instead of ZK.on_connected.  follow convention here.  fixed.
 * no sense in require('zookeeper').ZooKeeper.  already fixed this.
-* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110)
-* method names should map to convention a_method is redundant in node
+* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110). TODO
+* method names should map to convention a_method is redundant in node.
 * Init should be callect "connect", and should take a callback.  Forcing clients to use the events is awkward and error prone
 
 INSTALL
@@ -22,7 +22,7 @@ npm install zookeeper
 SYNOPSIS
 --------
 
-    var ZK = require ("zookeeper").ZooKeeper;
+    var ZK = require ("zookeeper");
     var zk = new ZK();
     zk.init ({connect:"localhost:2181", timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARNING, host_order_deterministic:false});
     zk.on (ZK.on_connected, function (zkk) {
