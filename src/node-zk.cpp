@@ -178,7 +178,7 @@ public:
             return;
         }
 
-        // DDOPSON-2011-11-17 the line following this comment is breaking the build do to a redefinition of 'EV_A' in Node v0.5/6.x
+        // DDOPSON-2011-11-17 the line following this comment is breaking the build due to a redefinition of 'EV_A' in Node v0.5/6.x
         // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
         //
         // last_activity = ev_now (EV_A);
