@@ -30,6 +30,7 @@ static Persistent<String> data_as_buffer;
 #define DEFINE_STRING(ev,str) static Persistent<String> ev = NODE_PSYMBOL(str)
 DEFINE_STRING (on_closed,            "close");
 DEFINE_STRING (on_connected,         "connect");
+DEFINE_STRING (on_connecting,        "connecting");
 DEFINE_STRING (on_event_created,     "created");
 DEFINE_STRING (on_event_deleted,     "deleted");
 DEFINE_STRING (on_event_changed,     "changed");
@@ -47,7 +48,6 @@ public:
         Local<FunctionTemplate> constructor_template = FunctionTemplate::New(New);
         constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
         constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-
 
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "init", Init);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "close", Close);
@@ -174,44 +174,57 @@ public:
     }
 
     void yield () {
-        // DDOPSON-2011-11-17 the line following this comment is breaking the build do to a redefinition of 'EV_A' in Node v0.5/6.x
-        // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
-        // last_activity = ev_now (EV_A);
-        int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
-        if (rc != ZOK) {
-            LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
+        if (is_closed) {
             return;
         }
-        if (fd != -1) {
-            int events = (interest & ZOOKEEPER_READ ? EV_READ : 0) | (interest & ZOOKEEPER_WRITE ? EV_WRITE : 0);
-            if (zk_io.fd != fd || zk_io.events != events) {
-                if (ev_is_active (&zk_io))
-                    ev_io_stop (EV_DEFAULT_UC_ &zk_io);
-                ev_io_set (&zk_io, fd, events);
-                ev_io_start(EV_DEFAULT_UC_ &zk_io);
-            }
-            zk_timer.repeat = tv.tv_sec + tv.tv_usec / 1000000.;
-            LOG_DEBUG (("zk time to wait: %lf", zk_timer.repeat));
-            ev_timer_again (EV_DEFAULT_UC_ &zk_timer);
-        } else {
-            LOG_WARN(("yield:zookeeper_interest returned -1 descriptor\n"));
+
+        // DDOPSON-2011-11-17 the line following this comment is breaking the build do to a redefinition of 'EV_A' in Node v0.5/6.x
+        // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
+        //
+        // last_activity = ev_now (EV_A);
+
+        int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
+        if (rc) {
+          LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
+          return;
         }
+
+        if (fd == -1 ) {
+          if (ev_is_active (&zk_io))
+            ev_io_stop (EV_DEFAULT_UC_ &zk_io);
+          return;
+        }
+
+        int events = (interest & ZOOKEEPER_READ ? EV_READ : 0) | (interest & ZOOKEEPER_WRITE ? EV_WRITE : 0);
+        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s)",
+                   fd,
+                   events & EV_READ ? "true" : "false",
+                   events & EV_WRITE ? "true" : "false"));
+
+        if (ev_is_active (&zk_io))
+          ev_io_stop (EV_DEFAULT_UC_ &zk_io);
+
+        ev_io_set (&zk_io, fd, events);
+        ev_io_start(EV_DEFAULT_UC_ &zk_io);
+
+        zk_timer.repeat = tv.tv_sec + tv.tv_usec / 1000000.;
+        ev_timer_again (EV_DEFAULT_UC_ &zk_timer);
     }
 
     static void zk_io_cb (EV_P_ ev_io *w, int revents) {
+        LOG_DEBUG(("zk_io_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
         int events = (revents & EV_READ? ZOOKEEPER_READ : 0) | (revents & EV_WRITE? ZOOKEEPER_WRITE : 0);
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
-            //return;
         }
         zk->yield ();
     }
 
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
+        LOG_DEBUG(("zk_timer_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-        assert (zk);
         ev_tstamp now     = ev_now (EV_A);
         ev_tstamp timeout = zk->last_activity + zk->tv.tv_sec + zk->tv.tv_usec/1000000.;
 
@@ -282,6 +295,8 @@ public:
             if (state == ZOO_CONNECTED_STATE) {
                 zk->myid.client_id = zoo_client_id(zzh)->client_id;
                 zk->DoEmit (on_connected, path);
+            } else if (state == ZOO_CONNECTING_STATE) {
+                zk->DoEmit (on_connecting, path);
             } else if (state == ZOO_AUTH_FAILED_STATE) {
                 LOG_ERROR (("Authentication failure. Shutting down...\n"));
                 zk->realClose();
@@ -643,6 +658,11 @@ public:
     }
 
     void realClose () {
+        if (is_closed)
+            return;
+
+        is_closed = true;
+
         if (ev_is_active (&zk_timer))
             ev_timer_stop(EV_DEFAULT_UC_ &zk_timer);
 
@@ -677,6 +697,7 @@ public:
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
+        is_closed = false;
     }
 private:
     zhandle_t *zhandle;
@@ -689,6 +710,7 @@ private:
     timeval tv;
     ev_tstamp last_activity; // time of last zookeeper event loop activity
     bool data_as_buffer;
+    bool is_closed;
 };
 
 } // namespace "zk"
