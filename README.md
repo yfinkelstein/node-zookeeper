@@ -29,7 +29,7 @@ zk.on ('connect', function (zkk) {
 
 ### Methods ###
 
-* init ( object options ), valid options: connect, timeout, debug_level, host_order_deterministic, data_as_buffer
+* init ( options )
 * close ( )
 * a_create ( path, data, flags, path_cb )
 * a_exists ( path, watch, stat_cb )
@@ -57,34 +57,36 @@ zk.on ('connect', function (zkk) {
  * void_cb : function ( rc, error )
  * watch_cb : function ( type, state, path )
 
-### Further Notes ###
+### Input Parameters ###
 
-* inputs:
-    * path can be any object that will toString() appropriately
-    * data can be any object that will toString() appropriately or a Buffer object
-    * flags can be any object that will ToInt32() appropriately
-    * version can be any object that will ToInt32() appropriately
-    * watch can be any object that will ToBoolean() appropriately
-* outputs:
-    * path is a string
-    * data is either a Buffer (default), or a string (this is controlled by data_as_buffer = true/false)
-    * children is an array of strings
-    * rc is an int (error codes from zk api)
-    * error is a string (error string from zk api)
-    * type is an int event type (from zk api)
-    * state is an int (state when the watcher fired from zk api)
-    * stat is an object with the following attributes:
-        * long czxid              // created zxid
-        * long mzxid              // last modified zxid
-        * long ctime              // created
-        * long mtime              // last modified
-        * int version             // version
-        * int cversion            // child version
-        * int aversion            // acl version
-        * string ephemeralOwner   // owner session id if ephemeral, 0 otw
-        * int dataLength          //length of the data in the node
-        * int numChildren         //number of children of this node
-        * long pzxid              // last modified children
+ * options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer}
+ * path : string
+ * data : string or Buffer
+ * flags : int32
+ * version : int32
+ * watch : boolean
+
+### Output Parameters ###
+
+ * path is a string
+ * data is either a Buffer (default), or a string (this is controlled by data_as_buffer = true/false)
+ * children is an array of strings
+ * rc is an int (error codes from zk api)
+ * error is a string (error string from zk api)
+ * type is an int event type (from zk api)
+ * state is an int (state when the watcher fired from zk api)
+ * stat is an object with the following attributes:
+     * long czxid              // created zxid
+     * long mzxid              // last modified zxid
+     * long ctime              // created
+     * long mtime              // last modified
+     * int version             // version
+     * int cversion            // child version
+     * int aversion            // acl version
+     * string ephemeralOwner   // owner session id if ephemeral, 0 otw
+     * int dataLength          //length of the data in the node
+     * int numChildren         //number of children of this node
+     * long pzxid              // last modified children
 
 
 Session state machine is well described in Zookeeper docs, i.e.
