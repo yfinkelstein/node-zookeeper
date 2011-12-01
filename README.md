@@ -1,26 +1,11 @@
-NAME
-----
+# Overview
 
-node-zookeeper - A Node interface to Hadoop Zookeeper based on the native C-client API for Zookeeper
+node-zookeeper - A Node.js client for Apache Zookeeper.
 
-NOTE on Module Status (DDOPSON-2011-11-17):
-I have hacked on this module a bit to make it work on v0.6.0 (and stay compatible with v0.4.9).  It should be working, but the test coverage is pretty spotty.  It would be really great if someone converted the tests to Vows and / or using a mock instead of depending on a live ZK server.  I can't test and don't really trust the "promise" stuff in this module, but the core module itself works and makes my tests pass on downstream dependencies.
+This module is implemented on top of the ZooKeeper C API; consult the [ZK Reference](http://zookeeper.apache.org/doc/r3.4.0/index.html) for further details on behavior.
 
-Given the time, I'd like to also update this to more current best practices for API design:
+# Example
 
-* events can just be strings like 'connect' instead of ZK.on_connected.  follow convention here.  fixed.
-* no sense in require('zookeeper').ZooKeeper.  already fixed this.
-* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110). TODO
-* method names should map to convention a_method is redundant in node.
-* Init should be callect "connect", and should take a callback.  Forcing clients to use the events is awkward and error prone
-
-INSTALL
--------
-
-npm install zookeeper
-
-SYNOPSIS
---------
 ```javascript
 var ZK = require ("zookeeper");
 var zk = new ZK();
@@ -40,22 +25,7 @@ zk.on ('connect', function (zkk) {
 });
 ```
 
-This prints the following:
-
-    zk session established, id=12c03eda65800b8
-    created zk node /node.js10000001001
-
-See illustration of all other ZK methods in tests/zk_test_chain.js
-
-DESCRIPTION
------------
-
-This is an attempt to expose Hadoop Zookeeper to node.js client applications. The bindings are implemented in C++ for V8 and depend on zk C api library.
-
-API Reference
---------------
-
-The API calls closely follow the ZK C API call. So, consult with [ZK Reference](http://zookeeper.apache.org/doc/r3.4.0/index.html) for further details on behavior.
+# API Reference
 
 ### Methods ###
 
@@ -78,13 +48,14 @@ The API calls closely follow the ZK C API call. So, consult with [ZK Reference](
 * aw_get_children2 ( path, watch_cb, child2_cb )
 
 ### Callback Signatures ###
-    * path_cb : function ( rc, error, path )
-    * stat_cb : function ( rc, error, stat )
-    * data_cb : function ( rc, error, stat, data )
-    * child_cb : function ( rc, error, children )
-    * child2_cb : function ( rc, error, children, stat )
-    * void_cb : function ( rc, error )
-    * watch_cb : function ( type, state, path )
+
+ * path_cb : function ( rc, error, path )
+ * stat_cb : function ( rc, error, stat )
+ * data_cb : function ( rc, error, stat, data )
+ * child_cb : function ( rc, error, children )
+ * child2_cb : function ( rc, error, children, stat )
+ * void_cb : function ( rc, error )
+ * watch_cb : function ( type, state, path )
 
 ### Further Notes ###
 
@@ -119,8 +90,33 @@ The API calls closely follow the ZK C API call. So, consult with [ZK Reference](
 Session state machine is well described in Zookeeper docs, i.e.
 ![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
 
-Random notes on implementation
+# Implementation Notes
+
+
+### NOTE on Module Status (DDOPSON-2011-11-30):
+* I ported this module to Node v0.6.0.  I did my best to retain compatibility with Node v0.4.x.  File bugs if you find any.
+* I have also worked to normalized the API style to be more conformant with Node conventions.  Again, I did my best to keep backwards compatibility with the old version.  File bugs if you find any.
+* The test coverage is pretty spotty.  It would be really great if someone converted the tests to Vows and / or using a mock instead of depending on a live ZK server.  I can't test and don't really trust the "promise" stuff in this module, but the core module itself works and makes my tests pass on downstream dependencies.
+
+Fixes:
+* Node v0.6.0 compatibility - There is no native EventEmitter class anymore.  Need a JS shim.
+* Node v0.6.0 compatibility - MODULE_INIT macro just plain doesn't work.  not sure why, but an init function works just fine.
+* Node v0.6.0 compatibility - 'sys' ==> 'util'
+* Node v0.6.0 compatibility - There was an issue with the EV_A macro in yield();  was able to comment it out without harming behavior
+* events should be strings like 'connect' instead of ZK.on_connected.  follow convention here.
+* no sense in "require('zookeeper').ZooKeeper" instead of simply "require('zookeeper')"
+
+TODO:
+* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110).
+* method names should map to convention. The "a_method" pattern is quite redundant in node.
+* Init should be called "connect", and should take a callback.  Forcing clients to use the events is awkward and error prone
+* Why do the watchers take two callbacks?
+
+
+
 ------------------------------
+
+### yfinkelstein's original notes
 
 * Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
 * The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZK internal and is not installed into /usr/local/include
