@@ -55,17 +55,46 @@ This is an attempt to expose Hadoop Zookeeper to node.js client applications. Th
 API Reference
 --------------
 
-The following API calls closely follow ZK C API call. So, consult with ZK Reference for details.
+The API calls closely follow the ZK C API call. So, consult with [ZK Reference](http://zookeeper.apache.org/doc/r3.4.0/index.html) for further details on behavior.
 
-The following apply for these apis:
+### Methods ###
 
-* for inputs:
+* init ( object options ), valid options: connect, timeout, debug_level, host_order_deterministic, data_as_buffer
+* close ( )
+* a_create ( path, data, flags, path_cb )
+* a_exists ( path, watch, stat_cb )
+* a_get ( path, watch, data_cb )
+* a_get_children ( path, watch, child_cb )
+* a_get_children2 ( path, watch, child2_cb )
+* a_set ( path, data, version, stat_cb )
+* a_delete`_` ( path, version, void_cb )
+    * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
+
+*The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
+
+* aw_exists ( path, watch_cb, stat_cb )
+* aw_get ( path, watch_cb, data_cb )
+* aw_get_children ( path, watch_cb, child_cb )
+* aw_get_children2 ( path, watch_cb, child2_cb )
+
+### Callback Signatures ###
+    * path_cb : function ( rc, error, path )
+    * stat_cb : function ( rc, error, stat )
+    * data_cb : function ( rc, error, stat, data )
+    * child_cb : function ( rc, error, children )
+    * child2_cb : function ( rc, error, children, stat )
+    * void_cb : function ( rc, error )
+    * watch_cb : function ( type, state, path )
+
+### Further Notes ###
+
+* inputs:
     * path can be any object that will toString() appropriately
     * data can be any object that will toString() appropriately or a Buffer object
     * flags can be any object that will ToInt32() appropriately
     * version can be any object that will ToInt32() appropriately
     * watch can be any object that will ToBoolean() appropriately
-* for outputs:
+* outputs:
     * path is a string
     * data is either a Buffer (default), or a string (this is controlled by data_as_buffer = true/false)
     * children is an array of strings
@@ -85,34 +114,6 @@ The following apply for these apis:
         * int dataLength          //length of the data in the node
         * int numChildren         //number of children of this node
         * long pzxid              // last modified children
-* callbacks
-    * path_cb : function ( rc, error, path )
-    * stat_cb : function ( rc, error, stat )
-    * data_cb : function ( rc, error, stat, data )
-    * child_cb : function ( rc, error, children )
-    * child2_cb : function ( rc, error, children, stat )
-    * void_cb : function ( rc, error )
-    * watch_cb : function ( type, state, path )
-
-**Regular async APIs:**
-
-* init ( object options ), valid options: connect, timeout, debug_level, host_order_deterministic, data_as_buffer
-* close ( )
-* a_create ( path, data, flags, path_cb )
-* a_exists ( path, watch, stat_cb )
-* a_get ( path, watch, data_cb )
-* a_get_children ( path, watch, child_cb )
-* a_get_children2 ( path, watch, child2_cb )
-* a_set ( path, data, version, stat_cb )
-* a_delete`_` ( path, version, void_cb )
-    * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
-
-**APIs based on watchers (watcher is a forward-looking subscription to changes on the node in context):**
-
-* aw_exists ( path, watch_cb, stat_cb )
-* aw_get ( path, watch_cb, data_cb )
-* aw_get_children ( path, watch_cb, child_cb )
-* aw_get_children2 ( path, watch_cb, child2_cb )
 
 
 Session state machine is well described in Zookeeper docs, i.e.
