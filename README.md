@@ -209,7 +209,7 @@ DDOPSON-2011-11-30 - are these issues still relevant?  unknown.
 
 # LICENSE
 
-See LICENSE-MIT.txt file in the top level folder.
+See [LICENSE-MIT.txt](./blob/master/LICENSE-MIT.txt) file in the top level folder.
 
 # ORIGINAL AUTHOR
 

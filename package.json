@@ -1,5 +1,5 @@
 {
-  "name": "zookeeper-ddopson"
+  "name": "zookeeper"
   ,"description": "apache zookeeper client (zookeeper async API >= 3.4.0)"
   ,"notes": "support for Node v0.6.x"
   ,"version": "4.1.0"
