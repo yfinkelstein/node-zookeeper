@@ -1,6 +1,4 @@
-require.paths.unshift('./build/default', '../build/default');
-var ZK = require ("zookeeper").ZooKeeper;
-var sys = require("sys");
+var ZK = require ("../lib/zookeeper").ZooKeeper;
 
 if (process.argv.length < 3)
     throw new Error ("must supply number of nodes to create and number of sessions (optionally)");

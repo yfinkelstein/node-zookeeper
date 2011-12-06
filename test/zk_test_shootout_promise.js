@@ -1,6 +1,3 @@
-require.paths.unshift('./build/default', '../build/default');
-require.paths.unshift('./node-promise', '../node-promise');
-require.paths.unshift('./lib', '../lib');
 
 /*
 Shootout is played by the following rules:
@@ -34,8 +31,8 @@ game #2:
  Also note how the looping is implemented. Recursion in node.js does not cause stack growth. It's not a tail recursion either...
 */
 
-var promise = require("zookeeper/promise");
-var ZK = require("zookeeper/zk_promise").ZK;
+var promise = require("../lib/promise");
+var ZK = require("../lib/zk_promise").ZK;
 
 var NGames = parseInt (process.argv[2] || 1);
 var connect  = (process.argv[3] || 'localhost:2181');
