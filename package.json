@@ -15,7 +15,8 @@
   }
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
-    "webworker": ">=0.8.2"
+    "webworker"    : ">=0.8.2"
+    ,"underscore"  : "*"
   }
   ,"main": "lib/zookeeper"
   ,"directories.lib": "build/default/"
