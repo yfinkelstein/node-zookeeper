@@ -1,14 +1,10 @@
-require.paths.unshift('./build/default', '../build/default');
-require.paths.unshift('./node-promise', '../node-promise');
-require.paths.unshift('./lib', '../lib');
-
-var promise = require("zookeeper/promise");
-var ZK = require("zookeeper/zk_promise").ZK;
+var promise = require("../lib/promise");
+var ZK = require("../lib/zk_promise").ZK;
 var assert = require ('assert');
-var sys = require ('sys');
-
+var util = require('util');
 var connect  = (process.argv[2] || 'localhost:2181');
-//-------------------------------------------------------------------- operations begin ---------------------------------------
+
+
 var deferred_watcher_ready = promise.defer();
 var deferred_watcher_triggered = promise.defer();
 

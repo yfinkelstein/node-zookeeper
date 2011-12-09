@@ -4,7 +4,6 @@
 #include <stdarg.h>
 #include <node.h>
 #include <node_buffer.h>
-#include <node_events.h>
 #include <node_object_wrap.h>
 #include <v8-debug.h>
 using namespace v8;
@@ -26,52 +25,29 @@ namespace zk {
       return; \
     }
 
-static Persistent<String> on_connecting, on_connected, on_closed,
-    on_event_created, on_event_deleted, on_event_changed, on_event_child,
-    on_event_notwatching;
-
-static Persistent<Function> json_parse_func, json_stringify_func;
-static Persistent<String> HIDDEN_PROP_ZK, HIDDEN_PROP_HANDBACK;
 static Persistent<String> data_as_buffer;
 
-#define DEFINE_SYMBOL(ev)   ev = NODE_PSYMBOL(#ev)
-#define DEFINE_EVENT(t,ev) DEFINE_SYMBOL(ev); t->Set(ev, ev)
+#define DEFINE_STRING(ev,str) static Persistent<String> ev = NODE_PSYMBOL(str)
+DEFINE_STRING (on_closed,            "close");
+DEFINE_STRING (on_connected,         "connect");
+DEFINE_STRING (on_connecting,        "connecting");
+DEFINE_STRING (on_event_created,     "created");
+DEFINE_STRING (on_event_deleted,     "deleted");
+DEFINE_STRING (on_event_changed,     "changed");
+DEFINE_STRING (on_event_child,       "child");
+DEFINE_STRING (on_event_notwatching, "notwatching");
 
-#define NODE_SET_PROTOTYPE_METHOD_SIG(templ, name, argc, callback)       \
-do {                                                                      \
-  Local<FunctionTemplate> argv [argc]; \
-  for (int i = 0; i < argc; i ++) argv[i] = FunctionTemplate::New(); \
-  v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ, argc, argv);  \
-  v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \
-    FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
-                          __callback##_SIG);                              \
-  templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
-                                  __callback##_TEM);                      \
-} while (0)
+#define DEFINE_SYMBOL(ev)   DEFINE_STRING(ev, #ev)
+DEFINE_SYMBOL (HIDDEN_PROP_ZK);
+DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
-class ZooKeeper: public EventEmitter {
+class ZooKeeper: public ObjectWrap {
 public:
-    static Persistent<FunctionTemplate> constructor_template;
-
     static void Initialize(v8::Handle<v8::Object> target) {
         HandleScope scope;
-        Local<FunctionTemplate> t = FunctionTemplate::New(New);
-        constructor_template = Persistent<FunctionTemplate>::New(t);
-        constructor_template->Inherit(EventEmitter::constructor_template);
+        Local<FunctionTemplate> constructor_template = FunctionTemplate::New(New);
         constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
         constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-
-        DEFINE_EVENT (constructor_template, on_closed);
-        DEFINE_EVENT (constructor_template, on_connected);
-        DEFINE_EVENT (constructor_template, on_connecting);
-        DEFINE_EVENT (constructor_template, on_event_created);
-        DEFINE_EVENT (constructor_template, on_event_deleted);
-        DEFINE_EVENT (constructor_template, on_event_changed);
-        DEFINE_EVENT (constructor_template, on_event_child);
-        DEFINE_EVENT (constructor_template, on_event_notwatching);
-
-        DEFINE_SYMBOL (HIDDEN_PROP_ZK);
-        DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "init", Init);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "close", Close);
@@ -183,17 +159,6 @@ public:
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("data_as_buffer"), DataAsBufferPropertyGetter, DataAsBufferPropertySetter);
 
         target->Set(String::NewSymbol("ZooKeeper"), constructor_template->GetFunction());
-
-        // prepare handles for JSON parse and stringify functions
-        Local<Value> json_ = Context::GetCurrent()->Global()->Get(String::NewSymbol("JSON"));
-        assert (json_->IsObject());
-        Local<Value> json_parse = json_->ToObject()->Get(String::NewSymbol("parse"));
-        assert (json_parse->IsFunction());
-        json_parse_func = Persistent<Function>::New (Local<Function>::Cast(json_parse));
-
-        Local<Value> json_stringify = json_->ToObject()->Get(String::NewSymbol("stringify"));
-        assert (json_stringify->IsFunction());
-        json_stringify_func = Persistent<Function>::New (Local<Function>::Cast(json_stringify));
     }
 
     static Handle<Value> New (const Arguments& args) {
@@ -213,7 +178,10 @@ public:
             return;
         }
 
-        last_activity = ev_now (EV_A);
+        // DDOPSON-2011-11-17 the line following this comment is breaking the build due to a redefinition of 'EV_A' in Node v0.5/6.x
+        // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
+        //
+        // last_activity = ev_now (EV_A);
 
         int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
         if (rc) {
@@ -281,7 +249,6 @@ public:
             LOG_ERROR (("zookeeper_init returned 0!"));
             return false;
         }
-        //handle_.ClearWeak();
         Ref();
         ev_init (&zk_io, &zk_io_cb);
         ev_init (&zk_timer, &zk_timer_cb);
@@ -361,16 +328,26 @@ public:
 
     void DoEmit (Handle<String> event_name, const char* path = NULL) {
         HandleScope scope;
-        Local<Value> argv[2];
-        argv[0] = Local<Value>::New(handle_);
+        Local<Value> argv[3];
+        argv[0] = Local<Value>::New(event_name);
+        argv[1] = Local<Value>::New(handle_);
         if (path != 0) {
-            argv[1] = String::New(path);
+            argv[2] = String::New(path);
             LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
         } else {
-            argv[1] = Local<Value>::New(Undefined());
+            argv[2] = Local<Value>::New(Undefined());
             LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
         }
-        Emit(event_name, 2, argv);
+        Local<Value> emit_v = handle_->Get(String::NewSymbol("emit"));
+        assert(emit_v->IsFunction());
+        Local<Function> emit_fn = emit_v.As<Function>();
+        
+
+        TryCatch tc;
+        emit_fn->Call(handle_, 3, argv);
+        if(tc.HasCaught()) {
+          FatalException(tc);
+        }
     }
 
 #define CALLBACK_PROLOG(args) \
@@ -716,7 +693,7 @@ public:
 
 #define ZERO_MEM(member) bzero(&(member), sizeof(member))
 
-    ZooKeeper () : EventEmitter(), zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
+    ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -736,7 +713,8 @@ private:
     bool is_closed;
 };
 
-Persistent<FunctionTemplate> ZooKeeper::constructor_template;
-}
+} // namespace "zk"
 
-NODE_MODULE(zookeeper, zk::ZooKeeper::Initialize);
+extern "C" void init(Handle<Object> target) {
+  zk::ZooKeeper::Initialize(target);
+}
