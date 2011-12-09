@@ -62,6 +62,7 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "aw_get_children2", AWGetChildren2);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set", ASet);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_delete_", ADelete);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "s_delete_", Delete);
 
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_DELETED_EVENT);
@@ -514,6 +515,16 @@ public:
             argv[3] = String::Cast(*Null());
         }
         CALLBACK_EPILOG();
+    }
+
+    static Handle<Value> Delete (const Arguments& args) {
+	  HandleScope scope;
+	  ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());	
+	  assert(zk);
+	  String::Utf8Value _path (args[0]->ToString());
+	  uint32_t version = args[1]->ToUint32()->Uint32Value();
+	  int ret= zoo_delete(zk->zhandle, *_path, version);
+	  return scope.Close(Int32::New(ret));
     }
 
     static Handle<Value> AGet (const Arguments& args) {
