@@ -5,7 +5,7 @@ var zk = new ZK();
 var connect  = (process.argv[2] || 'localhost:2181');
 
 zk.init({connect:connect, timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
-zk.on('connected', function (zkk) {
+zk.on('connect', function (zkk) {
     console.log("zk session established, id=%s", zkk.client_id);
     var str = '\u00bd + \u00bc = \u00be';
     var data = new String(str);

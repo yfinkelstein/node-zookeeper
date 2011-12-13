@@ -13,7 +13,7 @@ function zkTest (seq_, callback) {
     console.log ("myHolder=%j", myHolder);
     //console.log ("myCallee=%j", myCallee);
     this.zk.init ({connect:connect, timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_INFO, host_order_deterministic:false});
-    this.zk.on (ZK.on_connected, function (zkk, clientid) {
+    this.zk.on ('connect', function (zkk, clientid) {
         console.log ("session #%d connected ok", seq_);
         var counter = 0;
         for (var i = 0; i < N; i ++) {
