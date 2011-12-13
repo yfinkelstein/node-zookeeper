@@ -25,8 +25,6 @@ namespace zk {
       return; \
     }
 
-static Persistent<String> data_as_buffer;
-
 #define DEFINE_STRING(ev,str) static Persistent<String> ev = NODE_PSYMBOL(str)
 DEFINE_STRING (on_closed,            "close");
 DEFINE_STRING (on_connected,         "connect");
@@ -157,7 +155,6 @@ public:
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("data_as_buffer"), DataAsBufferPropertyGetter, DataAsBufferPropertySetter);
 
         target->Set(String::NewSymbol("ZooKeeper"), constructor_template->GetFunction());
     }
@@ -274,13 +271,8 @@ public:
         int32_t session_timeout = arg->Get(String::NewSymbol("timeout"))->ToInt32()->Value();
         if (session_timeout == 0) session_timeout = 20000;
 
-        Local<Value> asBuffer = arg->Get(String::NewSymbol("data_as_buffer"));
-
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        if( asBuffer != Undefined() && asBuffer != Null() ) {
-            zk->data_as_buffer = asBuffer->ToBoolean()->Value();
-        }
 
         if (!zk->realInit(*_hostPort, session_timeout))
             return ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__);
@@ -504,13 +496,9 @@ public:
         LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
         if( value != 0 ) {
-            if( zkk->data_as_buffer) {
-                Buffer* b = Buffer::New(value_len);
-                memcpy(BufferData(b), value, value_len);
-                argv[3] = Local<Value>::New(b->handle_);
-            } else {
-                argv[3] = String::New(value, value_len);
-            }
+            Buffer* b = Buffer::New(value_len);
+            memcpy(BufferData(b), value, value_len);
+            argv[3] = Local<Value>::New(b->handle_);
         } else {
             argv[3] = String::Cast(*Null());
         }
@@ -653,21 +641,6 @@ public:
         return Integer::New (zk->zhandle != 0? is_unrecoverable (zk->zhandle) : 0);
     }
 
-    static Handle<Value> DataAsBufferPropertyGetter(Local<String> property, const AccessorInfo &info) {
-        HandleScope scope;
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
-        assert(zk);
-        return Boolean::New (zk->data_as_buffer);
-    }
-
-    static void DataAsBufferPropertySetter(Local<String> property, Local<Value> value, const AccessorInfo& info) {
-        HandleScope scope;
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
-        assert(zk);
-
-        zk->data_as_buffer = value->BooleanValue();
-    }
-
     void realClose () {
         if (is_closed)
             return;
@@ -704,7 +677,7 @@ public:
 
 #define ZERO_MEM(member) bzero(&(member), sizeof(member))
 
-    ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1), data_as_buffer(true) {
+    ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1) {
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -720,7 +693,6 @@ private:
     int interest;
     timeval tv;
     ev_tstamp last_activity; // time of last zookeeper event loop activity
-    bool data_as_buffer;
     bool is_closed;
 };
 
