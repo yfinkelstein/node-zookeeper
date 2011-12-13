@@ -1,5 +1,5 @@
 var promise = require("../lib/promise");
-var ZK = require("../lib/zk_promise").ZK;
+var ZK = require("../lib/zk_promise");
 var assert = require ('assert');
 var util = require('util');
 var connect  = (process.argv[2] || 'localhost:2181');
@@ -8,10 +8,18 @@ var connect  = (process.argv[2] || 'localhost:2181');
 var deferred_watcher_ready = promise.defer();
 var deferred_watcher_triggered = promise.defer();
 
-var zk_config = {connect:connect, debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
+var zk_config = {
+  connect:connect, 
+  debug_level:ZK.ZOO_LOG_LEVEL_WARN, 
+  timeout:20000, 
+  host_order_deterministic:false
+};
 
 //reader
-var zk_r = new ZK ().init (zk_config);
+var zk_r = new ZK ();
+zk_r.setLogger(true);
+zk_r.init (zk_config);
+var context = {};
 zk_r.on_connected().
     then (
         function (zkk){
@@ -20,7 +28,7 @@ zk_r.on_connected().
         }
     ).then (
         function (path) {
-            zk_r.context.path = path;
+            context.path = path;
             console.log ("node created path=%s", path);
             return zk_r.w_get (path, 
                 function (type, state, path_w) { // this is a watcher
@@ -32,7 +40,7 @@ zk_r.on_connected().
     ).then (
         function (stat_and_value) { // this is the response from w_get above
             console.log ("get node: stat=%j, value=%j", stat_and_value[0], stat_and_value[1]);
-            deferred_watcher_ready.resolve (zk_r.context.path);
+            deferred_watcher_ready.resolve (context.path);
             return deferred_watcher_triggered;
         }
     ).then (
@@ -45,7 +53,9 @@ zk_r.on_connected().
     );
 
 //writer
-var zk_w = new ZK().init (zk_config);
+var zk_w = new ZK();
+zk_w.setLogger(true);
+zk_w.init (zk_config);
 zk_w.on_connected().
     then (
         function (zkk) {
