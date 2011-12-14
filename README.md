@@ -14,7 +14,8 @@ var zk = new ZooKeeper({
  ,debug_level: ZK.ZOO_LOG_LEVEL_WARNING
  ,host_order_deterministic: false
 });
-zk.connect(function () {
+zk.connect(function (err) {
+    if(err) throw err;
     console.log ("zk session established, id=%s", zk.client_id);
     zk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path)  {
         if (rc != 0) {
