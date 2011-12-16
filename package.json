@@ -1,5 +1,5 @@
 {
-  "name": "zookeeper-ddopson"
+  "name": "zookeeper"
   ,"description": "apache zookeeper client (zookeeper async API >= 3.4.0)"
   ,"notes": "support for Node v0.6.x"
   ,"version": "4.1.0"
@@ -11,7 +11,7 @@
   ]
   ,"repository": {
       "type": "git"
-      ,"url": "https://github.com/ddopson/node-zookeeper.git" 
+      ,"url": "https://github.com/yfinkelstein/node-zookeeper" 
   }
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
