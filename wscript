@@ -4,12 +4,12 @@ import platform
 srcdir = "."
 blddir = "build"
 APPNAME = "zookeeper"
-ZK_VERSION = "3.4.0"
+ZKVERSION = "3.4.0"
 OSTYPE = platform.system()
 
 
 def set_options(opt):
-    opt.add_option('-z','--zookeeper', action='store', default='zookeeper-' + ZK_VERSION, help='build zookeeper', dest='zookeeper')
+    opt.add_option('-z','--zookeeper', action='store', default='zookeeper-' + ZKVERSION, help='build zookeeper', dest='zookeeper')
     opt.tool_options("compiler_cxx")
 
 def configure(conf):
