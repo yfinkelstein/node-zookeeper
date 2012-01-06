@@ -365,6 +365,13 @@ public:
         }; \
         cb_destroy (callback)
 
+#define WATCHER_CALLBACK_EPILOG() \
+        TryCatch try_catch; \
+        (*callback)->Call(v8::Context::GetCurrent()->Global(), sizeof(argv)/sizeof(argv[0]), argv); \
+        if (try_catch.HasCaught()) { \
+            FatalException(try_catch); \
+        };
+
 #define A_METHOD_PROLOG(nargs) \
         HandleScope scope; \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This()); \
@@ -524,7 +531,7 @@ public:
 
     static void watcher_fn (zhandle_t *zh, int type, int state, const char *path, void *watcherCtx) {
         WATCHER_PROLOG (4);
-        CALLBACK_EPILOG();
+        WATCHER_CALLBACK_EPILOG();
     }
 
     static Handle<Value> AWGet (const Arguments& args) {
