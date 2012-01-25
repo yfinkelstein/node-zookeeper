@@ -220,8 +220,8 @@ See [LICENSE-MIT.txt](./LICENSE-MIT.txt) file in the top level folder.
 
 Yuri Finkelstein (yurif2003 at yahoo dot com)
 
-with owesome contributions from:
+with awesome contributions from:
 
 Woody Anderson (Woodya)
-Dave Dopson (DDOPSON)
+Dave Dopson (ddopson)
 Ryan Phillips (rphillips)
