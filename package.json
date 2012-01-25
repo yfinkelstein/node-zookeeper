@@ -1,10 +1,6 @@
 {
   "name": "zookeeper"
   ,"description": "apache zookeeper client (zookeeper async API >= 3.4.0)"
-  ,"notes": [
-    "support for Node v0.6.x"
-    ,"4.1.0 was created by mistake.  don't install it"
-  ]
   ,"version": "3.4.1-2"
   ,"author": "Yuri Finkelstein <yurif2003@yahoo.com>"
   ,"contributors": [
@@ -28,5 +24,5 @@
      ,"test" : "node-waf test"
      ,"doc" : "node-waf doc"
   }
-  ,"engines": { "node": ">= 0.3.0" }
+  ,"engines": { "node": "0.4.x || 0.6.x" }
 }
