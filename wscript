@@ -4,7 +4,7 @@ import platform
 srcdir = "."
 blddir = "build"
 APPNAME = "zookeeper"
-ZKVERSION = "3.4.1"
+ZKVERSION = "3.4.3"
 OSTYPE = platform.system()
 
 
