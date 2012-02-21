@@ -176,10 +176,7 @@ public:
             return;
         }
 
-        // DDOPSON-2011-11-17 the line following this comment is breaking the build due to a redefinition of 'EV_A' in Node v0.5/6.x
-        // I am commenting it out because the timeout logic in this module has no effect.  read "zk_timer_cb" to convince yourself of this...        
-        //
-        // last_activity = ev_now (EV_A);
+        last_activity = ev_now (uv_default_loop()->ev);
 
         int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
         if (rc) {
@@ -223,7 +220,7 @@ public:
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
         LOG_DEBUG(("zk_timer_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-        ev_tstamp now     = ev_now (EV_A);
+        ev_tstamp now     = ev_now (uv_default_loop()->ev);
         ev_tstamp timeout = zk->last_activity + zk->tv.tv_sec + zk->tv.tv_usec/1000000.;
 
         // if last_activity + tv.tv_sec is older than now, we did time out
