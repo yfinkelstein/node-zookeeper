@@ -176,7 +176,11 @@ public:
             return;
         }
 
+#if NODE_VERSION_AT_LEAST(0, 5, 0)
         last_activity = ev_now (uv_default_loop()->ev);
+#else
+        last_activity = ev_now (EV_A);
+#endif
 
         int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
         if (rc) {
@@ -220,7 +224,11 @@ public:
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
         LOG_DEBUG(("zk_timer_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
+#if NODE_VERSION_AT_LEAST(0, 5, 0)
         ev_tstamp now     = ev_now (uv_default_loop()->ev);
+#else
+        ev_tstamp now     = ev_now (EV_A);
+#endif
         ev_tstamp timeout = zk->last_activity + zk->tv.tv_sec + zk->tv.tv_usec/1000000.;
 
         // if last_activity + tv.tv_sec is older than now, we did time out
