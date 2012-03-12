@@ -396,7 +396,7 @@ public:
         Persistent<Function> *callback = cb_unwrap((void*)watcherCtx); \
         assert (callback); \
         Local<Value> lv_zk = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
-        (*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK); \
+        /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK); */ \
         Local<Object> zk_handle = Local<Object>::Cast(lv_zk); \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
         assert(zk);\
@@ -407,7 +407,7 @@ public:
         argv[1] = Integer::New(state); \
         argv[2] = String::New(path); \
         Local<Value> lv_hb = (*callback)->GetHiddenValue(HIDDEN_PROP_HANDBACK); \
-        (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); \
+        /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); */ \
         argv[3] = Local<Value>::New(Undefined ()); \
         if (!lv_hb.IsEmpty()) argv[3] = lv_hb
 
