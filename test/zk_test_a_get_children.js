@@ -1,4 +1,4 @@
-var ZK     = require("../lib/zookeeper").ZooKeeper,
+var ZK     = require("../lib/zookeeper"),
     Buffer = require('buffer').Buffer,
     exec   = require('child_process').exec;
 

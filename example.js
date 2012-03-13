@@ -1,4 +1,5 @@
-var ZooKeeper = require ("./lib/zookeeper");
+#!/usr/bin/env node
+var ZooKeeper = require ("./");
 var zk = new ZooKeeper({
   connect: "localhost:2181"
  ,timeout: 200000

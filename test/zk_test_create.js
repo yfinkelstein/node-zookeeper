@@ -1,4 +1,4 @@
-var ZK = require ("../lib/zookeeper").ZooKeeper;
+var ZK = require ("../lib/zookeeper");
 
 if (process.argv.length < 3)
     throw new Error ("must supply number of nodes to create and number of sessions (optionally)");

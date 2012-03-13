@@ -2,7 +2,7 @@
 var assert = require('assert');
 var util = require('util');
 
-var ZK = require ("../lib/zookeeper").ZooKeeper;
+var ZK = require ("../lib/zookeeper");
 
 onmessage = function(msg) {
     postMessage({ echo : msg });

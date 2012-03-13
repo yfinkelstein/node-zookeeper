@@ -1,7 +1,7 @@
 var assert = require ('assert');
 var util = require('util');
 
-var ZK = require ("../lib/zookeeper").ZooKeeper;
+var ZK = require ("../lib/zookeeper");
 
 if (process.argv.length < 2)
     throw new Error ("must supply number of  sessions (optionally)");

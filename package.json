@@ -17,7 +17,7 @@
     "webworker"    : ">=0.8.2"
     ,"underscore"  : "*"
   }
-  ,"main": "lib/zookeeper"
+  ,"main": "lib/index"
   ,"directories.lib": "build/default/"
   ,"scripts" : {
      "build" : "node-waf configure build"

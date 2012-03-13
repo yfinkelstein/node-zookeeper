@@ -32,7 +32,7 @@ game #2:
 */
 
 var promise = require("../lib/promise");
-var ZK = require("../lib/zk_promise").ZK;
+var ZK = require("../lib/zk_promise");
 
 var NGames = parseInt (process.argv[2] || 1);
 var connect  = (process.argv[3] || 'localhost:2181');
