@@ -13,8 +13,35 @@ using namespace node;
 #include "zk_log.h"
 #include "buffer_compat.h"
 
+// @param c must be in [0-15]
+// @return '0'..'9','A'..'F'
+inline char fourBitsToHex(unsigned char c) {
+  return ((c <= 9) ? ('0' + c) : ('7' + c));
+}
+
+// @param h must be one of '0'..'9','A'..'F'
+// @return [0-15]
+inline unsigned char hexToFourBits(char h) {
+  return (unsigned char) ((h <= '9') ? (h - '0') : (h - '7'));
+}
+
+// in: c
+// out: hex[0],hex[1]
+static void ucharToHex(const unsigned char *c, char *hex) {
+  hex[0] = fourBitsToHex((*c & 0xf0)>>4);
+  hex[1] = fourBitsToHex((*c & 0x0f));
+}
+
+// in: hex[0],hex[1]
+// out: c
+static void hexToUchar(const char *hex, unsigned char *c) {
+  *c = (hexToFourBits(hex[0]) << 4) | hexToFourBits(hex[1]);
+}
+
 namespace zk {
+#define ZERO_MEM(member) bzero(&(member), sizeof(member))
 #define _LL_CAST_ (long long)
+#define _LLP_CAST_ (long long *)
 
 #define THROW_IF_NOT(condition, text) if (!(condition)) { \
       return ThrowException(Exception::Error (String::New(text))); \
@@ -38,6 +65,8 @@ DEFINE_STRING (on_event_notwatching, "notwatching");
 #define DEFINE_SYMBOL(ev)   DEFINE_STRING(ev, #ev)
 DEFINE_SYMBOL (HIDDEN_PROP_ZK);
 DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
+
+#define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
 class ZooKeeper: public ObjectWrap {
 public:
@@ -153,6 +182,7 @@ public:
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
@@ -246,7 +276,8 @@ public:
         }
     }
 
-    inline bool realInit (const char* hostPort, int session_timeout) {
+    inline bool realInit (const char* hostPort, int session_timeout, clientid_t *client_id) {
+        myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
             LOG_ERROR (("zookeeper_init returned 0!"));
@@ -271,15 +302,32 @@ public:
         zoo_set_debug_level (static_cast<ZooLogLevel>(debug_level));
         bool order = arg->Get(String::NewSymbol("host_order_deterministic"))->ToBoolean()->BooleanValue();
 
+
         zoo_deterministic_conn_order (order); // enable deterministic order
         String::AsciiValue _hostPort (arg->Get(String::NewSymbol("connect"))->ToString());
         int32_t session_timeout = arg->Get(String::NewSymbol("timeout"))->ToInt32()->Value();
         if (session_timeout == 0) session_timeout = 20000;
 
+        clientid_t local_client;
+        ZERO_MEM (local_client);
+        v8::Local<v8::Value> v8v_client_id = arg->Get(String::NewSymbol("client_id"));
+        v8::Local<v8::Value> v8v_client_password = arg->Get(String::NewSymbol("client_password"));
+        bool id_and_password_defined = (!v8v_client_id->IsUndefined() && !v8v_client_password->IsUndefined());
+        bool id_and_password_undefined = (v8v_client_id->IsUndefined() && v8v_client_password->IsUndefined());
+        THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined), 
+            "ZK init: client id and password must either be both specified or unspecified");
+        if (id_and_password_defined) {
+          String::AsciiValue password_check(v8v_client_password->ToString());
+          THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT, 
+              "ZK init: password does not have correct length");
+          HexStringToPassword(v8v_client_password, local_client.passwd);
+          StringToId(v8v_client_id, &local_client.client_id);
+        }
+
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
 
-        if (!zk->realInit(*_hostPort, session_timeout))
+        if (!zk->realInit(*_hostPort, session_timeout, &local_client))
             return ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__);
         else
             return args.This();
@@ -291,7 +339,7 @@ public:
 
         if (type == ZOO_SESSION_EVENT) {
             if (state == ZOO_CONNECTED_STATE) {
-                zk->myid.client_id = zoo_client_id(zzh)->client_id;
+                zk->myid = *(zoo_client_id(zzh));
                 zk->DoEmit (on_connected, path);
             } else if (state == ZOO_CONNECTING_STATE) {
                 zk->DoEmit (on_connecting, path);
@@ -317,11 +365,36 @@ public:
         }
     }
 
-    Local<String> idAsString (int64_t id) {
+    static Local<String> idAsString (int64_t id) {
         HandleScope scope;
         char idbuff [128] = {0};
         sprintf(idbuff, "%llx", _LL_CAST_ id);
         return scope.Close (String::NewSymbol (idbuff));
+    }
+
+    static void StringToId(v8::Local<v8::Value> s, int64_t *id) {
+        String::AsciiValue a(s->ToString());
+        sscanf(*a, "%llx", _LLP_CAST_ id);
+    }
+
+    static Local<String> PasswordToHexString(const char *p) {
+        HandleScope scope;
+        char buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2 + 1], *b = buff;
+        for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
+            ucharToHex((unsigned char *) (p + i), b);
+            b += 2;
+        }
+        buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2] = '\0';
+        return scope.Close (String::NewSymbol(buff));
+    }
+
+    static void HexStringToPassword(v8::Local<v8::Value> s, char *p) {
+        String::AsciiValue a(s->ToString());
+        char *hex = *a;
+        for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
+          hexToUchar(hex, (unsigned char *)p+i);
+          hex += 2;
+        }
     }
 
     void DoEmit (Handle<String> event_name, const char* path = NULL) {
@@ -638,6 +711,13 @@ public:
         return zk->idAsString(zk->zhandle != 0 ?
                 zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id);
     }
+    static Handle<Value> ClientPasswordPropertyGetter (Local<String> property, const AccessorInfo& info) {
+        HandleScope scope;
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        assert(zk);
+        return zk->PasswordToHexString(zk->zhandle != 0 ?
+                zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd);
+    }
 
     static Handle<Value> SessionTimeoutPropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
@@ -687,7 +767,6 @@ public:
         LOG_INFO(("ZooKeeper destructor invoked"));
     }
 
-#define ZERO_MEM(member) bzero(&(member), sizeof(member))
 
     ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1) {
         ZERO_MEM (myid);
