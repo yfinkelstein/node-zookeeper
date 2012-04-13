@@ -7,6 +7,7 @@
     "Yuri Finkelstein <yurif2003@yahoo.com>"
     ,"Woody Anderson <woody.anderson@gmail.com>"
     ,"Dave Dopson <ddopson@gmail.com>"
+    ,"David Trejo <david.daniel.trejo@gmail.com>"
   ]
   ,"repository": {
       "type": "git"
@@ -16,12 +17,16 @@
   ,"dependencies": {
     "webworker"    : ">=0.8.2"
     ,"underscore"  : "*"
+    ,"async"       : "~0.1.18"
+  }
+  ,"devDependencies": {
+    "log4js": "~0.4.3"
   }
   ,"main": "lib/index"
   ,"directories.lib": "build/default/"
   ,"scripts" : {
      "build" : "node-waf configure build"
-     ,"test" : "node-waf test"
+     ,"test" : "pushd test; ./test; popd"
      ,"doc" : "node-waf doc"
   }
   ,"engines": { "node": "0.4.x || 0.6.x" }
