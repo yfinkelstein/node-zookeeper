@@ -37,6 +37,7 @@ zk.connect(function (err) {
 * init ( options )
 * close ( )
 * a_create ( path, data, flags, path_cb )
+* mkdirp ( path, callback(Error) )
 * a_exists ( path, watch, stat_cb )
 * a_get ( path, watch, data_cb )
 * a_get_children ( path, watch, child_cb )
@@ -225,3 +226,4 @@ with awesome contributions from:
 Woody Anderson (Woodya)
 Dave Dopson (ddopson)
 Ryan Phillips (rphillips)
+David Trejo (DTrejo)
