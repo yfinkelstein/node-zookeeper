@@ -65,7 +65,7 @@ if (require.main === module) {
       }
       // path already exists, do nothing :)
       assert.ok(stat);
-      console.log('TESTS PASSED!');
+      console.log('TEST PASSED!', __filename);
       process.exit(0);
       // can't delete the path we just made, b/c haven't written rm -rf :)
     });
