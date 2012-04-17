@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # arg1 is the connection string
 
@@ -24,3 +24,4 @@ runtest zk_test_utf8.js $1
 runtest zk_test_watcher.js 2 $1
 runtest zk_test_watcher_promise.js $1
 runtest zk_test_watcher_session.js 2 $1
+runtest zk_test_end_session.js $1
