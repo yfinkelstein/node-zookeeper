@@ -192,9 +192,6 @@ public:
     static Handle<Value> New (const Arguments& args) {
         HandleScope scope;
         ZooKeeper *zk = new ZooKeeper ();
-        v8::Context::GetCurrent()->Global()->Set(String::New("myThis"), args.This());
-        v8::Context::GetCurrent()->Global()->Set(String::New("myHolder"), args.Holder());
-        v8::Context::GetCurrent()->Global()->Set(String::New("myCallee"), args.Callee()->GetName());
 
         zk->Wrap(args.This());
         //zk->handle_.ClearWeak();
@@ -693,7 +690,6 @@ public:
 
     static Handle<Value> StatePropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
-        v8::Context::GetCurrent()->Global()->Set(String::New("State_myThis"), info.This());
         //Debug::DebugBreak();
         assert(info.This().IsEmpty() == false);
         assert(info.This()->IsObject());
