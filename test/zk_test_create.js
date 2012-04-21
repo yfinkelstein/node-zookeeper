@@ -9,9 +9,6 @@ var connect  = (process.argv[4] || 'localhost:2181');
 
 function zkTest (seq_, callback) {
     this.zk = new ZK();
-    console.log ("myThis=%j", myThis);
-    console.log ("myHolder=%j", myHolder);
-    //console.log ("myCallee=%j", myCallee);
     this.zk.init ({connect:connect, timeout:200000, debug_level:ZK.ZOO_LOG_LEVEL_INFO, host_order_deterministic:false});
     this.zk.on ('connect', function (zkk, clientid) {
         console.log ("session #%d connected ok", seq_);
