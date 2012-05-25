@@ -14,19 +14,18 @@
           'cflags': ['-Wno-strict-aliasing'],
           'defines': ['_POSIX_PTHREAD_SEMANTICS'],
           'include_dirs': ['/opt/local/include/zookeeper'],
-          'ldflags': ['-lzookeeper_st'],
-        },
-        ],['OS=="darwin"',{
+	  'ldflags': ['-lzookeeper_st'],
+        }], ['OS=="darwin"',{
           'include_dirs': ['<(module_root_dir)/build/zk/include/zookeeper'],
           'libraries': ['<(module_root_dir)/build/zk/lib/libzookeeper_st.a'],
           'xcode_settings': {
             'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
              'MACOSX_DEPLOYMENT_TARGET': '10.5'
           }
-        },{ # OS != sun||mac
-            'include_dirs': ['<(module_root_dir)/build/zk/include/zookeeper'],
-            'libraries': ['<(module_root_dir)/build/zk/lib/libzookeeper_st.a'],
-          }]
+        }], ['OS=="linux"', {
+          'include_dirs': ['<(module_root_dir)/build/zk/include/zookeeper'],
+          'libraries': ['<(module_root_dir)/build/zk/lib/libzookeeper_st.a'],
+        }]
       ]
     },
     {
