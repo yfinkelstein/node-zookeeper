@@ -3,3 +3,16 @@ node_modules
 npm-debug.log
 .lock-wscript
 *.tgz
+deps/zookeeper-3.4.3/src/c/.deps/
+deps/zookeeper-3.4.3/src/c/.libs/
+deps/zookeeper-3.4.3/src/c/Makefile
+deps/zookeeper-3.4.3/src/c/cli.o
+deps/zookeeper-3.4.3/src/c/cli_st
+deps/zookeeper-3.4.3/src/c/config.h
+deps/zookeeper-3.4.3/src/c/config.log
+deps/zookeeper-3.4.3/src/c/config.status
+deps/zookeeper-3.4.3/src/c/*.lo
+deps/zookeeper-3.4.3/src/c/*.o
+deps/zookeeper-3.4.3/src/c/*.la
+deps/zookeeper-3.4.3/src/c/libtool
+deps/zookeeper-3.4.3/src/c/stamp-h1

@@ -1,28 +1,25 @@
 {
   "name": "zookeeper"
   ,"description": "apache zookeeper client (zookeeper async API >= 3.4.0)"
-  ,"version": "3.4.1-2"
+  ,"version": "3.4.3"
   ,"author": "Yuri Finkelstein <yurif2003@yahoo.com>"
   ,"contributors": [
     "Yuri Finkelstein <yurif2003@yahoo.com>"
     ,"Woody Anderson <woody.anderson@gmail.com>"
     ,"Dave Dopson <ddopson@gmail.com>"
+    ,"Mark Cavage <mcavage@gmail.com>"
   ]
   ,"repository": {
       "type": "git"
-      ,"url": "https://github.com/yfinkelstein/node-zookeeper" 
+      ,"url": "https://github.com/yfinkelstein/node-zookeeper"
   }
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
+    "underscore"  : "1.3.3"
+  }
+  ,"devDependencies": {
     "webworker"    : ">=0.8.2"
-    ,"underscore"  : "*"
   }
   ,"main": "lib/index"
-  ,"directories.lib": "build/default/"
-  ,"scripts" : {
-     "build" : "node-waf configure build"
-     ,"test" : "node-waf test"
-     ,"doc" : "node-waf doc"
-  }
-  ,"engines": { "node": "0.4.x || 0.6.x" }
+  ,"engines": { "node": ">=0.6" }
 }
