@@ -31,7 +31,7 @@ def zookeeper(ctx, z):
     # We also use "--disable-shared" because on a newer version of the zk source (maybe 3.3.1 vs 3.3.0???), "--without-shared" is no longer recognized.  
     # no idea why / wtf is going on here.  but it works.  and the other one gets silently ignored.  keeping both in the code to cover all our bases
     # We use "--with-pic" to make position-independent code that can be statically linked into a shared object file (zookeeper.node)
-    #ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --without-shared --disable-shared --with-pic --prefix=%s && make clean install"%(z,t))
+    ctx.exec_command("mkdir -p zk ; cd %s/src/c && ./configure --without-syncapi --without-shared --disable-shared --with-pic --prefix=%s && make clean install"%(z,t))
 
 def build(bld):
     # for quicker development, run with "--zookeeper=" to skip rebuilding the zookeeper source (99% of build time)
