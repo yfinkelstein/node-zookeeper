@@ -182,7 +182,7 @@ then (
 -----
 
 ```javascript
-node-waf configure build [--zookeeper zookeeper-version|prefix-path|'']
+node-gyp configure build
 ```
 
 - note: for more details on the zk c-client build process, see [here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#C+Binding "Build C client")
@@ -190,6 +190,7 @@ node-waf configure build [--zookeeper zookeeper-version|prefix-path|'']
 - note: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
 - note: if you wish to link against an existing zookeeper lib: use --zoookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
 - note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", you may need to edit the wscript and remove it  (anyone with the answer please explain/fix if possible).
+- note: on SmartOS, you must have installed zookeeper-client-3.4.3 via pkgsrc; ZooKeeper does not build "out of the box" on SunOS variants.
 - note: if you are building on a platform for which the options are not working, please add a specific elif for that platform and create a pull request.
 
 # Known Bugs & Issues
