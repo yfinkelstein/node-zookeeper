@@ -29,5 +29,5 @@
      ,"test" : "pushd test; ./test; popd"
      ,"doc" : "node-waf doc"
   }
-  ,"engines": { "node": "0.4.x || 0.6.x" }
+  ,"engines": { "node": "0.4.x || 0.6.x || 0.8.x" }
 }
