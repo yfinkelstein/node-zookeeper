@@ -224,7 +224,8 @@ Yuri Finkelstein (yurif2003 at yahoo dot com)
 
 with awesome contributions from:
 
-Woody Anderson (Woodya)
-Dave Dopson (ddopson)
-Ryan Phillips (rphillips)
-David Trejo (DTrejo)
+- Woody Anderson (Woodya)
+- Dave Dopson (ddopson)
+- Ryan Phillips (rphillips)
+- David Trejo (DTrejo)
+- Mark Cavage (mcavage)
