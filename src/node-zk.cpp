@@ -256,6 +256,10 @@ public:
 
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
         LOG_DEBUG(("zk_timer_cb fired"));
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+        ev_timer_start (EV_DEFAULT_UC_ w);
+#endif
+
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 #if NODE_VERSION_AT_LEAST(0, 5, 0)
         ev_tstamp now     = ev_now (uv_default_loop()->ev);
