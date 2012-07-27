@@ -234,8 +234,13 @@ public:
         ev_io_set (&zk_io, fd, events);
         ev_io_start(EV_DEFAULT_UC_ &zk_io);
 
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+        zk_timer.delay = tv.tv_sec + tv.tv_usec / 1000000.;
+        ev_timer_start (EV_DEFAULT_UC_ &zk_timer);
+#else
         zk_timer.repeat = tv.tv_sec + tv.tv_usec / 1000000.;
         ev_timer_again (EV_DEFAULT_UC_ &zk_timer);
+#endif
     }
 
     static void zk_io_cb (EV_P_ ev_io *w, int revents) {
@@ -251,6 +256,10 @@ public:
 
     static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
         LOG_DEBUG(("zk_timer_cb fired"));
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+        ev_timer_start (EV_DEFAULT_UC_ w);
+#endif
+
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 #if NODE_VERSION_AT_LEAST(0, 5, 0)
         ev_tstamp now     = ev_now (uv_default_loop()->ev);
@@ -268,9 +277,15 @@ public:
             // callback was invoked, but there was some activity, re-arm
             // the watcher to fire in last_activity + 60, which is
             // guaranteed to be in the future, so "again" is positive:
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+            w->delay = timeout - now + 0.001;
+            ev_timer_start (EV_DEFAULT_UC_ w);
+            LOG_DEBUG(("delaying ping timer by %lf", w->delay));
+#else
             w->repeat = timeout - now;
             ev_timer_again (EV_DEFAULT_UC_ w);
             LOG_DEBUG(("delaying ping timer by %lf", w->repeat));
+#endif
         }
     }
 
