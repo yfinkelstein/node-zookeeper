@@ -12,7 +12,7 @@ if [ "$PLATFORM" != "SunOS" ]; then
     mkdir -p $BUILD_TMP
     if [ ! -e "$ZK_FILE" ] ; then
 	echo "Downloading $ZK from $ZK_URL"
-	curl --silent --output $ZK_FILE $ZK_URL
+	curl --silent --output $ZK_FILE $ZK_URL || wget $ZK_URL -O $ZK_FILE
 	if [ $? != 0 ] ; then
 	    echo "Unable to download zookeeper library"
 	    exit 1
@@ -28,6 +28,7 @@ if [ "$PLATFORM" != "SunOS" ]; then
 	--enable-static \
 	--disable-shared \
 	--with-pic \
+	--libdir=$BUILD/lib \
 	--prefix=$BUILD && \
 	make && \
 	make install
