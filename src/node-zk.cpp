@@ -217,8 +217,12 @@ public:
         }
 
         if (fd == -1 ) {
-          if (ev_is_active (&zk_io))
+          if (ev_is_active (&zk_io)) {
             ev_io_stop (EV_DEFAULT_UC_ &zk_io);
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+            zk_io.flags = 0;
+#endif
+          }
           return;
         }
 
@@ -228,9 +232,13 @@ public:
                    events & EV_READ ? "true" : "false",
                    events & EV_WRITE ? "true" : "false"));
 
-        if (ev_is_active (&zk_io))
+        if (ev_is_active (&zk_io)) {
           ev_io_stop (EV_DEFAULT_UC_ &zk_io);
-
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+          zk_io.flags = 0;
+#endif
+        }
+        
         ev_io_set (&zk_io, fd, events);
         ev_io_start(EV_DEFAULT_UC_ &zk_io);
 
@@ -761,8 +769,12 @@ public:
         }
         LOG_DEBUG(("zookeeper_close() returned"));
         DoEmit (on_closed);
-        if (ev_is_active (&zk_io))
+        if (ev_is_active (&zk_io)) {
             ev_io_stop (EV_DEFAULT_UC_ &zk_io);
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
+            zk_io.flags = 0;
+#endif
+        }
         Unref();
     }
 
