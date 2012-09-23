@@ -766,16 +766,17 @@ public:
             LOG_DEBUG(("call zookeeper_close(%lp)", zhandle));
             zookeeper_close(zhandle);
             zhandle = 0;
-        }
-        LOG_DEBUG(("zookeeper_close() returned"));
-        DoEmit (on_closed);
-        if (ev_is_active (&zk_io)) {
-            ev_io_stop (EV_DEFAULT_UC_ &zk_io);
+
+            LOG_DEBUG(("zookeeper_close() returned"));
+            DoEmit (on_closed);
+            if (ev_is_active (&zk_io)) {
+                ev_io_stop (EV_DEFAULT_UC_ &zk_io);
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
-            zk_io.flags = 0;
+                zk_io.flags = 0;
 #endif
+            }
+            Unref();
         }
-        Unref();
     }
 
     static Handle<Value> Close (const Arguments& args) {
