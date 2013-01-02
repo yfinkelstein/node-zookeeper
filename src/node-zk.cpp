@@ -361,26 +361,26 @@ public:
         if (type == ZOO_SESSION_EVENT) {
             if (state == ZOO_CONNECTED_STATE) {
                 zk->myid = *(zoo_client_id(zzh));
-                zk->DoEmit (on_connected, path);
+                zk->DoEmitPath (on_connected, path);
             } else if (state == ZOO_CONNECTING_STATE) {
-                zk->DoEmit (on_connecting, path);
+                zk->DoEmitPath (on_connecting, path);
             } else if (state == ZOO_AUTH_FAILED_STATE) {
                 LOG_ERROR (("Authentication failure. Shutting down...\n"));
-                zk->realClose();
+                zk->realClose(ZOO_AUTH_FAILED_STATE);
             } else if (state == ZOO_EXPIRED_SESSION_STATE) {
                 LOG_ERROR (("Session expired. Shutting down...\n"));
-                zk->realClose();
+                zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             }
         } else if (type == ZOO_CREATED_EVENT){
-            zk->DoEmit (on_event_created, path);
+            zk->DoEmitPath (on_event_created, path);
         } else if (type == ZOO_DELETED_EVENT) {
-            zk->DoEmit (on_event_deleted, path);
+            zk->DoEmitPath (on_event_deleted, path);
         } else if (type == ZOO_CHANGED_EVENT) {
-            zk->DoEmit (on_event_changed, path);
+            zk->DoEmitPath (on_event_changed, path);
         } else if (type == ZOO_CHILD_EVENT) {
-            zk->DoEmit (on_event_child, path);
+            zk->DoEmitPath (on_event_child, path);
         } else if (type == ZOO_NOTWATCHING_EVENT) {
-            zk->DoEmit (on_event_notwatching, path);
+            zk->DoEmitPath (on_event_notwatching, path);
         } else {
             LOG_WARN(("Unknonwn watcher event type %s",type));
         }
@@ -418,18 +418,36 @@ public:
         }
     }
 
-    void DoEmit (Handle<String> event_name, const char* path = NULL) {
+    void DoEmitPath (Handle<String> event_name, const char* path = NULL) {
         HandleScope scope;
+        Local<Value> str;
+
+        if (path != 0) {
+            str = String::New(path);
+            LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
+        } else {
+            str = Local<Value>::New(Undefined());
+            LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
+        }
+
+        this->DoEmit(event_name, str);
+    }
+
+    void DoEmitClose (Handle<String> event_name, int code) {
+        HandleScope scope;
+        Local<Value> v8code = Number::New(code);
+
+        this->DoEmit(event_name, v8code);
+    }
+
+    void DoEmit (Handle<String> event_name, Handle<Value> data) {
+        HandleScope scope;
+
         Local<Value> argv[3];
         argv[0] = Local<Value>::New(event_name);
         argv[1] = Local<Value>::New(handle_);
-        if (path != 0) {
-            argv[2] = String::New(path);
-            LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
-        } else {
-            argv[2] = Local<Value>::New(Undefined());
-            LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
-        }
+        argv[2] = Local<Value>::New(data);
+
         Local<Value> emit_v = handle_->Get(String::NewSymbol("emit"));
         assert(emit_v->IsFunction());
         Local<Function> emit_fn = emit_v.As<Function>();
@@ -753,7 +771,7 @@ public:
         return Integer::New (zk->zhandle != 0? is_unrecoverable (zk->zhandle) : 0);
     }
 
-    void realClose () {
+    void realClose (int code) {
         if (is_closed)
             return;
 
@@ -783,7 +801,7 @@ public:
         HandleScope scope;
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        zk->realClose();
+        zk->realClose(0);
         return args.This();
     };
 
