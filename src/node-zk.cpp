@@ -786,7 +786,7 @@ public:
             zhandle = 0;
 
             LOG_DEBUG(("zookeeper_close() returned"));
-            DoEmit (on_closed);
+            DoEmitClose (on_closed, code);
             if (ev_is_active (&zk_io)) {
                 ev_io_stop (EV_DEFAULT_UC_ &zk_io);
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
