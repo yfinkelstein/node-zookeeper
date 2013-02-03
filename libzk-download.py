@@ -1,11 +1,26 @@
 import os
+import platform
 import tarfile
 import zipfile
 import urllib2
+import httplib
+import subprocess
+import sys
+import hashlib
+from functools import partial
 
-scriptPath = os.path.dirname(os.path.realpath(__file__))
-ZK = "zookeeper-3.4.4"
-url = "http://apache.mirrors.tds.net/zookeeper/" + ZK + "/" + ZK + ".tar.gz"
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+
+ZK_DEPS_NAME = "deps"
+ZK_NAME = "zookeeper"
+ZK_VERSION = "3.4.4"
+
+ZK_BASENAME = ZK_NAME + "-" + ZK_VERSION
+ZK_FULLNAME = ZK_BASENAME + ".tar.gz"
+ZK_DESTPATH = SCRIPT_PATH + "/" + ZK_DEPS_NAME
+ZK_FULLPATH = ZK_DESTPATH + "/" + ZK_FULLNAME
+ZK_SERVER = "apache.mirrors.tds.net"
+ZK_DOWNLOAD_URL = "http://" + ZK_SERVER + "/" + ZK_NAME + "/" + ZK_FULLNAME
 
 def extract_file(path, to_directory='.'):
     if path.endswith('.zip'):
@@ -54,11 +69,44 @@ def download_file(url, to_directory='.'):
     finally:
         os.chdir(cwd)
 
-print "Current directory : " + os.getcwd()
-print "Downloading file from " + url + " to " + scriptPath + "/deps"
-#download_file(url, scriptPath + "/deps")
-print ZK + " has been downloaded"
-#extract_file(ZK + ".tar.gz", scriptPath + "/deps/")
-print ZK + " has been extracted"
+def hash_file(filename):
+    with open(filename, mode='rb') as f:
+        d = hashlib.md5()
+        m = hashlib.md5()
+        for buf in iter(partial(f.read, 128), b''):
+            d.update(buf)
+    m.update(d.hexdigest())
+    print m.hexdigest()
+    return d.hexdigest()
 
+def get_etag(url, fullname):
+	print fullname
+	conn = httplib.HTTPConnection(url)
+	conn.request("HEAD", "/" + fullname)
+	res = conn.getresponse()
+	print res.status, res.reason
+	print res.getheaders()
 
+def build_lib(from_directory='.'):
+        p = subprocess.Popen([sys.executable, from_directory + "ls -l"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        for line in p.stdout.readlines():
+		print line
+        retval = p.wait()
+
+if (os.path.exists(ZK_FULLPATH)):
+	 print get_etag(ZK_SERVER, ZK_NAME + "/" + ZK_BASENAME + "/" + ZK_FULLNAME)
+	 print hash_file(ZK_FULLPATH)
+else:
+	 print "Downloading file from " + ZK_DOWNLOAD_URL + " to " + ZK_DESTPATH
+	 download_file(ZK_DOWNLOAD_URL, ZK_DESTPATH)
+
+print "Extracting " + ZK_FULLNAME + " has been extracted"
+extract_file(ZK_FULLNAME, SCRIPT_PATH + "/" + ZK_DEPS_NAME + "/")
+print ZK_FULLNAME + " has been extracted"
+
+#
+# Under posix system, the library is build
+# by the native script
+#
+if (os.name == "posix"):
+        build_lib("/deps")
