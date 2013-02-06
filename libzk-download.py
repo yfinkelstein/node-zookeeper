@@ -23,7 +23,7 @@ SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 #
 ZK_DEPS_NAME = "deps"
 ZK_NAME = "zookeeper"
-ZK_VERSION = "3.4.4"
+ZK_VERSION = "3.4.5"
 
 #
 # SOME VARIABLES DEFINED BASE ON DECLARARTIONS
@@ -150,6 +150,18 @@ def download_deps(from_directory='abc'):
 		print "Extracting " + ZK_FULLNAME + " has been extracted"
 		extract_file(ZK_FULLNAME, SCRIPT_PATH + "/" + ZK_DEPS_NAME + "/")
 	
+def patch_deps(from_directory='.'):    
+    cwd = os.getcwd()
+    os.chdir(from_directory)
+    try:
+        p = subprocess.Popen(["python", "patch-1.12.11.py", "--strip=3", "--", "mt_adaptor.c.patch"], cwd=os.path.realpath(from_directory), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        for line in p.stdout.readlines():
+		    print line
+        for line in p.stderr.readlines():
+		    print line
+        retval = p.wait()
+    finally:
+        os.chdir(cwd)
 
 #
 # Under posix system, the library is build
@@ -179,6 +191,9 @@ parser.add_option("-b", "--build",
                   action="store_true", dest="build", default=False,
                   help="Build the library - (posix system only)")
 
+parser.add_option("-p", "--patch",
+                  action="store_true", dest="patch", default=False,
+                  help="Patch the Zookeeper Library (Windows x64)")
 #
 # Parse the command line
 #
@@ -195,6 +210,12 @@ if options.clean:
 #
 if options.download:
     download_deps(ZK_DESTPATH)
+
+#
+# Patch Option
+#
+if options.patch:
+    patch_deps(ZK_DESTPATH)
 
 #
 # Build Option

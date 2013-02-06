@@ -31,7 +31,7 @@
     'conditions': [
       ['OS == "win"', {
         'defines': [
-          'WIN32', '_WINDOWS', 'WIN32_NOASM'
+          'WIN32', '_WINDOWS'
         ],
       }]
     ],
