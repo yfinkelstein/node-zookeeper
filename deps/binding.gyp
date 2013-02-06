@@ -41,7 +41,7 @@
     {
       'target_name': 'zookeeper',
       'type': 'static_library',
-      'include_dirs': [ 'zookeeper-3.4.4/src/c/include',  'zookeeper-3.4.4/src/c/generated'],
+      'include_dirs': [ 'zookeeper-3.4.4/src/c/include', 'zookeeper-3.4.4/src/c/generated'],
       'direct_dependent_settings': {
         'include_dirs': [ '.' ],
         'defines': [
@@ -51,7 +51,7 @@
       'defines': [
           'MY_DEFINE=1'
       ],
-      'sources': [ 'zookeeper-3.4.4/src/c/src/hashtable/hashtable.c',
+      'sources+': [ 'zookeeper-3.4.4/src/c/src/hashtable/hashtable.c',
 				   'zookeeper-3.4.4/src/c/src/hashtable/hashtable_itr.c',
 				   'zookeeper-3.4.4/src/c/src/mt_adaptor.c',
 				   'zookeeper-3.4.4/src/c/src/recordio.c',
