@@ -30,15 +30,15 @@
           'libraries': ['<(module_root_dir)/build/zk/lib/libzookeeper_st.a'],
         }],
 		[ 'OS=="win"', { 
-			'include_dirs': ['<(module_root_dir)/deps/zookeeper-3.4.4/src/c/include', '<(module_root_dir)/deps/zookeeper-3.4.4/src/c/generated'],
-			'libraries': ['<(module_root_dir)/build/Release/lib/zookeeper.lib']
+			'include_dirs': ['<(module_root_dir)/deps/zookeeper-3.4.5/src/c/include', '<(module_root_dir)/deps/zookeeper-3.4.5/src/c/generated'],
+			'libraries': ['<(module_root_dir)/build/Release/lib/zookeeper.lib','Ws2_32.lib']
 			} 
   	 	],
       ]
     },
     {
       'target_name': 'libzk',
-      'type': 'none',
+      'type': 'executable',
 	  'actions': [{
 		'action_name': 'build_zk_client_lib',
 		'inputs': [''],
@@ -49,7 +49,7 @@
     },
     {
       'target_name': 'clean',
-      'type': 'none',
+      'type': 'executable',
 	  'actions': [{
 		'action_name': 'clean_client_lib',
 		'inputs': [''],

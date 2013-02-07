@@ -19,6 +19,11 @@ from optparse import OptionParser
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 #
+# PROXY
+#
+ZK_HTTP_PROXY = ""
+
+#
 # A FEW DECLARARTIONS
 #
 ZK_DEPS_NAME = "deps"

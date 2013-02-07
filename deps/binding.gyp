@@ -31,7 +31,7 @@
     'conditions': [
       ['OS == "win"', {
         'defines': [
-          'WIN32', '_WINDOWS'
+          'WIN32', '_WINDOWS', 'THREADED'
         ],
       }]
     ],
@@ -40,8 +40,9 @@
   'targets': [
     {
       'target_name': 'zookeeper',
-      'type': 'static_library',
-      'include_dirs': [ 'zookeeper-3.4.4/src/c/include', 'zookeeper-3.4.4/src/c/generated'],
+      'type': 'shared_library',
+      'include_dirs': [ 'zookeeper-3.4.5/src/c/include', 'zookeeper-3.4.5/src/c/generated'],
+	  'libraries': ['Ws2_32.lib'],
       'direct_dependent_settings': {
         'include_dirs': [ '.' ],
         'defines': [
@@ -51,15 +52,16 @@
       'defines': [
           'MY_DEFINE=1'
       ],
-      'sources+': [ 'zookeeper-3.4.4/src/c/src/hashtable/hashtable.c',
-				   'zookeeper-3.4.4/src/c/src/hashtable/hashtable_itr.c',
-				   'zookeeper-3.4.4/src/c/src/mt_adaptor.c',
-				   'zookeeper-3.4.4/src/c/src/recordio.c',
-				   'zookeeper-3.4.4/src/c/src/winport.c',
-				   'zookeeper-3.4.4/src/c/src/zk_hashtable.c',
-				   'zookeeper-3.4.4/src/c/src/zk_log.c',
-				   'zookeeper-3.4.4/src/c/src/zookeeper.c',
-				   'zookeeper-3.4.4/src/c/generated/zookeeper.jute.c'
+      'sources': [ 'zookeeper-3.4.5/src/c/src/hashtable/hashtable.c',
+				   'zookeeper-3.4.5/src/c/src/hashtable/hashtable_itr.c',
+				   'zookeeper-3.4.5/src/c/src/mt_adaptor.c',
+				   'zookeeper-3.4.5/src/c/src/recordio.c',
+				   'zookeeper-3.4.5/src/c/src/winport.c',
+				   'zookeeper-3.4.5/src/c/src/zk_hashtable.c',
+				   'zookeeper-3.4.5/src/c/src/zk_log.c',
+				   'zookeeper-3.4.5/src/c/src/zookeeper.c',
+				   'zookeeper-3.4.5/src/c/generated/zookeeper.jute.c',
+				   'zookeeper.def'
 	  ],
     }
   ]

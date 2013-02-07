@@ -1,5 +1,5 @@
---- C:/_SVN/node-zookeeper/deps/zookeeper-3.4.4/src/c/src/mt_adaptor.c	Mon Sep 17 09:34:37 2012
-+++ C:/_SVN/node-zookeeper/deps/zookeeper-3.4.4/src/c/src/mt_adaptor.c	Wed Feb 06 22:43:38 2013
+--- C:/_SVN/node-zookeeper/deps/zookeeper-3.4.5/src/c/src/mt_adaptor.c	Mon Sep 17 09:34:37 2012
++++ C:/_SVN/node-zookeeper/deps/zookeeper-3.4.5/src/c/src/mt_adaptor.c	Wed Feb 06 22:43:38 2013
 @@ -491,17 +491,8 @@
           : "memory");
     return result;

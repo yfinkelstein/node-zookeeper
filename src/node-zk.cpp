@@ -1,9 +1,13 @@
 #include <assert.h>
-#include <errno.h>
 #include <string.h>
+
 #ifndef WIN32
 #include <strings.h>
+#include <errno.h>
+#else
+#define _MSC_STDINT_H_
 #endif
+
 #include <stdarg.h>
 #include <node.h>
 #include <node_buffer.h>
@@ -375,6 +379,17 @@ public:
 
     }
 
+	static void zookeeper_close_fd(zhandle_t *zh) {
+	}
+
+	static int get_sock_option(uv_poll_t* handle, int * error, int * len) {
+#ifndef WIN32
+		return getsockopt(handle->fd, SOL_SOCKET, SO_ERROR, error, len);
+#else
+		return getsockopt(handle->socket, SOL_SOCKET, SO_ERROR, (char *) error, len);
+#endif
+	}
+
     static void zk_uv_cb (uv_poll_t* handle, int status, int revents) {
         LOG_DEBUG(("========================================="));
         LOG_DEBUG(("zk_io_cb fired, status: %d, revents: %d", status, revents));
@@ -400,7 +415,7 @@ public:
             if (events) {
                 int error = 0;
                 socklen_t len = sizeof(error);
-                if (getsockopt(handle->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0
+                if (get_sock_option(handle, &error, &len) < 0
                         || error) {
                     LOG_WARN(("zk connection error %d", error));
                     zookeeper_close_fd(zh);
