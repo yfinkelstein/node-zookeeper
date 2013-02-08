@@ -31,7 +31,7 @@
         }],
 		[ 'OS=="win"', { 
 			'include_dirs': ['<(module_root_dir)/deps/zookeeper-3.4.5/src/c/include', '<(module_root_dir)/deps/zookeeper-3.4.5/src/c/generated'],
-			'libraries': ['<(module_root_dir)/build/Release/lib/zookeeper.lib','Ws2_32.lib']
+			'libraries': ['<(module_root_dir)/build/Release/zookeeper.lib','Ws2_32.lib']
 			} 
   	 	],
       ]
