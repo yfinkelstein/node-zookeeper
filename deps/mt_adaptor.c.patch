@@ -1,0 +1,22 @@
+--- C:/_SVN/node-zookeeper/deps/zookeeper-3.4.5/src/c/src/mt_adaptor.c	Mon Sep 17 09:34:37 2012
++++ C:/_SVN/node-zookeeper/deps/zookeeper-3.4.5/src/c/src/mt_adaptor.c	Wed Feb 06 22:43:38 2013
+@@ -491,17 +491,8 @@
+          : "memory");
+    return result;
+ #else
+-    volatile int32_t result;
+-    _asm
+-    {
+-        mov eax, operand; //eax = v;
+-       mov ebx, incr; // ebx = i;
+-        mov ecx, 0x0; // ecx = 0;
+-        lock xadd dword ptr [eax], ecx; 
+-       lock xadd dword ptr [eax], ebx; 
+-        mov result, ecx; // result = ebx;        
+-     }
+-     return result;    
++    InterlockedExchangeAdd(operand, incr);
++	return *operand;
+ #endif
+ }
+ 
