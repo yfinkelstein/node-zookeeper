@@ -31,7 +31,7 @@
     'conditions': [
       ['OS == "win"', {
         'defines': [
-          'WIN32', '_WINDOWS', 'THREADED'
+          'WIN32', '_WINDOWS', 'THREADED', 'DLL_EXPORT'
         ],
       }]
     ],
@@ -40,7 +40,7 @@
   'targets': [
     {
       'target_name': 'zookeeper',
-      'type': 'shared_library',
+      'type': 'static_library',
       'include_dirs': [ 'zookeeper-3.4.5/src/c/include', 'zookeeper-3.4.5/src/c/generated'],
 	  'libraries': ['Ws2_32.lib'],
       'direct_dependent_settings': {
