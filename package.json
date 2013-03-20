@@ -31,5 +31,5 @@
      "build" : "node-gyp configure build"
      ,"test" : "pushd test; ./test; popd"
   }
-  ,"engines": { "node": ">=0.6" }
+  ,"engines": { "node": ">=0.8" }
 }
