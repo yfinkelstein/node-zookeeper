@@ -8,7 +8,7 @@
       "target_name": "zookeeper",
       'dependencies': ['libzk'],
       "sources": [ "src/node-zk.cpp" ],
-      'cflags': ['-Wall', '-Werror', '-O0'],
+      'cflags': ['-Wall', '-O0'],
       'conditions': [
         ['OS=="solaris"', {
           'cflags': ['-Wno-strict-aliasing'],
@@ -36,6 +36,17 @@
         'inputs': [''],
         'outputs': [''],
         'action': ['sh', 'libzk-build.sh']
+      }]
+    },
+    {
+      "target_name": "after_build",
+      "type": "none",
+      "dependencies": ["zookeeper"],
+      "actions": [{
+        "action_name": "symlink",
+        "inputs": ["<@(PRODUCT_DIR)/zookeeper.node"],
+        "outputs": ["<(module_root_dir)/build/zookeeper.node"],
+        "action": ["ln", "-s", "<@(PRODUCT_DIR)/zookeeper.node", "<(module_root_dir)/build/zookeeper.node"]
       }]
     }
   ],
