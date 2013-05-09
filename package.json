@@ -18,18 +18,17 @@
   }
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
-    "async": "~0.1.18"
+    "async": "~0.2.6"
     ,"underscore": "*"
   }
   ,"devDependencies": {
-    "log4js": "~0.4.3"
-    ,"webworker": ">=0.8.2"
+    "log4js": "~0.6.0"
+    ,"webworker": ">=0.8.4"
   }
   ,"main": "lib/index"
-  ,"directories.lib": "build/default/"
   ,"scripts" : {
      "build" : "node-gyp configure build"
      ,"test" : "pushd test; ./test; popd"
   }
-  ,"engines": { "node": ">=0.6" }
+  ,"engines": { "node": ">=0.8" }
 }

@@ -204,77 +204,57 @@ public:
             return;
         }
 
-#if NODE_VERSION_AT_LEAST(0, 5, 0)
-        last_activity = ev_now (uv_default_loop()->ev);
-#else
-        last_activity = ev_now (EV_A);
-#endif
+        last_activity = uv_now(uv_default_loop());
 
-        int rc = zookeeper_interest (zhandle, &fd, &interest, &tv);
+        int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
         if (rc) {
           LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
           return;
         }
 
         if (fd == -1 ) {
-          if (ev_is_active (&zk_io)) {
-            ev_io_stop (EV_DEFAULT_UC_ &zk_io);
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-            zk_io.flags = 0;
-#endif
+          if (uv_is_active((uv_handle_t*) &zk_io)) {
+            uv_poll_stop(&zk_io);
           }
           return;
         }
 
-        int events = (interest & ZOOKEEPER_READ ? EV_READ : 0) | (interest & ZOOKEEPER_WRITE ? EV_WRITE : 0);
-        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s)",
+        int64_t delay = tv.tv_sec * 1000 + tv.tv_usec / 1000.;
+
+        int events = (interest & ZOOKEEPER_READ ? UV_READABLE : 0) | (interest & ZOOKEEPER_WRITE ? UV_WRITABLE : 0);
+        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s, timeout=%f)",
                    fd,
-                   events & EV_READ ? "true" : "false",
-                   events & EV_WRITE ? "true" : "false"));
+                   events & UV_READABLE ? "true" : "false",
+                   events & UV_WRITABLE ? "true" : "false",
+                   delay));
 
-        if (ev_is_active (&zk_io)) {
-          ev_io_stop (EV_DEFAULT_UC_ &zk_io);
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-          zk_io.flags = 0;
-#endif
+        if (uv_is_active ((uv_handle_t*) &zk_io)) {
+          uv_poll_stop (&zk_io);
         }
-        
-        ev_io_set (&zk_io, fd, events);
-        ev_io_start(EV_DEFAULT_UC_ &zk_io);
 
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-        zk_timer.delay = tv.tv_sec + tv.tv_usec / 1000000.;
-        ev_timer_start (EV_DEFAULT_UC_ &zk_timer);
-#else
-        zk_timer.repeat = tv.tv_sec + tv.tv_usec / 1000000.;
-        ev_timer_again (EV_DEFAULT_UC_ &zk_timer);
-#endif
+        uv_poll_init(uv_default_loop(), &zk_io, fd);
+        uv_poll_start(&zk_io, events, &zk_io_cb);
+
+        uv_timer_start(&zk_timer, &zk_timer_cb, delay, 0);
     }
 
-    static void zk_io_cb (EV_P_ ev_io *w, int revents) {
+    static void zk_io_cb (uv_poll_t *w, int status, int revents) {
         LOG_DEBUG(("zk_io_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-        int events = (revents & EV_READ? ZOOKEEPER_READ : 0) | (revents & EV_WRITE? ZOOKEEPER_WRITE : 0);
+        int events = (revents & UV_READABLE ? ZOOKEEPER_READ : 0) | (revents & UV_WRITABLE ? ZOOKEEPER_WRITE : 0);
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
         }
-        zk->yield ();
+        zk->yield();
     }
 
-    static void zk_timer_cb (EV_P_ ev_timer *w, int revents) {
+    static void zk_timer_cb (uv_timer_t *w, int status) {
         LOG_DEBUG(("zk_timer_cb fired"));
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-        ev_timer_start (EV_DEFAULT_UC_ w);
-#endif
 
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-#if NODE_VERSION_AT_LEAST(0, 5, 0)
-        ev_tstamp now     = ev_now (uv_default_loop()->ev);
-#else
-        ev_tstamp now     = ev_now (EV_A);
-#endif
-        ev_tstamp timeout = zk->last_activity + zk->tv.tv_sec + zk->tv.tv_usec/1000000.;
+        int64_t now = uv_now(uv_default_loop());
+        int64_t timeout = zk->last_activity + zk->tv.tv_sec * 1000 + zk->tv.tv_usec / 1000.;
 
         // if last_activity + tv.tv_sec is older than now, we did time out
         if (timeout < now) {
@@ -285,15 +265,10 @@ public:
             // callback was invoked, but there was some activity, re-arm
             // the watcher to fire in last_activity + 60, which is
             // guaranteed to be in the future, so "again" is positive:
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-            w->delay = timeout - now + 0.001;
-            ev_timer_start (EV_DEFAULT_UC_ w);
-            LOG_DEBUG(("delaying ping timer by %lf", w->delay));
-#else
-            w->repeat = timeout - now;
-            ev_timer_again (EV_DEFAULT_UC_ w);
-            LOG_DEBUG(("delaying ping timer by %lf", w->repeat));
-#endif
+            int64_t delay = timeout - now + 1;
+            uv_timer_start(w, &zk_timer_cb, delay, 0);
+
+            LOG_DEBUG(("delaying ping timer by %lf", delay));
         }
     }
 
@@ -305,11 +280,11 @@ public:
             return false;
         }
         Ref();
-        ev_init (&zk_io, &zk_io_cb);
-        ev_init (&zk_timer, &zk_timer_cb);
+
+        uv_timer_init(uv_default_loop(), &zk_timer);
         zk_io.data = zk_timer.data = this;
-        ev_set_priority (&zk_timer, 1);
-        yield ();
+
+        yield();
         return true;
     }
     static Handle<Value> Init (const Arguments& args) {
@@ -777,8 +752,8 @@ public:
 
         is_closed = true;
 
-        if (ev_is_active (&zk_timer))
-            ev_timer_stop(EV_DEFAULT_UC_ &zk_timer);
+        if (uv_is_active ((uv_handle_t*) &zk_timer))
+            uv_timer_stop(&zk_timer);
 
         if (zhandle) {
             LOG_DEBUG(("call zookeeper_close(%lp)", zhandle));
@@ -787,11 +762,8 @@ public:
 
             LOG_DEBUG(("zookeeper_close() returned"));
             DoEmitClose (on_closed, code);
-            if (ev_is_active (&zk_io)) {
-                ev_io_stop (EV_DEFAULT_UC_ &zk_io);
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
-                zk_io.flags = 0;
-#endif
+            if (uv_is_active((uv_handle_t*) &zk_io)) {
+                uv_poll_stop(&zk_io);
             }
             Unref();
         }
@@ -821,12 +793,12 @@ private:
     zhandle_t *zhandle;
     clientid_t myid;
     const char *clientIdFile;
-    ev_io zk_io;
-    ev_timer zk_timer;
+    uv_poll_t zk_io;
+    uv_timer_t zk_timer;
     int fd;
     int interest;
     timeval tv;
-    ev_tstamp last_activity; // time of last zookeeper event loop activity
+    int64_t last_activity; // time of last zookeeper event loop activity
     bool is_closed;
 };
 
@@ -835,3 +807,5 @@ private:
 extern "C" void init(Handle<Object> target) {
   zk::ZooKeeper::Initialize(target);
 }
+
+NODE_MODULE(zookeeper, init)
