@@ -4,11 +4,16 @@ ROOT=`pwd`
 BUILD=$ROOT/build/zk
 BUILD_TMP=$BUILD/tmp
 PLATFORM=`uname`
-ZK=zookeeper-3.4.4
+ZK=zookeeper-3.4.5
 ZK_FILE=/$BUILD_TMP/$ZK.tar.gz
 ZK_URL=http://apache.mirrors.tds.net/zookeeper/$ZK/$ZK.tar.gz
 
 if [ "$PLATFORM" != "SunOS" ]; then
+    if [ -e "$BUILD/lib/libzookeeper_st.la" ]; then
+        echo "ZooKeeper has already been built"
+        exit 0
+    fi
+
     mkdir -p $BUILD_TMP
     if [ ! -e "$ZK_FILE" ] ; then
 	echo "Downloading $ZK from $ZK_URL"
@@ -39,10 +44,10 @@ if [ "$PLATFORM" != "SunOS" ]; then
     cd $ROOT
 else
     if [ `uname -v` =~ "joyent_.*" ] ; then
-	pkgin list | grep zookeeper-client-3.4.3
+	pkgin list | grep zookeeper-client-3.4.5
 	if [ $? != 0] ; then
 	    echo "You must install zookeeper before installing this module. Try:"
-	    echo "pkgin install zookeeper-client-3.4.3"
+	    echo "pkgin install zookeeper-client-3.4.5"
 	    exit 1
 	fi
     fi
