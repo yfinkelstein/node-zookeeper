@@ -222,14 +222,14 @@ public:
         int64_t delay = tv.tv_sec * 1000 + tv.tv_usec / 1000.;
 
         int events = (interest & ZOOKEEPER_READ ? UV_READABLE : 0) | (interest & ZOOKEEPER_WRITE ? UV_WRITABLE : 0);
-        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s, timeout=%f)",
+        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s, timeout=%d)",
                    fd,
                    events & UV_READABLE ? "true" : "false",
                    events & UV_WRITABLE ? "true" : "false",
                    delay));
 
         if (uv_is_active ((uv_handle_t*) &zk_io)) {
-          uv_poll_stop (&zk_io);
+          uv_poll_stop(&zk_io);
         }
 
         uv_poll_init(uv_default_loop(), &zk_io, fd);
@@ -241,7 +241,15 @@ public:
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
         LOG_DEBUG(("zk_io_cb fired"));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-        int events = (revents & UV_READABLE ? ZOOKEEPER_READ : 0) | (revents & UV_WRITABLE ? ZOOKEEPER_WRITE : 0);
+
+        int events;
+
+        if (status < 0 ) {
+            events = ZOOKEEPER_READ | ZOOKEEPER_WRITE;
+        } else {
+            events = (revents & UV_READABLE ? ZOOKEEPER_READ : 0) | (revents & UV_WRITABLE ? ZOOKEEPER_WRITE : 0);
+        }
+
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
