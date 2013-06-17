@@ -11,7 +11,7 @@ var ZooKeeper = require ("zookeeper");
 var zk = new ZooKeeper({
   connect: "localhost:2181"
  ,timeout: 200000
- ,debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARNING
+ ,debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN
  ,host_order_deterministic: false
 });
 zk.connect(function (err) {
