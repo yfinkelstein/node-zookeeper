@@ -7,6 +7,7 @@ then
 fi
 
 PRODUCT_DIR=$1
+FILE=$(basename $PRODUCT_DIR)
 BUILD_TYPE=$(basename $(dirname $PRODUCT_DIR))
 
-ln -s $BUILD_TYPE/zookeeper.node build/zookeeper.node
+ln -s $BUILD_TYPE/$FILE build/$FILE
