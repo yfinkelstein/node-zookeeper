@@ -769,11 +769,12 @@ public:
             zhandle = 0;
 
             LOG_DEBUG(("zookeeper_close() returned"));
-            DoEmitClose (on_closed, code);
+
             if (uv_is_active((uv_handle_t*) &zk_io)) {
                 uv_poll_stop(&zk_io);
             }
             Unref();
+            DoEmitClose (on_closed, code);
         }
     }
 
