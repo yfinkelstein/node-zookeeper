@@ -112,19 +112,18 @@ Session state machine is well described in Zookeeper docs, i.e.
 
 ### ACL and authorisation ###
 It's supported now, library comes with 3 default ACL levels defined (comes from ZK):
-ZooKeeper.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
-ZooKeeper.ZOO_READ_ACL_UNSAFE - anyone can read
-ZooKeeper.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
+* ZooKeeper.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
+* ZooKeeper.ZOO_READ_ACL_UNSAFE - anyone can read
+* ZooKeeper.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
 
 If you don't want to use predefined ACLs you can define your own (the ACL object is described above), for limiting permisions you can use:
-ZooKeeper.ZOO_PERM_READ - read permission
-ZooKeeper.ZOO_PERM_WRITE - write permission
-ZooKeeper.ZOO_PERM_CREATE - create permission
-ZooKeeper.ZOO_PERM_DELETE - delete permission
-ZooKeeper.ZOO_PERM_ADMIN - admin permission
-ZooKeeper.ZOO_PERM_ALL - all of the above
+* ZooKeeper.ZOO_PERM_READ - read permission
+* ZooKeeper.ZOO_PERM_WRITE - write permission
+* ZooKeeper.ZOO_PERM_CREATE - create permission
+* ZooKeeper.ZOO_PERM_DELETE - delete permission
+* ZooKeeper.ZOO_PERM_ADMIN - admin permission
+* ZooKeeper.ZOO_PERM_ALL - all of the above
 
-For more details please refer to ZooKeeper docs.
 Example:
 ```javascript
 var ZooKeeper = require("zookeeper");
@@ -163,6 +162,7 @@ zk.connect(function (err, client) {
     });
 });
 ```
+For more details please refer to ZooKeeper docs.
 
 # Limitations
 * passing acl to a_create is not possible
