@@ -69,6 +69,12 @@ DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
+struct completion_data {
+    Persistent<Function> *cb;
+    int32_t type;
+    void *data;
+};
+
 class ZooKeeper: public ObjectWrap {
 public:
     static void Initialize(v8::Handle<v8::Object> target) {
@@ -448,7 +454,7 @@ public:
 
 #define CALLBACK_PROLOG(args) \
         HandleScope scope; \
-        Persistent<Function> *callback = cb_unwrap((void*)data); \
+        Persistent<Function> *callback = cb_unwrap((void*)cb); \
         assert (callback); \
         Local<Value> lv = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
         /*(*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK);*/ \
@@ -528,9 +534,9 @@ public:
         }
 */
 
-    static void string_completion (int rc, const char *value, const void *data) {
+    static void string_completion (int rc, const char *value, const void *cb) {
         if (value == 0) value="null";
-        LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, data));
+        LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, cb));
         CALLBACK_PROLOG (3);
         argv[2] = String::New (value);
         CALLBACK_EPILOG();
@@ -550,16 +556,32 @@ public:
     }
 
     static void void_completion (int rc, const void *data) {
+        struct completion_data *d = (struct completion_data *) data;
+        void *cb = (void *) d->cb;
+
+        if (d->type == ZOO_SETACL_OP) {
+            deallocate_ACL_vector((struct ACL_vector *)d->data);
+            free(d->data);
+        }
+
         CALLBACK_PROLOG (2);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         CALLBACK_EPILOG();
+
+        free(d);
     }
 
     static Handle<Value> ADelete (const Arguments& args) {
         A_METHOD_PROLOG (3);
         String::Utf8Value _path (args[0]->ToString());
         uint32_t version = args[1]->ToUint32()->Uint32Value();
-        METHOD_EPILOG (zoo_adelete(zk->zhandle, *_path, version, &void_completion, cb));
+
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_DELETE_OP;
+        data->data = NULL;
+
+        METHOD_EPILOG (zoo_adelete(zk->zhandle, *_path, version, &void_completion, data));
     }
 
     Local<Object> createStatObject (const struct Stat *stat) {
@@ -580,7 +602,7 @@ public:
         return scope.Close(o);
     }
 
-    static void stat_completion (int rc, const struct Stat *stat, const void *data) {
+    static void stat_completion (int rc, const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG (3);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         argv[2] = rc == ZOK ? zkk->createStatObject (stat) : Object::Cast(*Null());
@@ -601,7 +623,7 @@ public:
     }
 
     static void data_completion (int rc, const char *value, int value_len,
-                                 const struct Stat *stat, const void *data) {
+                                 const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG (4);
         LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
@@ -658,7 +680,7 @@ public:
     }
 
     static void strings_completion (int rc,
-            const struct String_vector *strings, const void *data) {
+            const struct String_vector *strings, const void *cb) {
         CALLBACK_PROLOG (3);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         if (strings != NULL) {
@@ -687,7 +709,7 @@ public:
     }
 
     static void strings_stat_completion (int rc, const struct String_vector *strings,
-            const struct Stat *stat, const void *data) {
+            const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG (4);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         if (strings != NULL) {
@@ -750,7 +772,12 @@ public:
             acl->id = id;
         }
 
-        METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, cb));
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_SETACL_OP;
+        data->data = aclv;
+
+        METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, data));
     }
 
     static Handle<Value> AddAuth (const Arguments& args) {
@@ -759,7 +786,12 @@ public:
         String::Utf8Value _scheme (args[0]->ToString());
         String::Utf8Value _auth (args[1]->ToString());
 
-        METHOD_EPILOG(zoo_add_auth(zk->zhandle, *_scheme, *_auth, _auth.length(), void_completion, cb));
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_SETAUTH_OP;
+        data->data = NULL;
+
+        METHOD_EPILOG(zoo_add_auth(zk->zhandle, *_scheme, *_auth, _auth.length(), void_completion, data));
     }
 
     Local<Object> createAclObject (struct ACL_vector *aclv) {
@@ -781,7 +813,7 @@ public:
         return scope.Close(arr);
     };
 
-    static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *data) {
+    static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(4);
 
         argv[2] = acl != NULL ? zkk->createAclObject(acl) : Object::Cast(*Null());
