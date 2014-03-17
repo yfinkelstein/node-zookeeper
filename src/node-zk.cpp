@@ -839,7 +839,7 @@ public:
             Local<Object> obj = Object::New();
             obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms), ReadOnly);
             obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme), ReadOnly);
-            obj->Set(String::NewSymbol("id"), String::New(acl->id.id), ReadOnly);
+            obj->Set(String::NewSymbol("auth"), String::New(acl->id.id), ReadOnly);
 
             arr->Set(i, obj);
         }
