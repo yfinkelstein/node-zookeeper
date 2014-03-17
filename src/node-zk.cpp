@@ -115,12 +115,26 @@ public:
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ADMIN);
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ALL);
 
-        //extern ZOOAPI struct Id ZOO_ANYONE_ID_UNSAFE;
-        //extern ZOOAPI struct Id ZOO_AUTH_IDS;
-
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
+        Local<Object> acl_open = Object::New();
+        acl_open->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
+        Local<Object> acl_read = Object::New();
+        acl_read->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
+        Local<Object> acl_creator = Object::New();
+        acl_creator->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(String::NewSymbol("scheme"), String::NewSymbol("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(String::NewSymbol("auth"), String::NewSymbol(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_WRITE);
         NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_READ);
@@ -823,9 +837,9 @@ public:
             struct ACL *acl = &aclv->data[i];
 
             Local<Object> obj = Object::New();
-            obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms));
-            obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme));
-            obj->Set(String::NewSymbol("id"), String::New(acl->id.id));
+            obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms), ReadOnly);
+            obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme), ReadOnly);
+            obj->Set(String::NewSymbol("id"), String::New(acl->id.id), ReadOnly);
 
             arr->Set(i, obj);
         }
