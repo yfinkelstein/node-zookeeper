@@ -91,6 +91,9 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set", ASet);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_delete_", ADelete);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "s_delete_", Delete);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_get_acl", AGetAcl);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_DELETED_EVENT);
@@ -711,6 +714,80 @@ public:
         AW_METHOD_PROLOG (3);
         String::Utf8Value _path (args[0]->ToString());
         METHOD_EPILOG (zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
+    }
+
+    static Handle<Value> AGetAcl (const Arguments& args) {
+        A_METHOD_PROLOG(2);
+        String::Utf8Value _path (args[0]->ToString());
+        METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
+    }
+
+    static Handle<Value> ASetAcl (const Arguments& args) {
+        A_METHOD_PROLOG(4);
+
+        String::Utf8Value _path (args[0]->ToString());
+        uint32_t _version = args[1]->ToUint32()->Uint32Value();
+        Local<Array> arr = Local<Array>::Cast(args[2]);
+
+        struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
+        aclv->count = arr->Length();
+        aclv->data = (struct ACL *) calloc(aclv->count, sizeof(struct ACL));
+
+        for (int i = 0, l = aclv->count; i < l; i++) {
+            Local<Object> obj = Local<Object>::Cast(arr->Get(i));
+
+            String::Utf8Value _scheme (obj->Get(String::New("scheme"))->ToString());
+            String::Utf8Value _auth (obj->Get(String::New("auth"))->ToString());
+            uint32_t _perms = obj->Get(String::New("perms"))->ToUint32()->Uint32Value();
+
+            struct Id id;
+            struct ACL *acl = &aclv->data[i];
+
+            id.scheme = strdup(*_scheme);
+            id.id = strdup(*_auth);
+
+            acl->perms = _perms;
+            acl->id = id;
+        }
+
+        METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, cb));
+    }
+
+    static Handle<Value> AddAuth (const Arguments& args) {
+        A_METHOD_PROLOG(3);
+
+        String::Utf8Value _scheme (args[0]->ToString());
+        String::Utf8Value _auth (args[1]->ToString());
+
+        METHOD_EPILOG(zoo_add_auth(zk->zhandle, *_scheme, *_auth, _auth.length(), void_completion, cb));
+    }
+
+    Local<Object> createAclObject (struct ACL_vector *aclv) {
+        HandleScope scope;
+
+        Local<Array> arr = Array::New(aclv->count);
+
+        for (int i = 0; i < aclv->count; i++) {
+            struct ACL *acl = &aclv->data[i];
+
+            Local<Object> obj = Object::New();
+            obj->Set(String::New("perms"), Integer::New(acl->perms));
+            obj->Set(String::New("scheme"), String::New(acl->id.scheme));
+            obj->Set(String::New("id"), String::New(acl->id.id));
+
+            arr->Set(i, obj);
+        }
+
+        return scope.Close(arr);
+    };
+
+    static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *data) {
+        CALLBACK_PROLOG(4);
+
+        argv[2] = acl != NULL ? zkk->createAclObject(acl) : Object::Cast(*Null());
+        argv[3] = stat != NULL ? zkk->createStatObject(stat) : Object::Cast(*Null());
+
+        CALLBACK_EPILOG();
     }
 
     static Handle<Value> StatePropertyGetter (Local<String> property, const AccessorInfo& info) {
