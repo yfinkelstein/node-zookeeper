@@ -751,26 +751,7 @@ public:
         uint32_t _version = args[1]->ToUint32()->Uint32Value();
         Local<Array> arr = Local<Array>::Cast(args[2]);
 
-        struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
-        aclv->count = arr->Length();
-        aclv->data = (struct ACL *) calloc(aclv->count, sizeof(struct ACL));
-
-        for (int i = 0, l = aclv->count; i < l; i++) {
-            Local<Object> obj = Local<Object>::Cast(arr->Get(i));
-
-            String::Utf8Value _scheme (obj->Get(String::New("scheme"))->ToString());
-            String::Utf8Value _auth (obj->Get(String::New("auth"))->ToString());
-            uint32_t _perms = obj->Get(String::New("perms"))->ToUint32()->Uint32Value();
-
-            struct Id id;
-            struct ACL *acl = &aclv->data[i];
-
-            id.scheme = strdup(*_scheme);
-            id.id = strdup(*_auth);
-
-            acl->perms = _perms;
-            acl->id = id;
-        }
+        struct ACL_vector *aclv = zk->createAclVector(arr);
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -803,15 +784,44 @@ public:
             struct ACL *acl = &aclv->data[i];
 
             Local<Object> obj = Object::New();
-            obj->Set(String::New("perms"), Integer::New(acl->perms));
-            obj->Set(String::New("scheme"), String::New(acl->id.scheme));
-            obj->Set(String::New("id"), String::New(acl->id.id));
+            obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms));
+            obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme));
+            obj->Set(String::NewSymbol("id"), String::New(acl->id.id));
 
             arr->Set(i, obj);
         }
 
         return scope.Close(arr);
     };
+
+    struct ACL_vector *createAclVector (Handle<Array> arr) {
+        HandleScope scope;
+
+        struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
+        aclv->count = arr->Length();
+        aclv->data = (struct ACL *) calloc(aclv->count, sizeof(struct ACL));
+
+        for (int i = 0, l = aclv->count; i < l; i++) {
+            Local<Object> obj = Local<Object>::Cast(arr->Get(i));
+
+            String::Utf8Value _scheme (obj->Get(String::NewSymbol("scheme"))->ToString());
+            String::Utf8Value _auth (obj->Get(String::NewSymbol("auth"))->ToString());
+            uint32_t _perms = obj->Get(String::NewSymbol("perms"))->ToUint32()->Uint32Value();
+
+            struct Id id;
+            struct ACL *acl = &aclv->data[i];
+
+            id.scheme = strdup(*_scheme);
+            id.id = strdup(*_auth);
+
+            acl->perms = _perms;
+            acl->id = id;
+        }
+
+        scope.Close(Undefined());
+
+        return aclv;
+    }
 
     static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(4);
