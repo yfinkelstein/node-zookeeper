@@ -16,12 +16,12 @@ if [ "$PLATFORM" != "SunOS" ]; then
 
     mkdir -p $BUILD_TMP
     if [ ! -e "$ZK_FILE" ] ; then
-	echo "Downloading $ZK from $ZK_URL"
-	curl --silent --output $ZK_FILE $ZK_URL || wget $ZK_URL -O $ZK_FILE
-	if [ $? != 0 ] ; then
-	    echo "Unable to download zookeeper library"
-	    exit 1
-	fi
+        echo "Downloading $ZK from $ZK_URL"
+        curl --silent --output $ZK_FILE $ZK_URL || wget $ZK_URL -O $ZK_FILE
+        if [ $? != 0 ] ; then
+            echo "Unable to download zookeeper library"
+            exit 1
+        fi
     fi
 
     cd $BUILD_TMP
@@ -29,26 +29,26 @@ if [ "$PLATFORM" != "SunOS" ]; then
     tar -zxf $ZK_FILE && \
     cd $ZK/src/c && \
     ./configure \
-	--without-syncapi \
-	--enable-static \
-	--disable-shared \
-	--with-pic \
-	--libdir=$BUILD/lib \
-	--prefix=$BUILD && \
-	make && \
-	make install
+        --without-syncapi \
+        --enable-static \
+        --disable-shared \
+        --with-pic \
+        --libdir=$BUILD/lib \
+        --prefix=$BUILD && \
+        make && \
+        make install
     if [ $? != 0 ] ; then
-	    echo "Unable to build zookeeper library"
-	    exit 1
+            echo "Unable to build zookeeper library"
+            exit 1
     fi
     cd $ROOT
 else
     if [ `uname -v` =~ "joyent_.*" ] ; then
-	pkgin list | grep zookeeper-client-3.4.5
-	if [ $? != 0] ; then
-	    echo "You must install zookeeper before installing this module. Try:"
-	    echo "pkgin install zookeeper-client-3.4.5"
-	    exit 1
-	fi
+        pkgin list | grep zookeeper-client-3.4.5
+        if [ $? != 0] ; then
+            echo "You must install zookeeper before installing this module. Try:"
+            echo "pkgin install zookeeper-client-3.4.5"
+            exit 1
+        fi
     fi
 fi
