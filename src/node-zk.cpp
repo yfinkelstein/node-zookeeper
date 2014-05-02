@@ -62,6 +62,7 @@ DEFINE_STRING (on_event_deleted,     "deleted");
 DEFINE_STRING (on_event_changed,     "changed");
 DEFINE_STRING (on_event_child,       "child");
 DEFINE_STRING (on_event_notwatching, "notwatching");
+DEFINE_STRING (on_error,             "error");
 
 #define DEFINE_SYMBOL(ev)   DEFINE_STRING(ev, #ev)
 DEFINE_SYMBOL (HIDDEN_PROP_ZK);
@@ -209,6 +210,7 @@ public:
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
         if (rc) {
           LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
+          this->DoEmitError (on_error, rc);
           return;
         }
 
@@ -253,6 +255,7 @@ public:
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
+            zk->DoEmitError (on_error, rc);
         }
         zk->yield();
     }
@@ -421,6 +424,13 @@ public:
         Local<Value> v8code = Number::New(code);
 
         this->DoEmit(event_name, v8code);
+    }
+    
+    void DoEmitError (Handle<String> event_name, int code) {
+        Local<Object> err = Exception::Error( String::New(zerror(code)) )->ToObject();
+        err->Set(String::NewSymbol("code"), Integer::New(code));
+        
+        this->DoEmit(event_name, err);
     }
 
     void DoEmit (Handle<String> event_name, Handle<Value> data) {
