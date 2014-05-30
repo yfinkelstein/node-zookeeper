@@ -28,7 +28,7 @@ if [ "$PLATFORM" != "SunOS" ]; then
         echo "Can't connect apache.org."
         exit 1
     fi
-    ZK_ROOT_URL=$(grep -o "http://mirrors.[a-zA-Z0-9.-\_]*/apache/zookeeper/" $APACHE_DYN_FILE | head -n 1)
+    ZK_ROOT_URL=$(grep --color=never -o "http://mirrors.[a-zA-Z0-9.-\_]*/apache/zookeeper/" $APACHE_DYN_FILE | head -n 1)
     if [ "x$ZK_ROOT_URL" != "x" ] ; then
         ZK_URL="$ZK_ROOT_URL/$ZK/$ZK.tar.gz"
     fi
