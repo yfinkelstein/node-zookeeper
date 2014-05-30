@@ -235,7 +235,7 @@ public:
         uv_poll_init(uv_default_loop(), &zk_io, fd);
         uv_poll_start(&zk_io, events, &zk_io_cb);
 
-        uv_timer_start(&zk_timer, &zk_timer_cb, delay, 0);
+        uv_timer_start(&zk_timer, &zk_timer_cb, delay, delay);
     }
 
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
@@ -274,9 +274,9 @@ public:
             // the watcher to fire in last_activity + 60, which is
             // guaranteed to be in the future, so "again" is positive:
             int64_t delay = timeout - now + 1;
-            uv_timer_start(w, &zk_timer_cb, delay, 0);
+            uv_timer_start(w, &zk_timer_cb, delay, delay);
 
-            LOG_DEBUG(("delaying ping timer by %lf", delay));
+            LOG_DEBUG(("delaying ping timer by %lu", delay));
         }
     }
 
