@@ -883,6 +883,8 @@ public:
         argv[2] = acl != NULL ? zkk->createAclObject(acl) : Object::Cast(*Null());
         argv[3] = stat != NULL ? zkk->createStatObject(stat) : Object::Cast(*Null());
 
+        deallocate_ACL_vector(acl);
+
         CALLBACK_EPILOG();
     }
 
