@@ -17,26 +17,26 @@ using namespace node;
 // @param c must be in [0-15]
 // @return '0'..'9','A'..'F'
 inline char fourBitsToHex(unsigned char c) {
-  return ((c <= 9) ? ('0' + c) : ('7' + c));
+    return ((c <= 9) ? ('0' + c) : ('7' + c));
 }
 
 // @param h must be one of '0'..'9','A'..'F'
 // @return [0-15]
 inline unsigned char hexToFourBits(char h) {
-  return (unsigned char) ((h <= '9') ? (h - '0') : (h - '7'));
+    return (unsigned char) ((h <= '9') ? (h - '0') : (h - '7'));
 }
 
 // in: c
 // out: hex[0],hex[1]
 static void ucharToHex(const unsigned char *c, char *hex) {
-  hex[0] = fourBitsToHex((*c & 0xf0)>>4);
-  hex[1] = fourBitsToHex((*c & 0x0f));
+    hex[0] = fourBitsToHex((*c & 0xf0)>>4);
+    hex[1] = fourBitsToHex((*c & 0x0f));
 }
 
 // in: hex[0],hex[1]
 // out: c
 static void hexToUchar(const char *hex, unsigned char *c) {
-  *c = (hexToFourBits(hex[0]) << 4) | hexToFourBits(hex[1]);
+    *c = (hexToFourBits(hex[0]) << 4) | hexToFourBits(hex[1]);
 }
 
 namespace zk {
@@ -69,9 +69,15 @@ DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
+struct completion_data {
+    Persistent<Function> *cb;
+    int32_t type;
+    void *data;
+};
+
 class ZooKeeper: public ObjectWrap {
 public:
-    static void Initialize(v8::Handle<v8::Object> target) {
+    static void Initialize (v8::Handle<v8::Object> target) {
         HandleScope scope;
         Local<FunctionTemplate> constructor_template = FunctionTemplate::New(New);
         constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
@@ -91,6 +97,9 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set", ASet);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_delete_", ADelete);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "s_delete_", Delete);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_get_acl", AGetAcl);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_DELETED_EVENT);
@@ -106,12 +115,26 @@ public:
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ADMIN);
         NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ALL);
 
-        //extern ZOOAPI struct Id ZOO_ANYONE_ID_UNSAFE;
-        //extern ZOOAPI struct Id ZOO_AUTH_IDS;
-
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
+        Local<Object> acl_open = Object::New();
+        acl_open->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
+        Local<Object> acl_read = Object::New();
+        acl_read->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
+        Local<Object> acl_creator = Object::New();
+        acl_creator->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(String::NewSymbol("scheme"), String::NewSymbol("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(String::NewSymbol("auth"), String::NewSymbol(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(String::NewSymbol("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_WRITE);
         NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_READ);
@@ -192,7 +215,7 @@ public:
 
     static Handle<Value> New (const Arguments& args) {
         HandleScope scope;
-        ZooKeeper *zk = new ZooKeeper ();
+        ZooKeeper *zk = new ZooKeeper();
 
         zk->Wrap(args.This());
         //zk->handle_.ClearWeak();
@@ -208,15 +231,15 @@ public:
 
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
         if (rc) {
-          LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
-          return;
+            LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
+            return;
         }
 
         if (fd == -1 ) {
-          if (uv_is_active((uv_handle_t*) &zk_io)) {
-            uv_poll_stop(&zk_io);
-          }
-          return;
+            if (uv_is_active((uv_handle_t*) &zk_io)) {
+                uv_poll_stop(&zk_io);
+            }
+            return;
         }
 
         int64_t delay = tv.tv_sec * 1000 + tv.tv_usec / 1000.;
@@ -229,7 +252,7 @@ public:
                    delay));
 
         if (uv_is_active ((uv_handle_t*) &zk_io)) {
-          uv_poll_stop(&zk_io);
+            uv_poll_stop(&zk_io);
         }
 
         uv_poll_init(uv_default_loop(), &zk_io, fd);
@@ -284,7 +307,7 @@ public:
         myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
-            LOG_ERROR (("zookeeper_init returned 0!"));
+            LOG_ERROR(("zookeeper_init returned 0!"));
             return false;
         }
         Ref();
@@ -298,19 +321,21 @@ public:
     static Handle<Value> Init (const Arguments& args) {
         HandleScope scope;
 
-        THROW_IF_NOT (args.Length() >= 1, "Must pass ZK init object");
-        THROW_IF_NOT (args[0]->IsObject(), "Init argument must be an object");
+        THROW_IF_NOT(args.Length() >= 1, "Must pass ZK init object");
+        THROW_IF_NOT(args[0]->IsObject(), "Init argument must be an object");
         Local<Object> arg = args[0]->ToObject();
 
         int32_t debug_level = arg->Get(String::NewSymbol("debug_level"))->ToInt32()->Value();
-        zoo_set_debug_level (static_cast<ZooLogLevel>(debug_level));
+        zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
+
         bool order = arg->Get(String::NewSymbol("host_order_deterministic"))->ToBoolean()->BooleanValue();
+        zoo_deterministic_conn_order(order); // enable deterministic order
 
-
-        zoo_deterministic_conn_order (order); // enable deterministic order
         String::AsciiValue _hostPort (arg->Get(String::NewSymbol("connect"))->ToString());
         int32_t session_timeout = arg->Get(String::NewSymbol("timeout"))->ToInt32()->Value();
-        if (session_timeout == 0) session_timeout = 20000;
+        if (session_timeout == 0) {
+            session_timeout = 20000;
+        }
 
         clientid_t local_client;
         ZERO_MEM (local_client);
@@ -331,39 +356,40 @@ public:
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
 
-        if (!zk->realInit(*_hostPort, session_timeout, &local_client))
+        if (!zk->realInit(*_hostPort, session_timeout, &local_client)) {
             return ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__);
-        else
+        } else {
             return args.This();
+        }
     }
 
-    static void main_watcher(zhandle_t *zzh, int type, int state, const char *path, void* context) {
+    static void main_watcher (zhandle_t *zzh, int type, int state, const char *path, void* context) {
         LOG_DEBUG(("main watcher event: type=%d, state=%d, path=%s", type, state, (path ? path: "null")));
         ZooKeeper *zk = static_cast<ZooKeeper *>(context);
 
         if (type == ZOO_SESSION_EVENT) {
             if (state == ZOO_CONNECTED_STATE) {
                 zk->myid = *(zoo_client_id(zzh));
-                zk->DoEmitPath (on_connected, path);
+                zk->DoEmitPath(on_connected, path);
             } else if (state == ZOO_CONNECTING_STATE) {
                 zk->DoEmitPath (on_connecting, path);
             } else if (state == ZOO_AUTH_FAILED_STATE) {
-                LOG_ERROR (("Authentication failure. Shutting down...\n"));
+                LOG_ERROR(("Authentication failure. Shutting down...\n"));
                 zk->realClose(ZOO_AUTH_FAILED_STATE);
             } else if (state == ZOO_EXPIRED_SESSION_STATE) {
-                LOG_ERROR (("Session expired. Shutting down...\n"));
+                LOG_ERROR(("Session expired. Shutting down...\n"));
                 zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             }
-        } else if (type == ZOO_CREATED_EVENT){
-            zk->DoEmitPath (on_event_created, path);
+        } else if (type == ZOO_CREATED_EVENT) {
+            zk->DoEmitPath(on_event_created, path);
         } else if (type == ZOO_DELETED_EVENT) {
-            zk->DoEmitPath (on_event_deleted, path);
+            zk->DoEmitPath(on_event_deleted, path);
         } else if (type == ZOO_CHANGED_EVENT) {
-            zk->DoEmitPath (on_event_changed, path);
+            zk->DoEmitPath(on_event_changed, path);
         } else if (type == ZOO_CHILD_EVENT) {
-            zk->DoEmitPath (on_event_child, path);
+            zk->DoEmitPath(on_event_child, path);
         } else if (type == ZOO_NOTWATCHING_EVENT) {
-            zk->DoEmitPath (on_event_notwatching, path);
+            zk->DoEmitPath(on_event_notwatching, path);
         } else {
             LOG_WARN(("Unknonwn watcher event type %s",type));
         }
@@ -373,15 +399,15 @@ public:
         HandleScope scope;
         char idbuff [128] = {0};
         sprintf(idbuff, "%llx", _LL_CAST_ id);
-        return scope.Close (String::NewSymbol (idbuff));
+        return scope.Close(String::NewSymbol(idbuff));
     }
 
-    static void StringToId(v8::Local<v8::Value> s, int64_t *id) {
+    static void StringToId (v8::Local<v8::Value> s, int64_t *id) {
         String::AsciiValue a(s->ToString());
         sscanf(*a, "%llx", _LLP_CAST_ id);
     }
 
-    static Local<String> PasswordToHexString(const char *p) {
+    static Local<String> PasswordToHexString (const char *p) {
         HandleScope scope;
         char buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2 + 1], *b = buff;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
@@ -389,10 +415,10 @@ public:
             b += 2;
         }
         buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2] = '\0';
-        return scope.Close (String::NewSymbol(buff));
+        return scope.Close(String::NewSymbol(buff));
     }
 
-    static void HexStringToPassword(v8::Local<v8::Value> s, char *p) {
+    static void HexStringToPassword (v8::Local<v8::Value> s, char *p) {
         String::AsciiValue a(s->ToString());
         char *hex = *a;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
@@ -407,10 +433,10 @@ public:
 
         if (path != 0) {
             str = String::New(path);
-            LOG_DEBUG (("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
+            LOG_DEBUG(("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
         } else {
             str = Local<Value>::New(Undefined());
-            LOG_DEBUG (("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
+            LOG_DEBUG(("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
         }
 
         this->DoEmit(event_name, str);
@@ -435,17 +461,18 @@ public:
         assert(emit_v->IsFunction());
         Local<Function> emit_fn = emit_v.As<Function>();
         
-
         TryCatch tc;
+
         emit_fn->Call(handle_, 3, argv);
+
         if(tc.HasCaught()) {
-          FatalException(tc);
+            FatalException(tc);
         }
     }
 
 #define CALLBACK_PROLOG(args) \
         HandleScope scope; \
-        Persistent<Function> *callback = cb_unwrap((void*)data); \
+        Persistent<Function> *callback = cb_unwrap((void*)cb); \
         assert (callback); \
         Local<Value> lv = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
         /*(*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK);*/ \
@@ -525,51 +552,73 @@ public:
         }
 */
 
-    static void string_completion (int rc, const char *value, const void *data) {
-        if (value == 0) value="null";
-        LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, data));
-        CALLBACK_PROLOG (3);
-        argv[2] = String::New (value);
+    static void string_completion (int rc, const char *value, const void *cb) {
+        if (value == 0) {
+            value = "null";
+        }
+
+        LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, cb));
+
+        CALLBACK_PROLOG(3);
+        argv[2] = String::New(value);
         CALLBACK_EPILOG();
     }
 
     static Handle<Value> ACreate (const Arguments& args) {
-        A_METHOD_PROLOG (4);
+        A_METHOD_PROLOG(4);
+
         String::Utf8Value _path (args[0]->ToString());
         uint32_t flags = args[2]->ToUint32()->Uint32Value();
-        if( Buffer::HasInstance(args[1]) ) { // buffer
+
+        if (Buffer::HasInstance(args[1])) { // buffer
             Local<Object> _data = args[1]->ToObject();
-            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
             String::Utf8Value _data (args[1]->ToString());
-            METHOD_EPILOG (zoo_acreate (zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         }
     }
 
     static void void_completion (int rc, const void *data) {
-        CALLBACK_PROLOG (2);
+        struct completion_data *d = (struct completion_data *) data;
+        void *cb = (void *) d->cb;
+
+        if (d->type == ZOO_SETACL_OP) {
+            deallocate_ACL_vector((struct ACL_vector *)d->data);
+            free(d->data);
+        }
+
+        CALLBACK_PROLOG(2);
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         CALLBACK_EPILOG();
+
+        free(d);
     }
 
     static Handle<Value> ADelete (const Arguments& args) {
-        A_METHOD_PROLOG (3);
+        A_METHOD_PROLOG(3);
         String::Utf8Value _path (args[0]->ToString());
         uint32_t version = args[1]->ToUint32()->Uint32Value();
-        METHOD_EPILOG (zoo_adelete(zk->zhandle, *_path, version, &void_completion, cb));
+
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_DELETE_OP;
+        data->data = NULL;
+
+        METHOD_EPILOG (zoo_adelete(zk->zhandle, *_path, version, &void_completion, data));
     }
 
     Local<Object> createStatObject (const struct Stat *stat) {
         HandleScope scope;
         Local<Object> o = Object::New();
-        o->Set(String::NewSymbol("czxid"), Number::New (stat->czxid), ReadOnly);
-        o->Set(String::NewSymbol("mzxid"), Number::New (stat->mzxid), ReadOnly);
-        o->Set(String::NewSymbol("pzxid"), Number::New (stat->pzxid), ReadOnly);
-        o->Set(String::NewSymbol("dataLength"), Integer::New (stat->dataLength), ReadOnly);
-        o->Set(String::NewSymbol("numChildren"), Integer::New (stat->numChildren), ReadOnly);
-        o->Set(String::NewSymbol("version"), Integer::New (stat->version), ReadOnly);
-        o->Set(String::NewSymbol("cversion"), Integer::New (stat->cversion), ReadOnly);
-        o->Set(String::NewSymbol("aversion"), Integer::New (stat->aversion), ReadOnly);
+        o->Set(String::NewSymbol("czxid"), Number::New(stat->czxid), ReadOnly);
+        o->Set(String::NewSymbol("mzxid"), Number::New(stat->mzxid), ReadOnly);
+        o->Set(String::NewSymbol("pzxid"), Number::New(stat->pzxid), ReadOnly);
+        o->Set(String::NewSymbol("dataLength"), Integer::New(stat->dataLength), ReadOnly);
+        o->Set(String::NewSymbol("numChildren"), Integer::New(stat->numChildren), ReadOnly);
+        o->Set(String::NewSymbol("version"), Integer::New(stat->version), ReadOnly);
+        o->Set(String::NewSymbol("cversion"), Integer::New(stat->cversion), ReadOnly);
+        o->Set(String::NewSymbol("aversion"), Integer::New(stat->aversion), ReadOnly);
         o->Set(String::NewSymbol("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
         o->Set(String::NewSymbol("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
         o->Set(String::NewSymbol("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
@@ -577,87 +626,102 @@ public:
         return scope.Close(o);
     }
 
-    static void stat_completion (int rc, const struct Stat *stat, const void *data) {
-        CALLBACK_PROLOG (3);
+    static void stat_completion (int rc, const struct Stat *stat, const void *cb) {
+        CALLBACK_PROLOG(3);
+
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
         argv[2] = rc == ZOK ? zkk->createStatObject (stat) : Object::Cast(*Null());
+
         CALLBACK_EPILOG();
     }
 
     static Handle<Value> AExists (const Arguments& args) {
-        A_METHOD_PROLOG (3);
+        A_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
-        METHOD_EPILOG (zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
+
+        METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
 
     static Handle<Value> AWExists (const Arguments& args) {
-        AW_METHOD_PROLOG (3);
+        AW_METHOD_PROLOG(3);
         String::Utf8Value _path (args[0]->ToString());
-        METHOD_EPILOG (zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
+        METHOD_EPILOG(zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
     }
 
-    static void data_completion (int rc, const char *value, int value_len,
-                                 const struct Stat *stat, const void *data) {
-        CALLBACK_PROLOG (4);
+    static void data_completion (int rc, const char *value, int value_len, const struct Stat *stat, const void *cb) {
+        CALLBACK_PROLOG(4);
+
         LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
+
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
-        if( value != 0 ) {
+
+        if (value != 0) {
             Buffer* b = Buffer::New(value_len);
             memcpy(BufferData(b), value, value_len);
             argv[3] = Local<Value>::New(b->handle_);
         } else {
             argv[3] = String::Cast(*Null());
         }
+
         CALLBACK_EPILOG();
     }
 
     static Handle<Value> Delete (const Arguments& args) {
-	  HandleScope scope;
-	  ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());	
-	  assert(zk);
-	  String::Utf8Value _path (args[0]->ToString());
-	  uint32_t version = args[1]->ToUint32()->Uint32Value();
-	  int ret= zoo_delete(zk->zhandle, *_path, version);
-	  return scope.Close(Int32::New(ret));
+        HandleScope scope;
+
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());   
+        assert(zk);
+        String::Utf8Value _path (args[0]->ToString());
+        uint32_t version = args[1]->ToUint32()->Uint32Value();
+  
+        int ret = zoo_delete(zk->zhandle, *_path, version);
+        return scope.Close(Int32::New(ret));
     }
 
     static Handle<Value> AGet (const Arguments& args) {
-        A_METHOD_PROLOG (3);
+        A_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
-        METHOD_EPILOG (zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
+
+        METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
     }
 
     static void watcher_fn (zhandle_t *zh, int type, int state, const char *path, void *watcherCtx) {
-        WATCHER_PROLOG (4);
+        WATCHER_PROLOG(4);
         WATCHER_CALLBACK_EPILOG();
     }
 
     static Handle<Value> AWGet (const Arguments& args) {
-        AW_METHOD_PROLOG (3);
+        AW_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
-        METHOD_EPILOG (zoo_awget(zk->zhandle, *_path,
-                &watcher_fn, cbw, &data_completion, cb));
+
+        METHOD_EPILOG(zoo_awget(zk->zhandle, *_path, &watcher_fn, cbw, &data_completion, cb));
     }
 
     static Handle<Value> ASet (const Arguments& args) {
-        A_METHOD_PROLOG (4);
+        A_METHOD_PROLOG(4);
+
         String::Utf8Value _path (args[0]->ToString());
         uint32_t version = args[2]->ToUint32()->Uint32Value();
-        if( Buffer::HasInstance(args[1]) ) { // buffer
+
+        if (Buffer::HasInstance(args[1])) { // buffer
             Local<Object> _data = args[1]->ToObject();
-            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
+            METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
             String::Utf8Value _data(args[1]->ToString());
-            METHOD_EPILOG (zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
+            METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
         }
     }
 
-    static void strings_completion (int rc,
-            const struct String_vector *strings, const void *data) {
-        CALLBACK_PROLOG (3);
+    static void strings_completion (int rc, const struct String_vector *strings, const void *cb) {
+        CALLBACK_PROLOG(3);
+
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+
         if (strings != NULL) {
             Local<Array> ar = Array::New((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
@@ -667,26 +731,32 @@ public:
         } else {
             argv[2] = Object::Cast(*Null());
         }
+
         CALLBACK_EPILOG();
     }
 
     static Handle<Value> AGetChildren (const Arguments& args) {
-        A_METHOD_PROLOG (3);
+        A_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
-        METHOD_EPILOG (zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
+
+        METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
 
     static Handle<Value> AWGetChildren (const Arguments& args) {
-        AW_METHOD_PROLOG (3);
+        AW_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
-        METHOD_EPILOG (zoo_awget_children(zk->zhandle, *_path, &watcher_fn, cbw, &strings_completion, cb));
+
+        METHOD_EPILOG(zoo_awget_children(zk->zhandle, *_path, &watcher_fn, cbw, &strings_completion, cb));
     }
 
-    static void strings_stat_completion (int rc, const struct String_vector *strings,
-            const struct Stat *stat, const void *data) {
-        CALLBACK_PROLOG (4);
+    static void strings_stat_completion (int rc, const struct String_vector *strings, const struct Stat *stat, const void *cb) {
+        CALLBACK_PROLOG(4);
+
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+
         if (strings != NULL) {
             Local<Array> ar = Array::New((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
@@ -696,72 +766,175 @@ public:
         } else {
             argv[2] = Object::Cast(*Null());
         }
+
         argv[3] = (stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null()));
+
         CALLBACK_EPILOG();
     }
 
     static Handle<Value> AGetChildren2 (const Arguments& args) {
-        A_METHOD_PROLOG (3);
+        A_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
-        METHOD_EPILOG (zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
+
+        METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }
 
     static Handle<Value> AWGetChildren2 (const Arguments& args) {
-        AW_METHOD_PROLOG (3);
+        AW_METHOD_PROLOG(3);
+
         String::Utf8Value _path (args[0]->ToString());
-        METHOD_EPILOG (zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
+
+        METHOD_EPILOG(zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
+    }
+
+    static Handle<Value> AGetAcl (const Arguments& args) {
+        A_METHOD_PROLOG(2);
+
+        String::Utf8Value _path (args[0]->ToString());
+
+        METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
+    }
+
+    static Handle<Value> ASetAcl (const Arguments& args) {
+        A_METHOD_PROLOG(4);
+
+        String::Utf8Value _path (args[0]->ToString());
+        uint32_t _version = args[1]->ToUint32()->Uint32Value();
+        Local<Array> arr = Local<Array>::Cast(args[2]);
+
+        struct ACL_vector *aclv = zk->createAclVector(arr);
+
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_SETACL_OP;
+        data->data = aclv;
+
+        METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, data));
+    }
+
+    static Handle<Value> AddAuth (const Arguments& args) {
+        A_METHOD_PROLOG(3);
+
+        String::Utf8Value _scheme (args[0]->ToString());
+        String::Utf8Value _auth (args[1]->ToString());
+
+        struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
+        data->cb = cb;
+        data->type = ZOO_SETAUTH_OP;
+        data->data = NULL;
+
+        METHOD_EPILOG(zoo_add_auth(zk->zhandle, *_scheme, *_auth, _auth.length(), void_completion, data));
+    }
+
+    Local<Object> createAclObject (struct ACL_vector *aclv) {
+        HandleScope scope;
+
+        Local<Array> arr = Array::New(aclv->count);
+
+        for (int i = 0; i < aclv->count; i++) {
+            struct ACL *acl = &aclv->data[i];
+
+            Local<Object> obj = Object::New();
+            obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms), ReadOnly);
+            obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme), ReadOnly);
+            obj->Set(String::NewSymbol("auth"), String::New(acl->id.id), ReadOnly);
+
+            arr->Set(i, obj);
+        }
+
+        return scope.Close(arr);
+    };
+
+    struct ACL_vector *createAclVector (Handle<Array> arr) {
+        HandleScope scope;
+
+        struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
+        aclv->count = arr->Length();
+        aclv->data = (struct ACL *) calloc(aclv->count, sizeof(struct ACL));
+
+        for (int i = 0, l = aclv->count; i < l; i++) {
+            Local<Object> obj = Local<Object>::Cast(arr->Get(i));
+
+            String::Utf8Value _scheme (obj->Get(String::NewSymbol("scheme"))->ToString());
+            String::Utf8Value _auth (obj->Get(String::NewSymbol("auth"))->ToString());
+            uint32_t _perms = obj->Get(String::NewSymbol("perms"))->ToUint32()->Uint32Value();
+
+            struct Id id;
+            struct ACL *acl = &aclv->data[i];
+
+            id.scheme = strdup(*_scheme);
+            id.id = strdup(*_auth);
+
+            acl->perms = _perms;
+            acl->id = id;
+        }
+
+        scope.Close(Undefined());
+
+        return aclv;
+    }
+
+    static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *cb) {
+        LOG_DEBUG(("rc=%d, rc_string=%s, acl_vector=%lp", rc, zerror(rc), acl));
+        CALLBACK_PROLOG(4);
+
+        argv[2] = acl != NULL ? zkk->createAclObject(acl) : Object::Cast(*Null());
+        argv[3] = stat != NULL ? zkk->createStatObject(stat) : Object::Cast(*Null());
+
+        deallocate_ACL_vector(acl);
+
+        CALLBACK_EPILOG();
     }
 
     static Handle<Value> StatePropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
-        //Debug::DebugBreak();
         assert(info.This().IsEmpty() == false);
         assert(info.This()->IsObject());
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
         assert(zk->handle_ == info.This());
-        return Integer::New (zk->zhandle != 0? zoo_state (zk->zhandle) : 0);
-        //return Integer::New(-10);
+        return Integer::New (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0);
     }
 
     static Handle<Value> ClientidPropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return zk->idAsString(zk->zhandle != 0 ?
-                zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id);
+        return zk->idAsString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id);
     }
     static Handle<Value> ClientPasswordPropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return zk->PasswordToHexString(zk->zhandle != 0 ?
-                zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd);
+        return zk->PasswordToHexString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd);
     }
 
     static Handle<Value> SessionTimeoutPropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return Integer::New (zk->zhandle != 0? zoo_recv_timeout (zk->zhandle) : -1);
+        return Integer::New (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1);
     }
 
     static Handle<Value> IsUnrecoverablePropertyGetter (Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return Integer::New (zk->zhandle != 0? is_unrecoverable (zk->zhandle) : 0);
+        return Integer::New (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0);
     }
 
     void realClose (int code) {
-        if (is_closed)
+        if (is_closed) {
             return;
+        }
 
         is_closed = true;
 
-        if (uv_is_active ((uv_handle_t*) &zk_timer))
+        if (uv_is_active ((uv_handle_t*) &zk_timer)) {
             uv_timer_stop(&zk_timer);
+        }
 
         if (zhandle) {
             LOG_DEBUG(("call zookeeper_close(%lp)", zhandle));

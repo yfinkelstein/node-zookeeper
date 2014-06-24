@@ -45,6 +45,10 @@ zk.connect(function (err) {
 * a_set ( path, data, version, stat_cb )
 * a_delete`_` ( path, version, void_cb )
     * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
+* a_set_acl ( path, version, acl, void_cb )
+* a_get_acl ( path, acl_cb )
+* add_auth ( scheme, auth )
+
 
 *The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
 
@@ -62,6 +66,7 @@ zk.connect(function (err) {
  * child2_cb : function ( rc, error, children, stat )
  * void_cb : function ( rc, error )
  * watch_cb : function ( type, state, path )
+ * acl_cb : function (rc, error, acl, stat)
 
 ### Input Parameters ###
 
@@ -71,6 +76,9 @@ zk.connect(function (err) {
  * flags : int32
  * version : int32
  * watch : boolean
+ * scheme : authorisation scheme (digest, auth)
+ * auth : authorisation credentials (username:password)
+ * acl : acls list (same as output parameter, look below) - read only
 
 ### Output Parameters ###
 
@@ -90,17 +98,74 @@ zk.connect(function (err) {
      * int cversion            // child version
      * int aversion            // acl version
      * string ephemeralOwner   // owner session id if ephemeral, 0 otw
-     * int dataLength          //length of the data in the node
-     * int numChildren         //number of children of this node
+     * int dataLength          // length of the data in the node
+     * int numChildren         // number of children of this node
      * long pzxid              // last modified children
+ * acl is an array of acls objects, single acl object has following key
+     * int perms               // permisions
+     * string scheme           // authorisation scheme (digest, auth)
+     * string auth               // authorisation credentials (username:hashed_password)
 
 
 Session state machine is well described in Zookeeper docs, i.e.
 ![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
 
+### ACL and authorisation ###
+It's supported now, library comes with 3 default ACL levels defined (comes from ZK):
+* ZooKeeper.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
+* ZooKeeper.ZOO_READ_ACL_UNSAFE - anyone can read
+* ZooKeeper.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
+
+If you don't want to use predefined ACLs you can define your own (the ACL object is described above), for limiting permisions you can use:
+* ZooKeeper.ZOO_PERM_READ - read permission
+* ZooKeeper.ZOO_PERM_WRITE - write permission
+* ZooKeeper.ZOO_PERM_CREATE - create permission
+* ZooKeeper.ZOO_PERM_DELETE - delete permission
+* ZooKeeper.ZOO_PERM_ADMIN - admin permission
+* ZooKeeper.ZOO_PERM_ALL - all of the above
+
+Example:
+```javascript
+var ZooKeeper = require("zookeeper");
+
+zk = new ZooKeeper({
+    connect: "localhost:2181",
+    timeout: 2000,
+});
+
+var key = "/acl-test";
+
+zk.connect(function (err, client) {
+    if (err) throw err;
+    console.log("zoolocker: Connected to Zookeeper, id=%s", zk.client_id);
+
+    client.add_auth("digest", "username:password", function (rc, error) {
+        console.log("ADD_AUTH", rc, error);
+
+        client.a_create(key, "", {
+            version: -1
+        }, function (rc, error, path) {
+            console.log("CREATE", rc, error);
+
+            client.a_set_acl(key, -1, [ZooKeeper.ZOO_CREATOR_ALL_ACL, ZooKeeper.ZOO_OPEN_ACL_UNSAFE, {
+                perms: ZooKeeper.ZOO_PERM_WRITE,
+                scheme: "world",
+                auth: "anyone",
+            }], function (rc, error) {
+                console.log("SET_ACL", rc, error);
+
+                client.a_get_acl(key, function (rc, error, acl, stat) {
+                    console.log("GET_ACL", rc, error, acl);
+                });
+            });
+        });
+    });
+});
+```
+For more details please refer to ZooKeeper docs.
+
 # Limitations
-* no zookeeper ACL support
-* no support for authentication
+* passing acl to a_create is not possible
 * tests are not standalone, must run a zk server (easiest if you run at localhost:2181, if not you must pass the connect string to the tests)
 * only asynchronous ZK methods are implemented. Hey, this is node.js ... no sync calls are allowed
 
@@ -229,3 +294,4 @@ with awesome contributions from:
 - Ryan Phillips (rphillips)
 - David Trejo (DTrejo)
 - Mark Cavage (mcavage)
+- Jakub Lekstan (kuebk)
