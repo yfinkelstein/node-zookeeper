@@ -60,6 +60,11 @@ if [ "$PLATFORM" != "SunOS" ]; then
             exit 1
     fi
     cd $ROOT
+
+    # At this point, the binaries have been built and copied
+    # into the --prefix directory, so the temp files from the build
+    # can be cleaned up
+    rm -Rf $BUILD_TMP
 else
     if [ `uname -v` =~ "joyent_.*" ] ; then
         pkgin list | grep zookeeper-client-$ZK_VERSION
