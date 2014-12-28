@@ -296,4 +296,3 @@ with awesome contributions from:
 - Mark Cavage (mcavage)
 - Jakub Lekstan (kuebk)
 - Matt Lavin (mdlavin)
-- 
