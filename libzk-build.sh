@@ -46,21 +46,21 @@ if [ "$PLATFORM" != "SunOS" ]; then
 
     tar -zxf $ZK_FILE
 
-    if [ "$PLATFORM" = "Darwin" ]; then
-        OS_X_VERSION=`sw_vers -productVersion`
-        if [ $OS_X_VERSION = "10.10" ]; then
-            PATCH_URL=https://issues.apache.org/jira/secure/attachment/12673212/ZOOKEEPER-2049.noprefix.trunk.patch
-            PATCH_FILE=/$BUILD_TMP/trunk.patch
-            echo "Downloading yosemite patch"
-            curl --silent --output $PATCH_FILE $PATCH_URL || wget $PATCH_URL -O $PATCH_FILE
-            if [ $? != 0 ] ; then
-                echo "Unable to download yosemite patch"
-                exit 1
-            fi
-            echo "Applying patch"
-            (cd $ZK && patch -p0 < $PATCH_FILE)
-        fi
+    PATCH_URL=https://issues.apache.org/jira/secure/attachment/12673210/ZOOKEEPER-2049.noprefix.branch-3.4.patch
+    PATCH_FILE=/$BUILD_TMP/branch-3.4.patch
+    echo "Downloading yosemite patch"
+    curl --silent --output $PATCH_FILE $PATCH_URL || wget $PATCH_URL -O $PATCH_FILE
+    if [ $? != 0 ] ; then
+        echo "Unable to download yosemite patch"
+        exit 1
     fi
+    echo "Applying patch"
+    (cd $ZK && patch -p0 < $PATCH_FILE)
+    if [ $? != 0 ] ; then
+            echo "Unable to patch the ZooKeeper source"
+            exit 1
+    fi
+
 
     cd $ZK/src/c && \
     ./configure \
