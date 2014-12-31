@@ -230,15 +230,17 @@ public:
         last_activity = uv_now(uv_default_loop());
 
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
+
+        if (uv_is_active((uv_handle_t*) &zk_io)) {
+            uv_poll_stop(&zk_io);
+        }
+
         if (rc) {
             LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
             return;
         }
 
         if (fd == -1 ) {
-            if (uv_is_active((uv_handle_t*) &zk_io)) {
-                uv_poll_stop(&zk_io);
-            }
             return;
         }
 
@@ -250,10 +252,6 @@ public:
                    events & UV_READABLE ? "true" : "false",
                    events & UV_WRITABLE ? "true" : "false",
                    delay));
-
-        if (uv_is_active ((uv_handle_t*) &zk_io)) {
-            uv_poll_stop(&zk_io);
-        }
 
         uv_poll_init(uv_default_loop(), &zk_io, fd);
         uv_poll_start(&zk_io, events, &zk_io_cb);
