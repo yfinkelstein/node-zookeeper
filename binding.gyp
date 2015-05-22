@@ -35,7 +35,7 @@
         'action_name': 'build_zk_client_lib',
         'inputs': [''],
         'outputs': [''],
-        'action': ['sh', 'libzk-build.sh']
+        'action': ['sh', 'scripts/build.sh']
       }]
     },
     {
@@ -46,7 +46,7 @@
         "action_name": "symlink",
         "inputs": ["<@(PRODUCT_DIR)/zookeeper.node"],
         "outputs": ["<(module_root_dir)/build/zookeeper.node"],
-        "action": ["sh", "libzk-symlink.sh", "<@(_inputs)"]
+        "action": ["sh", "scripts/symlink.sh", "<@(_inputs)"]
       }]
     }
   ],
