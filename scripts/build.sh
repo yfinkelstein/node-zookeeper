@@ -13,11 +13,8 @@ if [ "$PLATFORM" != "SunOS" ]; then
         --without-syncapi \
         --enable-static \
         --disable-shared \
-        --with-pic \
-        --libdir=$BUILD/lib \
-        --prefix=$BUILD && \
-        make && \
-        make install
+        --with-pic && \
+        make
     if [ $? != 0 ] ; then
             echo "Unable to build zookeeper library"
             exit 1

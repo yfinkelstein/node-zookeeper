@@ -13,7 +13,11 @@ if [ $? != 0 ] ; then
     exit 1
 fi
 
-tar zxf $ZK_FILE $ZK/src/c
+rm -rf $ZK_DEPS
+
+tar zxf  $ZK_FILE $ZK/src/c
+
+mv $ZK $ZK_DEPS
 
 cd $ZK_DEPS
 
