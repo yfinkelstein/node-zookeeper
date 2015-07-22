@@ -11,6 +11,7 @@ using namespace v8;
 using namespace node;
 #undef THREADED
 #include <zookeeper.h>
+#include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
 
@@ -78,9 +79,9 @@ struct completion_data {
 class ZooKeeper: public ObjectWrap {
 public:
     static void Initialize (v8::Handle<v8::Object> target) {
-        HandleScope scope;
         Local<FunctionTemplate> constructor_template = FunctionTemplate::New(New);
         constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
+        NanScope();
         constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "init", Init);
@@ -214,12 +215,12 @@ public:
     }
 
     static Handle<Value> New (const Arguments& args) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = new ZooKeeper();
 
         zk->Wrap(args.This());
         //zk->handle_.ClearWeak();
-        return args.This();
+        NanReturnThis();
     }
 
     void yield () {
@@ -317,7 +318,7 @@ public:
         return true;
     }
     static Handle<Value> Init (const Arguments& args) {
-        HandleScope scope;
+        NanScope();
 
         THROW_IF_NOT(args.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(args[0]->IsObject(), "Init argument must be an object");
@@ -355,9 +356,9 @@ public:
         assert(zk);
 
         if (!zk->realInit(*_hostPort, session_timeout, &local_client)) {
-            return ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__);
+            NanReturnValue(ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__));
         } else {
-            return args.This();
+            NanReturnThis();
         }
     }
 
@@ -394,10 +395,10 @@ public:
     }
 
     static Local<String> idAsString (int64_t id) {
-        HandleScope scope;
+        NanEscapableScope();
         char idbuff [128] = {0};
         sprintf(idbuff, "%llx", _LL_CAST_ id);
-        return scope.Close(String::NewSymbol(idbuff));
+        return NanEscapeScope(String::NewSymbol(idbuff));
     }
 
     static void StringToId (v8::Local<v8::Value> s, int64_t *id) {
@@ -406,14 +407,14 @@ public:
     }
 
     static Local<String> PasswordToHexString (const char *p) {
-        HandleScope scope;
+        NanEscapableScope();
         char buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2 + 1], *b = buff;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
             ucharToHex((unsigned char *) (p + i), b);
             b += 2;
         }
         buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2] = '\0';
-        return scope.Close(String::NewSymbol(buff));
+        return NanEscapeScope(String::NewSymbol(buff));
     }
 
     static void HexStringToPassword (v8::Local<v8::Value> s, char *p) {
@@ -426,7 +427,7 @@ public:
     }
 
     void DoEmitPath (Handle<String> event_name, const char* path = NULL) {
-        HandleScope scope;
+        NanScope();
         Local<Value> str;
 
         if (path != 0) {
@@ -441,14 +442,14 @@ public:
     }
 
     void DoEmitClose (Handle<String> event_name, int code) {
-        HandleScope scope;
+        NanScope();
         Local<Value> v8code = Number::New(code);
 
         this->DoEmit(event_name, v8code);
     }
 
     void DoEmit (Handle<String> event_name, Handle<Value> data) {
-        HandleScope scope;
+        NanScope();
 
         Local<Value> argv[3];
         argv[0] = Local<Value>::New(event_name);
@@ -469,7 +470,7 @@ public:
     }
 
 #define CALLBACK_PROLOG(args) \
-        HandleScope scope; \
+        NanScope(); \
         Persistent<Function> *callback = cb_unwrap((void*)cb); \
         assert (callback); \
         Local<Value> lv = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
@@ -498,7 +499,7 @@ public:
         };
 
 #define A_METHOD_PROLOG(nargs) \
-        HandleScope scope; \
+        NanScope();                                                       \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This()); \
         assert(zk);\
         THROW_IF_NOT (args.Length() >= nargs, "expected "#nargs" arguments") \
@@ -508,11 +509,11 @@ public:
 
 #define METHOD_EPILOG(call) \
         int ret = (call); \
-        return scope.Close(Int32::New(ret))
+        NanReturnValue(Int32::New(ret))
 
 #define WATCHER_PROLOG(args) \
         if (zoo_state(zh) == ZOO_EXPIRED_SESSION_STATE) { return; } \
-        HandleScope scope; \
+        NanScope();                                                    \
         Persistent<Function> *callback = cb_unwrap((void*)watcherCtx); \
         assert (callback); \
         Local<Value> lv_zk = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
@@ -532,7 +533,7 @@ public:
         if (!lv_hb.IsEmpty()) argv[3] = lv_hb
 
 #define AW_METHOD_PROLOG(nargs) \
-        HandleScope scope; \
+        NanScope();                                                       \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This()); \
         assert(zk);\
         THROW_IF_NOT (args.Length() >= nargs, "expected at least "#nargs" arguments") \
@@ -607,7 +608,7 @@ public:
     }
 
     Local<Object> createStatObject (const struct Stat *stat) {
-        HandleScope scope;
+        NanEscapableScope();
         Local<Object> o = Object::New();
         o->Set(String::NewSymbol("czxid"), Number::New(stat->czxid), ReadOnly);
         o->Set(String::NewSymbol("mzxid"), Number::New(stat->mzxid), ReadOnly);
@@ -621,7 +622,7 @@ public:
         o->Set(String::NewSymbol("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
         o->Set(String::NewSymbol("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
         o->Set(String::NewSymbol("createdInThisSession"), Boolean::New(myid.client_id == stat->ephemeralOwner), ReadOnly);
-        return scope.Close(o);
+        return NanEscapeScope(o);
     }
 
     static void stat_completion (int rc, const struct Stat *stat, const void *cb) {
@@ -656,9 +657,7 @@ public:
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
 
         if (value != 0) {
-            Buffer* b = Buffer::New(value_len);
-            memcpy(BufferData(b), value, value_len);
-            argv[3] = Local<Value>::New(b->handle_);
+            argv[3] = BufferNew(value, value_len);
         } else {
             argv[3] = String::Cast(*Null());
         }
@@ -667,7 +666,7 @@ public:
     }
 
     static Handle<Value> Delete (const Arguments& args) {
-        HandleScope scope;
+        NanScope();
 
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());   
         assert(zk);
@@ -675,7 +674,7 @@ public:
         uint32_t version = args[1]->ToUint32()->Uint32Value();
   
         int ret = zoo_delete(zk->zhandle, *_path, version);
-        return scope.Close(Int32::New(ret));
+        NanReturnValue(Int32::New(ret));
     }
 
     static Handle<Value> AGet (const Arguments& args) {
@@ -827,7 +826,7 @@ public:
     }
 
     Local<Object> createAclObject (struct ACL_vector *aclv) {
-        HandleScope scope;
+        NanEscapableScope();
 
         Local<Array> arr = Array::New(aclv->count);
 
@@ -842,11 +841,11 @@ public:
             arr->Set(i, obj);
         }
 
-        return scope.Close(arr);
+        return NanEscapeScope(arr);
     };
 
     struct ACL_vector *createAclVector (Handle<Array> arr) {
-        HandleScope scope;
+        NanScope();
 
         struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
         aclv->count = arr->Length();
@@ -869,7 +868,6 @@ public:
             acl->id = id;
         }
 
-        scope.Close(Undefined());
 
         return aclv;
     }
@@ -887,40 +885,40 @@ public:
     }
 
     static Handle<Value> StatePropertyGetter (Local<String> property, const AccessorInfo& info) {
-        HandleScope scope;
+        NanScope();
         assert(info.This().IsEmpty() == false);
         assert(info.This()->IsObject());
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
         assert(zk->handle_ == info.This());
-        return Integer::New (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0);
+        NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0));
     }
 
     static Handle<Value> ClientidPropertyGetter (Local<String> property, const AccessorInfo& info) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return zk->idAsString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id);
+        NanReturnValue(zk->idAsString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id));
     }
     static Handle<Value> ClientPasswordPropertyGetter (Local<String> property, const AccessorInfo& info) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return zk->PasswordToHexString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd);
+        NanReturnValue(zk->PasswordToHexString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd));
     }
 
     static Handle<Value> SessionTimeoutPropertyGetter (Local<String> property, const AccessorInfo& info) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return Integer::New (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1);
+        NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1));
     }
 
     static Handle<Value> IsUnrecoverablePropertyGetter (Local<String> property, const AccessorInfo& info) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        return Integer::New (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0);
+        NanReturnValue(Integer::New (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0));
     }
 
     void realClose (int code) {
@@ -950,11 +948,11 @@ public:
     }
 
     static Handle<Value> Close (const Arguments& args) {
-        HandleScope scope;
+        NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         zk->realClose(0);
-        return args.This();
+        NanReturnThis();
     };
 
     virtual ~ZooKeeper() {

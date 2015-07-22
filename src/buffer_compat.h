@@ -6,7 +6,7 @@
 #include <node_version.h>
 #include <v8.h>
 
-#if NODE_MINOR_VERSION < 3
+#if NODE_MAJOR_VERSION < 11 && NODE_MINOR_VERSION < 3
 
 char *BufferData(node::Buffer *b) {
     return b->data();
@@ -25,20 +25,25 @@ size_t BufferLength(v8::Local<v8::Object> buf_obj) {
     return buf->length();
 }
 
-#else // NODE_VERSION
+Local<Object> BufferNew(const char* bytes, int length) {
+    Buffer* b = Buffer::New(value_len);
+    memcpy(BufferData(b), value, value_len);
+    return Local<Object>::New(b->handle_);
+}
 
-char *BufferData(node::Buffer *b) {
-    return node::Buffer::Data(b->handle_);
+#else // NODE_VERSION
+#include "nan.h"
+
+Local<Object> BufferNew(const char* bytes, int length) {
+    return NanNewBufferHandle(bytes, length);
 }
-size_t BufferLength(node::Buffer *b) {
-    return node::Buffer::Length(b->handle_);
-}
+
 char *BufferData(v8::Local<v8::Object> buf_obj) {
-    v8::HandleScope scope;
+    NanScope();
     return node::Buffer::Data(buf_obj);
 }
 size_t BufferLength(v8::Local<v8::Object> buf_obj) {
-    v8::HandleScope scope;
+    NanScope();
     return node::Buffer::Length(buf_obj);
 }
 
