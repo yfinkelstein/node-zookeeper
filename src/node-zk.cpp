@@ -219,7 +219,7 @@ public:
         target->Set(String::NewSymbol("ZooKeeper"), constructor_template->GetFunction());
     }
 
-    static Handle<Value> New (const Arguments& args) {
+    static NAN_METHOD(New) {
         NanScope();
         ZooKeeper *zk = new ZooKeeper();
 
@@ -322,7 +322,8 @@ public:
         yield();
         return true;
     }
-    static Handle<Value> Init (const Arguments& args) {
+
+    static NAN_METHOD(Init) {
         NanScope();
 
         THROW_IF_NOT(args.Length() >= 1, "Must pass ZK init object");
@@ -568,7 +569,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> ACreate (const Arguments& args) {
+    static NAN_METHOD(ACreate) {
         A_METHOD_PROLOG(4);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -599,7 +600,7 @@ public:
         free(d);
     }
 
-    static Handle<Value> ADelete (const Arguments& args) {
+    static NAN_METHOD(ADelete) {
         A_METHOD_PROLOG(3);
         String::Utf8Value _path (args[0]->ToString());
         uint32_t version = args[1]->ToUint32()->Uint32Value();
@@ -639,7 +640,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> AExists (const Arguments& args) {
+    static NAN_METHOD(AExists) {
         A_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -648,7 +649,7 @@ public:
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
 
-    static Handle<Value> AWExists (const Arguments& args) {
+    static NAN_METHOD(AWExists) {
         AW_METHOD_PROLOG(3);
         String::Utf8Value _path (args[0]->ToString());
         METHOD_EPILOG(zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
@@ -670,7 +671,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> Delete (const Arguments& args) {
+    static NAN_METHOD(Delete) {
         NanScope();
 
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());   
@@ -682,7 +683,7 @@ public:
         NanReturnValue(Int32::New(ret));
     }
 
-    static Handle<Value> AGet (const Arguments& args) {
+    static NAN_METHOD(AGet) {
         A_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -696,7 +697,7 @@ public:
         WATCHER_CALLBACK_EPILOG();
     }
 
-    static Handle<Value> AWGet (const Arguments& args) {
+    static NAN_METHOD(AWGet) {
         AW_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -704,7 +705,7 @@ public:
         METHOD_EPILOG(zoo_awget(zk->zhandle, *_path, &watcher_fn, cbw, &data_completion, cb));
     }
 
-    static Handle<Value> ASet (const Arguments& args) {
+    static NAN_METHOD(ASet) {
         A_METHOD_PROLOG(4);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -737,7 +738,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> AGetChildren (const Arguments& args) {
+    static NAN_METHOD(AGetChildren) {
         A_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -746,7 +747,7 @@ public:
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
 
-    static Handle<Value> AWGetChildren (const Arguments& args) {
+    static NAN_METHOD(AWGetChildren) {
         AW_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -774,7 +775,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> AGetChildren2 (const Arguments& args) {
+    static NAN_METHOD(AGetChildren2) {
         A_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -783,7 +784,7 @@ public:
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }
 
-    static Handle<Value> AWGetChildren2 (const Arguments& args) {
+    static NAN_METHOD(AWGetChildren2) {
         AW_METHOD_PROLOG(3);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -791,7 +792,7 @@ public:
         METHOD_EPILOG(zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
     }
 
-    static Handle<Value> AGetAcl (const Arguments& args) {
+    static NAN_METHOD(AGetAcl) {
         A_METHOD_PROLOG(2);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -799,7 +800,7 @@ public:
         METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
     }
 
-    static Handle<Value> ASetAcl (const Arguments& args) {
+    static NAN_METHOD(ASetAcl) {
         A_METHOD_PROLOG(4);
 
         String::Utf8Value _path (args[0]->ToString());
@@ -816,7 +817,7 @@ public:
         METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, data));
     }
 
-    static Handle<Value> AddAuth (const Arguments& args) {
+    static NAN_METHOD(AddAuth) {
         A_METHOD_PROLOG(3);
 
         String::Utf8Value _scheme (args[0]->ToString());
@@ -889,39 +890,40 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static Handle<Value> StatePropertyGetter (Local<String> property, const AccessorInfo& info) {
+    static NAN_PROPERTY_GETTER(StatePropertyGetter) {
         NanScope();
-        assert(info.This().IsEmpty() == false);
-        assert(info.This()->IsObject());
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        assert(args.This().IsEmpty() == false);
+        assert(args.This()->IsObject());
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        assert(zk->handle_ == info.This());
+        assert(zk->handle_ == args.This());
         NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0));
     }
 
-    static Handle<Value> ClientidPropertyGetter (Local<String> property, const AccessorInfo& info) {
+    static NAN_PROPERTY_GETTER(ClientidPropertyGetter) {
         NanScope();
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         NanReturnValue(zk->idAsString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->client_id : zk->myid.client_id));
     }
-    static Handle<Value> ClientPasswordPropertyGetter (Local<String> property, const AccessorInfo& info) {
+
+    static NAN_PROPERTY_GETTER(ClientPasswordPropertyGetter) {
         NanScope();
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         NanReturnValue(zk->PasswordToHexString(zk->zhandle != 0 ? zoo_client_id(zk->zhandle)->passwd : zk->myid.passwd));
     }
 
-    static Handle<Value> SessionTimeoutPropertyGetter (Local<String> property, const AccessorInfo& info) {
+    static NAN_PROPERTY_GETTER(SessionTimeoutPropertyGetter) {
         NanScope();
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1));
     }
 
-    static Handle<Value> IsUnrecoverablePropertyGetter (Local<String> property, const AccessorInfo& info) {
+    static NAN_PROPERTY_GETTER(IsUnrecoverablePropertyGetter) {
         NanScope();
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         NanReturnValue(Integer::New (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0));
     }
@@ -952,7 +954,7 @@ public:
         }
     }
 
-    static Handle<Value> Close (const Arguments& args) {
+    static NAN_METHOD(Close) {
         NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
