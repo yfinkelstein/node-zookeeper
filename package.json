@@ -21,6 +21,7 @@
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
     "async": "~0.2.6"
+    ,"nan": "^1.8.4"
     ,"underscore": "*"
   }
   ,"devDependencies": {
