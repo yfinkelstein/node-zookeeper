@@ -54,19 +54,23 @@ namespace zk {
       return; \
     }
 
-#define DEFINE_STRING(ev,str) static Persistent<String> ev = NODE_PSYMBOL(str)
-DEFINE_STRING (on_closed,            "close");
-DEFINE_STRING (on_connected,         "connect");
-DEFINE_STRING (on_connecting,        "connecting");
-DEFINE_STRING (on_event_created,     "created");
-DEFINE_STRING (on_event_deleted,     "deleted");
-DEFINE_STRING (on_event_changed,     "changed");
-DEFINE_STRING (on_event_child,       "child");
-DEFINE_STRING (on_event_notwatching, "notwatching");
+#define DECLARE_STRING(ev) static Persistent<String> ev; 
+#define INITIALIZE_STRING(ev, str) NanAssignPersistent(ev, NanNew<String>(str)); 
 
-#define DEFINE_SYMBOL(ev)   DEFINE_STRING(ev, #ev)
-DEFINE_SYMBOL (HIDDEN_PROP_ZK);
-DEFINE_SYMBOL (HIDDEN_PROP_HANDBACK);
+DECLARE_STRING (on_closed);
+DECLARE_STRING (on_connected);
+DECLARE_STRING (on_connecting);
+DECLARE_STRING (on_event_created);
+DECLARE_STRING (on_event_deleted);
+DECLARE_STRING (on_event_changed);
+DECLARE_STRING (on_event_child);
+DECLARE_STRING (on_event_notwatching);
+
+#define DECLARE_SYMBOL(ev)   DECLARE_STRING(ev)
+#define INITIALIZE_SYMBOL(ev) INITIALIZE_STRING(ev, #ev)
+  
+DECLARE_SYMBOL (HIDDEN_PROP_ZK);
+DECLARE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
@@ -79,9 +83,10 @@ struct completion_data {
 class ZooKeeper: public ObjectWrap {
 public:
     static void Initialize (v8::Handle<v8::Object> target) {
-        Local<FunctionTemplate> constructor_template = FunctionTemplate::New(New);
-        constructor_template->SetClassName(String::NewSymbol("ZooKeeper"));
         NanScope();
+
+        Local<FunctionTemplate> constructor_template = NanNew<FunctionTemplate>(New);
+        constructor_template->SetClassName(NanNew("ZooKeeper"));
         constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
 
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "init", Init);
@@ -118,10 +123,10 @@ public:
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
         Local<Object> acl_open = Object::New();
-        acl_open->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_open->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_open->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(String::NewSymbol("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(NanNew("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(NanNew("scheme"), NanNew("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->Set(NanNew("auth"), NanNew("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(NanNew("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
         Local<Object> acl_read = Object::New();
@@ -983,6 +988,18 @@ private:
 } // namespace "zk"
 
 extern "C" void init(Handle<Object> target) {
+  INITIALIZE_STRING (zk::on_closed,            "close");
+  INITIALIZE_STRING (zk::on_connected,         "connect");
+  INITIALIZE_STRING (zk::on_connecting,        "connecting");
+  INITIALIZE_STRING (zk::on_event_created,     "created");
+  INITIALIZE_STRING (zk::on_event_deleted,     "deleted");
+  INITIALIZE_STRING (zk::on_event_changed,     "changed");
+  INITIALIZE_STRING (zk::on_event_child,       "child");
+  INITIALIZE_STRING (zk::on_event_notwatching, "notwatching");
+
+  INITIALIZE_SYMBOL (zk::HIDDEN_PROP_ZK);
+  INITIALIZE_SYMBOL (zk::HIDDEN_PROP_HANDBACK);
+
   zk::ZooKeeper::Initialize(target);
 }
 
