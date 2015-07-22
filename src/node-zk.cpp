@@ -107,20 +107,6 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CREATED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_DELETED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CHANGED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CHILD_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_SESSION_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_NOTWATCHING_EVENT);
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_READ);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_WRITE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_CREATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_DELETE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ADMIN);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_PERM_ALL);
-
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
         Local<Object> acl_open = Object::New();
         acl_open->Set(NanNew("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
@@ -142,73 +128,6 @@ public:
         acl_creator->Set(String::NewSymbol("auth"), String::NewSymbol(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         constructor_template->Set(String::NewSymbol("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
-        NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_WRITE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOOKEEPER_READ);
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_EPHEMERAL);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_SEQUENCE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_EXPIRED_SESSION_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_AUTH_FAILED_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CONNECTING_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_ASSOCIATING_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CONNECTED_STATE);
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CREATED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_DELETED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CHANGED_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CHILD_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_SESSION_EVENT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_NOTWATCHING_EVENT);
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_LOG_LEVEL_ERROR);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_LOG_LEVEL_WARN);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_LOG_LEVEL_INFO);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_LOG_LEVEL_DEBUG);
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_EXPIRED_SESSION_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_AUTH_FAILED_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CONNECTING_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_ASSOCIATING_STATE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOO_CONNECTED_STATE);
-
-
-        NODE_DEFINE_CONSTANT(constructor_template, ZOK);
-
-        /** System and server-side errors.
-         * This is never thrown by the server, it shouldn't be used other than
-         * to indicate a range. Specifically error codes greater than this
-         * value, but lesser than {@link #ZAPIERROR}, are system errors. */
-        NODE_DEFINE_CONSTANT(constructor_template, ZSYSTEMERROR);
-        NODE_DEFINE_CONSTANT(constructor_template, ZRUNTIMEINCONSISTENCY);
-        NODE_DEFINE_CONSTANT(constructor_template, ZDATAINCONSISTENCY);
-        NODE_DEFINE_CONSTANT(constructor_template, ZCONNECTIONLOSS);
-        NODE_DEFINE_CONSTANT(constructor_template, ZMARSHALLINGERROR);
-        NODE_DEFINE_CONSTANT(constructor_template, ZUNIMPLEMENTED);
-        NODE_DEFINE_CONSTANT(constructor_template, ZOPERATIONTIMEOUT);
-        NODE_DEFINE_CONSTANT(constructor_template, ZBADARGUMENTS);
-        NODE_DEFINE_CONSTANT(constructor_template, ZINVALIDSTATE);
-
-        /** API errors.
-         * This is never thrown by the server, it shouldn't be used other than
-         * to indicate a range. Specifically error codes greater than this
-         * value are API errors (while values less than this indicate a
-         * {@link #ZSYSTEMERROR}).
-         */
-        NODE_DEFINE_CONSTANT(constructor_template, ZAPIERROR);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNONODE);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNOAUTH);
-        NODE_DEFINE_CONSTANT(constructor_template, ZBADVERSION);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNOCHILDRENFOREPHEMERALS);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNODEEXISTS);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNOTEMPTY);
-        NODE_DEFINE_CONSTANT(constructor_template, ZSESSIONEXPIRED);
-        NODE_DEFINE_CONSTANT(constructor_template, ZINVALIDCALLBACK);
-        NODE_DEFINE_CONSTANT(constructor_template, ZINVALIDACL);
-        NODE_DEFINE_CONSTANT(constructor_template, ZAUTHFAILED);
-        NODE_DEFINE_CONSTANT(constructor_template, ZCLOSING);
-        NODE_DEFINE_CONSTANT(constructor_template, ZNOTHING);
-        NODE_DEFINE_CONSTANT(constructor_template, ZSESSIONMOVED);
-
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
@@ -216,7 +135,91 @@ public:
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
-        target->Set(String::NewSymbol("ZooKeeper"), constructor_template->GetFunction());
+        Local<Function> constructor = constructor_template->GetFunction();
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CHANGED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CHILD_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_SESSION_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_NOTWATCHING_EVENT);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_READ);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_WRITE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_CREATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_DELETE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_ADMIN);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERM_ALL);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOOKEEPER_WRITE);
+        NODE_DEFINE_CONSTANT(constructor, ZOOKEEPER_READ);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_EPHEMERAL);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_SEQUENCE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_EXPIRED_SESSION_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_AUTH_FAILED_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CONNECTING_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_ASSOCIATING_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CONNECTED_STATE);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CHANGED_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CHILD_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_SESSION_EVENT);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_NOTWATCHING_EVENT);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_LOG_LEVEL_ERROR);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_LOG_LEVEL_WARN);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_LOG_LEVEL_INFO);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_LOG_LEVEL_DEBUG);
+
+        NODE_DEFINE_CONSTANT(constructor, ZOO_EXPIRED_SESSION_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_AUTH_FAILED_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CONNECTING_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_ASSOCIATING_STATE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CONNECTED_STATE);
+
+
+        NODE_DEFINE_CONSTANT(constructor, ZOK);
+
+        /** System and server-side errors.
+         * This is never thrown by the server, it shouldn't be used other than
+         * to indicate a range. Specifically error codes greater than this
+         * value, but lesser than {@link #ZAPIERROR}, are system errors. */
+        NODE_DEFINE_CONSTANT(constructor, ZSYSTEMERROR);
+        NODE_DEFINE_CONSTANT(constructor, ZRUNTIMEINCONSISTENCY);
+        NODE_DEFINE_CONSTANT(constructor, ZDATAINCONSISTENCY);
+        NODE_DEFINE_CONSTANT(constructor, ZCONNECTIONLOSS);
+        NODE_DEFINE_CONSTANT(constructor, ZMARSHALLINGERROR);
+        NODE_DEFINE_CONSTANT(constructor, ZUNIMPLEMENTED);
+        NODE_DEFINE_CONSTANT(constructor, ZOPERATIONTIMEOUT);
+        NODE_DEFINE_CONSTANT(constructor, ZBADARGUMENTS);
+        NODE_DEFINE_CONSTANT(constructor, ZINVALIDSTATE);
+
+        /** API errors.
+         * This is never thrown by the server, it shouldn't be used other than
+         * to indicate a range. Specifically error codes greater than this
+         * value are API errors (while values less than this indicate a
+         * {@link #ZSYSTEMERROR}).
+         */
+        NODE_DEFINE_CONSTANT(constructor, ZAPIERROR);
+        NODE_DEFINE_CONSTANT(constructor, ZNONODE);
+        NODE_DEFINE_CONSTANT(constructor, ZNOAUTH);
+        NODE_DEFINE_CONSTANT(constructor, ZBADVERSION);
+        NODE_DEFINE_CONSTANT(constructor, ZNOCHILDRENFOREPHEMERALS);
+        NODE_DEFINE_CONSTANT(constructor, ZNODEEXISTS);
+        NODE_DEFINE_CONSTANT(constructor, ZNOTEMPTY);
+        NODE_DEFINE_CONSTANT(constructor, ZSESSIONEXPIRED);
+        NODE_DEFINE_CONSTANT(constructor, ZINVALIDCALLBACK);
+        NODE_DEFINE_CONSTANT(constructor, ZINVALIDACL);
+        NODE_DEFINE_CONSTANT(constructor, ZAUTHFAILED);
+        NODE_DEFINE_CONSTANT(constructor, ZCLOSING);
+        NODE_DEFINE_CONSTANT(constructor, ZNOTHING);
+        NODE_DEFINE_CONSTANT(constructor, ZSESSIONMOVED);
+
+
+        target->Set(String::NewSymbol("ZooKeeper"), constructor);
     }
 
     static NAN_METHOD(New) {
