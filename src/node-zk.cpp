@@ -814,11 +814,11 @@ public:
     }
 
     static Handle<Value> ASync (const Arguments& args) {
-      A_METHOD_PROLOG(2);
+        A_METHOD_PROLOG(2);
 
-      String::Utf8Value _path (args[0]->ToString());
+        String::Utf8Value _path (args[0]->ToString());
 
-      METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
+        METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
     }
 
     static Handle<Value> AddAuth (const Arguments& args) {
