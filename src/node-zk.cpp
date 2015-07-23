@@ -46,11 +46,11 @@ namespace zk {
 #define _LLP_CAST_ (long long *)
 
 #define THROW_IF_NOT(condition, text) if (!(condition)) { \
-      return ThrowException(Exception::Error (String::New(text))); \
+      return ThrowException(Exception::Error (NanNew<String>(text))); \
     }
 
 #define THROW_IF_NOT_R(condition, text) if (!(condition)) { \
-      ThrowException(Exception::Error (String::New(text))); \
+      ThrowException(Exception::Error (NanNew<String>(text))); \
       return; \
     }
 
@@ -108,32 +108,32 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
-        Local<Object> acl_open = Object::New();
-        acl_open->Set(NanNew("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Local<Object> acl_open = NanNew<Object>();
+        acl_open->Set(NanNew("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         acl_open->Set(NanNew("scheme"), NanNew("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         acl_open->Set(NanNew("auth"), NanNew("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         constructor_template->Set(NanNew("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
-        Local<Object> acl_read = Object::New();
-        acl_read->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_read->Set(String::NewSymbol("scheme"), String::NewSymbol("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_read->Set(String::NewSymbol("auth"), String::NewSymbol("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(String::NewSymbol("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Local<Object> acl_read = NanNew<Object>();
+        acl_read->Set(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(NanNew<String>("scheme"), NanNew<String>("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->Set(NanNew<String>("auth"), NanNew<String>("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(NanNew<String>("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
-        Local<Object> acl_creator = Object::New();
-        acl_creator->Set(String::NewSymbol("perms"), Integer::New(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_creator->Set(String::NewSymbol("scheme"), String::NewSymbol("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_creator->Set(String::NewSymbol("auth"), String::NewSymbol(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(String::NewSymbol("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Local<Object> acl_creator = NanNew<Object>();
+        acl_creator->Set(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(NanNew<String>("scheme"), NanNew<String>("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->Set(NanNew<String>("auth"), NanNew<String>(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor_template->Set(NanNew<String>("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(String::NewSymbol("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
         Local<Function> constructor = constructor_template->GetFunction();
 
@@ -219,7 +219,7 @@ public:
         NODE_DEFINE_CONSTANT(constructor, ZSESSIONMOVED);
 
 
-        target->Set(String::NewSymbol("ZooKeeper"), constructor);
+        target->Set(NanNew<String>("ZooKeeper"), constructor);
     }
 
     static NAN_METHOD(New) {
@@ -333,22 +333,22 @@ public:
         THROW_IF_NOT(args[0]->IsObject(), "Init argument must be an object");
         Local<Object> arg = args[0]->ToObject();
 
-        int32_t debug_level = arg->Get(String::NewSymbol("debug_level"))->ToInt32()->Value();
+        int32_t debug_level = arg->Get(NanNew<String>("debug_level"))->ToInt32()->Value();
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
-        bool order = arg->Get(String::NewSymbol("host_order_deterministic"))->ToBoolean()->BooleanValue();
+        bool order = arg->Get(NanNew<String>("host_order_deterministic"))->ToBoolean()->BooleanValue();
         zoo_deterministic_conn_order(order); // enable deterministic order
 
-        String::AsciiValue _hostPort (arg->Get(String::NewSymbol("connect"))->ToString());
-        int32_t session_timeout = arg->Get(String::NewSymbol("timeout"))->ToInt32()->Value();
+        String::AsciiValue _hostPort (arg->Get(NanNew<String>("connect"))->ToString());
+        int32_t session_timeout = arg->Get(NanNew<String>("timeout"))->ToInt32()->Value();
         if (session_timeout == 0) {
             session_timeout = 20000;
         }
 
         clientid_t local_client;
         ZERO_MEM (local_client);
-        v8::Local<v8::Value> v8v_client_id = arg->Get(String::NewSymbol("client_id"));
-        v8::Local<v8::Value> v8v_client_password = arg->Get(String::NewSymbol("client_password"));
+        v8::Local<v8::Value> v8v_client_id = arg->Get(NanNew<String>("client_id"));
+        v8::Local<v8::Value> v8v_client_password = arg->Get(NanNew<String>("client_password"));
         bool id_and_password_defined = (!v8v_client_id->IsUndefined() && !v8v_client_password->IsUndefined());
         bool id_and_password_undefined = (v8v_client_id->IsUndefined() && v8v_client_password->IsUndefined());
         THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined), 
@@ -407,7 +407,7 @@ public:
         NanEscapableScope();
         char idbuff [128] = {0};
         sprintf(idbuff, "%llx", _LL_CAST_ id);
-        return NanEscapeScope(String::NewSymbol(idbuff));
+        return NanEscapeScope(NanNew<String>(idbuff));
     }
 
     static void StringToId (v8::Local<v8::Value> s, int64_t *id) {
@@ -423,7 +423,7 @@ public:
             b += 2;
         }
         buff[ZOOKEEPER_PASSWORD_BYTE_COUNT * 2] = '\0';
-        return NanEscapeScope(String::NewSymbol(buff));
+        return NanEscapeScope(NanNew<String>(buff));
     }
 
     static void HexStringToPassword (v8::Local<v8::Value> s, char *p) {
@@ -440,10 +440,10 @@ public:
         Local<Value> str;
 
         if (path != 0) {
-            str = String::New(path);
+            str = NanNew<String>(path);
             LOG_DEBUG(("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
         } else {
-            str = Local<Value>::New(Undefined());
+            str = NanUndefined();
             LOG_DEBUG(("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
         }
 
@@ -452,7 +452,7 @@ public:
 
     void DoEmitClose (Handle<String> event_name, int code) {
         NanScope();
-        Local<Value> v8code = Number::New(code);
+        Local<Value> v8code = NanNew<Number>(code);
 
         this->DoEmit(event_name, v8code);
     }
@@ -461,11 +461,11 @@ public:
         NanScope();
 
         Local<Value> argv[3];
-        argv[0] = Local<Value>::New(event_name);
-        argv[1] = Local<Value>::New(handle_);
-        argv[2] = Local<Value>::New(data);
+        argv[0] = NanNew<String>(event_name);
+        argv[1] = NanNew<Object>(handle_);
+        argv[2] = NanNew<Value>(data);
 
-        Local<Value> emit_v = handle_->Get(String::NewSymbol("emit"));
+        Local<Value> emit_v = handle_->Get(NanNew<String>("emit"));
         assert(emit_v->IsFunction());
         Local<Function> emit_fn = emit_v.As<Function>();
         
@@ -489,8 +489,8 @@ public:
         assert(zkk);\
         assert(zkk->handle_ == zk_handle); \
         Local<Value> argv[args]; \
-        argv[0] = Int32::New(rc); \
-        argv[1] = String::NewSymbol (zerror(rc))
+        argv[0] = NanNew<Int32>(rc);           \
+        argv[1] = NanNew<String>(zerror(rc))
 
 #define CALLBACK_EPILOG() \
         TryCatch try_catch; \
@@ -518,7 +518,7 @@ public:
 
 #define METHOD_EPILOG(call) \
         int ret = (call); \
-        NanReturnValue(Int32::New(ret))
+        NanReturnValue(NanNew<Int32>(ret))
 
 #define WATCHER_PROLOG(args) \
         if (zoo_state(zh) == ZOO_EXPIRED_SESSION_STATE) { return; } \
@@ -533,12 +533,12 @@ public:
         assert(zk->handle_ == zk_handle); \
         assert(zk->zhandle == zh); \
         Local<Value> argv[args]; \
-        argv[0] = Integer::New(type); \
-        argv[1] = Integer::New(state); \
-        argv[2] = String::New(path); \
+        argv[0] = NanNew<Integer>(type);   \
+        argv[1] = NanNew<Integer>(state);  \
+        argv[2] = NanNew<String>(path);                                 \
         Local<Value> lv_hb = (*callback)->GetHiddenValue(HIDDEN_PROP_HANDBACK); \
         /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); */ \
-        argv[3] = Local<Value>::New(Undefined ()); \
+        argv[3] = NanUndefined();    \
         if (!lv_hb.IsEmpty()) argv[3] = lv_hb
 
 #define AW_METHOD_PROLOG(nargs) \
@@ -568,7 +568,7 @@ public:
         LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, cb));
 
         CALLBACK_PROLOG(3);
-        argv[2] = String::New(value);
+        argv[2] = NanNew<String>(value);
         CALLBACK_EPILOG();
     }
 
@@ -618,19 +618,19 @@ public:
 
     Local<Object> createStatObject (const struct Stat *stat) {
         NanEscapableScope();
-        Local<Object> o = Object::New();
-        o->Set(String::NewSymbol("czxid"), Number::New(stat->czxid), ReadOnly);
-        o->Set(String::NewSymbol("mzxid"), Number::New(stat->mzxid), ReadOnly);
-        o->Set(String::NewSymbol("pzxid"), Number::New(stat->pzxid), ReadOnly);
-        o->Set(String::NewSymbol("dataLength"), Integer::New(stat->dataLength), ReadOnly);
-        o->Set(String::NewSymbol("numChildren"), Integer::New(stat->numChildren), ReadOnly);
-        o->Set(String::NewSymbol("version"), Integer::New(stat->version), ReadOnly);
-        o->Set(String::NewSymbol("cversion"), Integer::New(stat->cversion), ReadOnly);
-        o->Set(String::NewSymbol("aversion"), Integer::New(stat->aversion), ReadOnly);
-        o->Set(String::NewSymbol("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
-        o->Set(String::NewSymbol("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
-        o->Set(String::NewSymbol("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
-        o->Set(String::NewSymbol("createdInThisSession"), Boolean::New(myid.client_id == stat->ephemeralOwner), ReadOnly);
+        Local<Object> o = NanNew<Object>();
+        o->Set(NanNew<String>("czxid"), NanNew<Number>(stat->czxid), ReadOnly);
+        o->Set(NanNew<String>("mzxid"), NanNew<Number>(stat->mzxid), ReadOnly);
+        o->Set(NanNew<String>("pzxid"), NanNew<Number>(stat->pzxid), ReadOnly);
+        o->Set(NanNew<String>("dataLength"), NanNew<Integer>(stat->dataLength), ReadOnly);
+        o->Set(NanNew<String>("numChildren"), NanNew<Integer>(stat->numChildren), ReadOnly);
+        o->Set(NanNew<String>("version"), NanNew<Integer>(stat->version), ReadOnly);
+        o->Set(NanNew<String>("cversion"), NanNew<Integer>(stat->cversion), ReadOnly);
+        o->Set(NanNew<String>("aversion"), NanNew<Integer>(stat->aversion), ReadOnly);
+        o->Set(NanNew<String>("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
+        o->Set(NanNew<String>("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
+        o->Set(NanNew<String>("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
+        o->Set(NanNew<String>("createdInThisSession"), NanNew<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
         return NanEscapeScope(o);
     }
 
@@ -683,7 +683,7 @@ public:
         uint32_t version = args[1]->ToUint32()->Uint32Value();
   
         int ret = zoo_delete(zk->zhandle, *_path, version);
-        NanReturnValue(Int32::New(ret));
+        NanReturnValue(NanNew<Int32>(ret));
     }
 
     static NAN_METHOD(AGet) {
@@ -729,9 +729,9 @@ public:
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
 
         if (strings != NULL) {
-            Local<Array> ar = Array::New((uint32_t)strings->count);
+            Local<Array> ar = NanNew<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(i, String::New(strings->data[i]));
+                ar->Set(i, NanNew<String>(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -764,9 +764,9 @@ public:
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
 
         if (strings != NULL) {
-            Local<Array> ar = Array::New((uint32_t)strings->count);
+            Local<Array> ar = NanNew<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(i, String::New(strings->data[i]));
+                ar->Set(i, NanNew<String>(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -837,15 +837,15 @@ public:
     Local<Object> createAclObject (struct ACL_vector *aclv) {
         NanEscapableScope();
 
-        Local<Array> arr = Array::New(aclv->count);
+        Local<Array> arr = NanNew<Array>(aclv->count);
 
         for (int i = 0; i < aclv->count; i++) {
             struct ACL *acl = &aclv->data[i];
 
-            Local<Object> obj = Object::New();
-            obj->Set(String::NewSymbol("perms"), Integer::New(acl->perms), ReadOnly);
-            obj->Set(String::NewSymbol("scheme"), String::New(acl->id.scheme), ReadOnly);
-            obj->Set(String::NewSymbol("auth"), String::New(acl->id.id), ReadOnly);
+            Local<Object> obj = NanNew<Object>();
+            obj->Set(NanNew<String>("perms"), NanNew<Integer>(acl->perms), ReadOnly);
+            obj->Set(NanNew<String>("scheme"), NanNew<String>(acl->id.scheme), ReadOnly);
+            obj->Set(NanNew<String>("auth"), NanNew<String>(acl->id.id), ReadOnly);
 
             arr->Set(i, obj);
         }
@@ -863,9 +863,9 @@ public:
         for (int i = 0, l = aclv->count; i < l; i++) {
             Local<Object> obj = Local<Object>::Cast(arr->Get(i));
 
-            String::Utf8Value _scheme (obj->Get(String::NewSymbol("scheme"))->ToString());
-            String::Utf8Value _auth (obj->Get(String::NewSymbol("auth"))->ToString());
-            uint32_t _perms = obj->Get(String::NewSymbol("perms"))->ToUint32()->Uint32Value();
+            String::Utf8Value _scheme (obj->Get(NanNew<String>("scheme"))->ToString());
+            String::Utf8Value _auth (obj->Get(NanNew<String>("auth"))->ToString());
+            uint32_t _perms = obj->Get(NanNew<String>("perms"))->ToUint32()->Uint32Value();
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
@@ -900,7 +900,7 @@ public:
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
         assert(zk->handle_ == args.This());
-        NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0));
+        NanReturnValue(NanNew<Integer> (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0));
     }
 
     static NAN_PROPERTY_GETTER(ClientidPropertyGetter) {
@@ -921,14 +921,14 @@ public:
         NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        NanReturnValue(Integer::New (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1));
+        NanReturnValue(NanNew<Integer> (zk->zhandle != 0 ? zoo_recv_timeout(zk->zhandle) : -1));
     }
 
     static NAN_PROPERTY_GETTER(IsUnrecoverablePropertyGetter) {
         NanScope();
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        NanReturnValue(Integer::New (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0));
+        NanReturnValue(NanNew<Integer> (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0));
     }
 
     void realClose (int code) {
