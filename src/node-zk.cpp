@@ -75,7 +75,7 @@ DECLARE_SYMBOL (HIDDEN_PROP_HANDBACK);
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
 struct completion_data {
-    Persistent<Function> *cb;
+    NanCallback *cb;
     int32_t type;
     void *data;
 };
@@ -482,9 +482,9 @@ public:
 
 #define CALLBACK_PROLOG(args) \
         NanScope(); \
-        Persistent<Function> *callback = cb_unwrap((void*)cb); \
+        NanCallback *callback = (NanCallback*)(cb); \
         assert (callback); \
-        Local<Value> lv = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
+        Local<Value> lv = callback->GetFunction()->GetHiddenValue(NanNew(HIDDEN_PROP_ZK)); \
         /*(*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK);*/ \
         Local<Object> zk_handle = Local<Object>::Cast(lv); \
         ZooKeeper *zkk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
@@ -496,15 +496,15 @@ public:
 
 #define CALLBACK_EPILOG() \
         TryCatch try_catch; \
-        (*callback)->Call(v8::Context::GetCurrent()->Global(), sizeof(argv)/sizeof(argv[0]), argv); \
+        callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
         if (try_catch.HasCaught()) { \
             FatalException(try_catch); \
         }; \
-        cb_destroy (callback)
+        delete callback
 
 #define WATCHER_CALLBACK_EPILOG() \
         TryCatch try_catch; \
-        (*callback)->Call(v8::Context::GetCurrent()->Global(), sizeof(argv)/sizeof(argv[0]), argv); \
+        callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
         if (try_catch.HasCaught()) { \
             FatalException(try_catch); \
         };
@@ -515,8 +515,8 @@ public:
         assert(zk);\
         THROW_IF_NOT (args.Length() >= nargs, "expected "#nargs" arguments") \
         assert (args[nargs-1]->IsFunction()); \
-        Persistent<Function> *cb = cb_persist (args[nargs-1]); \
-        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk)); \
+        NanCallback *cb = new NanCallback(args[nargs-1].As<Function>()); \
+        cb->GetFunction()->SetHiddenValue(NanNew(HIDDEN_PROP_ZK), NanObjectWrapHandle(zk)); \
 
 #define METHOD_EPILOG(call) \
         int ret = (call); \
@@ -525,9 +525,9 @@ public:
 #define WATCHER_PROLOG(args) \
         if (zoo_state(zh) == ZOO_EXPIRED_SESSION_STATE) { return; } \
         NanScope();                                                    \
-        Persistent<Function> *callback = cb_unwrap((void*)watcherCtx); \
+        NanCallback *callback = (NanCallback*)(watcherCtx);            \
         assert (callback); \
-        Local<Value> lv_zk = (*callback)->GetHiddenValue(HIDDEN_PROP_ZK); \
+        Local<Value> lv_zk = callback->GetFunction()->GetHiddenValue(NanNew(HIDDEN_PROP_ZK)); \
         /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK); */ \
         Local<Object> zk_handle = Local<Object>::Cast(lv_zk); \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
@@ -538,7 +538,7 @@ public:
         argv[0] = NanNew<Integer>(type);   \
         argv[1] = NanNew<Integer>(state);  \
         argv[2] = NanNew<String>(path);                                 \
-        Local<Value> lv_hb = (*callback)->GetHiddenValue(HIDDEN_PROP_HANDBACK); \
+        Local<Value> lv_hb = callback->GetFunction()->GetHiddenValue(NanNew(HIDDEN_PROP_HANDBACK)); \
         /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); */ \
         argv[3] = NanUndefined();    \
         if (!lv_hb.IsEmpty()) argv[3] = lv_hb
@@ -549,12 +549,12 @@ public:
         assert(zk);\
         THROW_IF_NOT (args.Length() >= nargs, "expected at least "#nargs" arguments") \
         assert (args[nargs-1]->IsFunction()); \
-        Persistent<Function> *cb = cb_persist (args[nargs-1]); \
-        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk)); \
+        NanCallback *cb = new NanCallback (args[nargs-1].As<Function>()); \
+        cb->GetFunction()->SetHiddenValue(NanNew(HIDDEN_PROP_ZK), NanObjectWrapHandle(zk)); \
         \
         assert (args[nargs-2]->IsFunction()); \
-        Persistent<Function> *cbw = cb_persist (args[nargs-2]); \
-        (*cbw)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk))
+        NanCallback *cbw = new NanCallback (args[nargs-2].As<Function>()); \
+        cbw->GetFunction()->SetHiddenValue(NanNew(HIDDEN_PROP_ZK), NanObjectWrapHandle(zk))
 
 /*
         if (args.Length() > nargs) { \
