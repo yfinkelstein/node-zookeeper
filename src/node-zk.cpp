@@ -46,11 +46,11 @@ namespace zk {
 #define _LLP_CAST_ (long long *)
 
 #define THROW_IF_NOT(condition, text) if (!(condition)) { \
-      return ThrowException(Exception::Error (NanNew<String>(text))); \
+      return NanThrowError(text); \
     }
 
 #define THROW_IF_NOT_R(condition, text) if (!(condition)) { \
-      ThrowException(Exception::Error (NanNew<String>(text))); \
+      NanThrowError(text); \
       return; \
     }
 
