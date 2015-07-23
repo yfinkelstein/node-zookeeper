@@ -467,13 +467,13 @@ public:
         argv[1] = NanObjectWrapHandle(this);
         argv[2] = NanNew<Value>(data);
 
-        Local<Value> emit_v = handle_->Get(NanNew<String>("emit"));
+        Local<Value> emit_v = NanObjectWrapHandle(this)->Get(NanNew<String>("emit"));
         assert(emit_v->IsFunction());
         Local<Function> emit_fn = emit_v.As<Function>();
         
         TryCatch tc;
 
-        emit_fn->Call(handle_, 3, argv);
+        emit_fn->Call(NanObjectWrapHandle(this), 3, argv);
 
         if(tc.HasCaught()) {
             FatalException(tc);
@@ -489,7 +489,7 @@ public:
         Local<Object> zk_handle = Local<Object>::Cast(lv); \
         ZooKeeper *zkk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
         assert(zkk);\
-        assert(zkk->handle_ == zk_handle); \
+        assert(NanObjectWrapHandle(zkk) == zk_handle);  \
         Local<Value> argv[args]; \
         argv[0] = NanNew<Int32>(rc);           \
         argv[1] = NanNew<String>(zerror(rc))
@@ -516,7 +516,7 @@ public:
         THROW_IF_NOT (args.Length() >= nargs, "expected "#nargs" arguments") \
         assert (args[nargs-1]->IsFunction()); \
         Persistent<Function> *cb = cb_persist (args[nargs-1]); \
-        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, zk->handle_); \
+        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk)); \
 
 #define METHOD_EPILOG(call) \
         int ret = (call); \
@@ -532,7 +532,7 @@ public:
         Local<Object> zk_handle = Local<Object>::Cast(lv_zk); \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
         assert(zk);\
-        assert(zk->handle_ == zk_handle); \
+        assert(NanObjectWrapHandle(zk) == zk_handle);   \
         assert(zk->zhandle == zh); \
         Local<Value> argv[args]; \
         argv[0] = NanNew<Integer>(type);   \
@@ -550,11 +550,11 @@ public:
         THROW_IF_NOT (args.Length() >= nargs, "expected at least "#nargs" arguments") \
         assert (args[nargs-1]->IsFunction()); \
         Persistent<Function> *cb = cb_persist (args[nargs-1]); \
-        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, zk->handle_); \
+        (*cb)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk)); \
         \
         assert (args[nargs-2]->IsFunction()); \
         Persistent<Function> *cbw = cb_persist (args[nargs-2]); \
-        (*cbw)->SetHiddenValue(HIDDEN_PROP_ZK, zk->handle_)
+        (*cbw)->SetHiddenValue(HIDDEN_PROP_ZK, NanObjectWrapHandle(zk))
 
 /*
         if (args.Length() > nargs) { \
@@ -901,7 +901,7 @@ public:
         assert(args.This()->IsObject());
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());
         assert(zk);
-        assert(zk->handle_ == args.This());
+        assert(NanObjectWrapHandle(zk) == args.This());
         NanReturnValue(NanNew<Integer> (zk->zhandle != 0 ? zoo_state(zk->zhandle) : 0));
     }
 
