@@ -340,7 +340,7 @@ public:
         bool order = arg->Get(NanNew<String>("host_order_deterministic"))->ToBoolean()->BooleanValue();
         zoo_deterministic_conn_order(order); // enable deterministic order
 
-        String::AsciiValue _hostPort (arg->Get(NanNew<String>("connect"))->ToString());
+        NanAsciiString _hostPort (arg->Get(NanNew<String>("connect"))->ToString());
         int32_t session_timeout = arg->Get(NanNew<String>("timeout"))->ToInt32()->Value();
         if (session_timeout == 0) {
             session_timeout = 20000;
@@ -355,7 +355,7 @@ public:
         THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined), 
             "ZK init: client id and password must either be both specified or unspecified");
         if (id_and_password_defined) {
-          String::AsciiValue password_check(v8v_client_password->ToString());
+          NanAsciiString password_check(v8v_client_password->ToString());
           THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT, 
               "ZK init: password does not have correct length");
           HexStringToPassword(v8v_client_password, local_client.passwd);
@@ -413,7 +413,7 @@ public:
     }
 
     static void StringToId (v8::Local<v8::Value> s, int64_t *id) {
-        String::AsciiValue a(s->ToString());
+        NanAsciiString a(s->ToString());
         sscanf(*a, "%llx", _LLP_CAST_ id);
     }
 
@@ -429,7 +429,7 @@ public:
     }
 
     static void HexStringToPassword (v8::Local<v8::Value> s, char *p) {
-        String::AsciiValue a(s->ToString());
+        NanAsciiString a(s->ToString());
         char *hex = *a;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
           hexToUchar(hex, (unsigned char *)p+i);
