@@ -640,7 +640,7 @@ public:
         CALLBACK_PROLOG(3);
 
         LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
-        argv[2] = rc == ZOK ? zkk->createStatObject (stat) : Object::Cast(*Null());
+        argv[2] = rc == ZOK ? zkk->createStatObject (stat) : NanNull().As<Object>();
 
         CALLBACK_EPILOG();
     }
@@ -665,12 +665,12 @@ public:
 
         LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
 
-        argv[2] = stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null());
+        argv[2] = stat != 0 ? zkk->createStatObject (stat) : NanNull().As<Object>();
 
         if (value != 0) {
             argv[3] = BufferNew(value, value_len);
         } else {
-            argv[3] = String::Cast(*Null());
+            argv[3] = NanNull().As<Object>();
         }
 
         CALLBACK_EPILOG();
@@ -737,7 +737,7 @@ public:
             }
             argv[2] = ar;
         } else {
-            argv[2] = Object::Cast(*Null());
+            argv[2] = NanNull().As<Object>();
         }
 
         CALLBACK_EPILOG();
@@ -772,10 +772,10 @@ public:
             }
             argv[2] = ar;
         } else {
-            argv[2] = Object::Cast(*Null());
+            argv[2] = NanNull().As<Object>();
         }
 
-        argv[3] = (stat != 0 ? zkk->createStatObject (stat) : Object::Cast(*Null()));
+        argv[3] = (stat != 0 ? zkk->createStatObject (stat) : NanNull().As<Object>());
 
         CALLBACK_EPILOG();
     }
@@ -887,8 +887,8 @@ public:
         LOG_DEBUG(("rc=%d, rc_string=%s, acl_vector=%lp", rc, zerror(rc), acl));
         CALLBACK_PROLOG(4);
 
-        argv[2] = acl != NULL ? zkk->createAclObject(acl) : Object::Cast(*Null());
-        argv[3] = stat != NULL ? zkk->createStatObject(stat) : Object::Cast(*Null());
+        argv[2] = acl != NULL ? zkk->createAclObject(acl) : NanNull().As<Object>();
+        argv[3] = stat != NULL ? zkk->createStatObject(stat) : NanNull().As<Object>();
 
         deallocate_ACL_vector(acl);
 
