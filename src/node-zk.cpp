@@ -107,26 +107,28 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
+        Local<Function> constructor = constructor_template->GetFunction();
+
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
         Local<Object> acl_open = NanNew<Object>();
-        acl_open->Set(NanNew("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_open->Set(NanNew("scheme"), NanNew("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_open->Set(NanNew("auth"), NanNew("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(NanNew("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->ForceSet(NanNew("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->ForceSet(NanNew("scheme"), NanNew("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_open->ForceSet(NanNew("auth"), NanNew("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor->ForceSet(NanNew("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
         Local<Object> acl_read = NanNew<Object>();
-        acl_read->Set(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_read->Set(NanNew<String>("scheme"), NanNew<String>("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_read->Set(NanNew<String>("auth"), NanNew<String>("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(NanNew<String>("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->ForceSet(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->ForceSet(NanNew<String>("scheme"), NanNew<String>("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_read->ForceSet(NanNew<String>("auth"), NanNew<String>("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor->ForceSet(NanNew<String>("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
         Local<Object> acl_creator = NanNew<Object>();
-        acl_creator->Set(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_creator->Set(NanNew<String>("scheme"), NanNew<String>("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        acl_creator->Set(NanNew<String>("auth"), NanNew<String>(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        constructor_template->Set(NanNew<String>("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->ForceSet(NanNew<String>("perms"), NanNew<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->ForceSet(NanNew<String>("scheme"), NanNew<String>("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        acl_creator->ForceSet(NanNew<String>("auth"), NanNew<String>(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        constructor->ForceSet(NanNew<String>("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
@@ -135,7 +137,6 @@ public:
         constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
         constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
-        Local<Function> constructor = constructor_template->GetFunction();
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);
@@ -619,18 +620,18 @@ public:
     Local<Object> createStatObject (const struct Stat *stat) {
         NanEscapableScope();
         Local<Object> o = NanNew<Object>();
-        o->Set(NanNew<String>("czxid"), NanNew<Number>(stat->czxid), ReadOnly);
-        o->Set(NanNew<String>("mzxid"), NanNew<Number>(stat->mzxid), ReadOnly);
-        o->Set(NanNew<String>("pzxid"), NanNew<Number>(stat->pzxid), ReadOnly);
-        o->Set(NanNew<String>("dataLength"), NanNew<Integer>(stat->dataLength), ReadOnly);
-        o->Set(NanNew<String>("numChildren"), NanNew<Integer>(stat->numChildren), ReadOnly);
-        o->Set(NanNew<String>("version"), NanNew<Integer>(stat->version), ReadOnly);
-        o->Set(NanNew<String>("cversion"), NanNew<Integer>(stat->cversion), ReadOnly);
-        o->Set(NanNew<String>("aversion"), NanNew<Integer>(stat->aversion), ReadOnly);
-        o->Set(NanNew<String>("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
-        o->Set(NanNew<String>("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
-        o->Set(NanNew<String>("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
-        o->Set(NanNew<String>("createdInThisSession"), NanNew<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
+        o->ForceSet(NanNew<String>("czxid"), NanNew<Number>(stat->czxid), ReadOnly);
+        o->ForceSet(NanNew<String>("mzxid"), NanNew<Number>(stat->mzxid), ReadOnly);
+        o->ForceSet(NanNew<String>("pzxid"), NanNew<Number>(stat->pzxid), ReadOnly);
+        o->ForceSet(NanNew<String>("dataLength"), NanNew<Integer>(stat->dataLength), ReadOnly);
+        o->ForceSet(NanNew<String>("numChildren"), NanNew<Integer>(stat->numChildren), ReadOnly);
+        o->ForceSet(NanNew<String>("version"), NanNew<Integer>(stat->version), ReadOnly);
+        o->ForceSet(NanNew<String>("cversion"), NanNew<Integer>(stat->cversion), ReadOnly);
+        o->ForceSet(NanNew<String>("aversion"), NanNew<Integer>(stat->aversion), ReadOnly);
+        o->ForceSet(NanNew<String>("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
+        o->ForceSet(NanNew<String>("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
+        o->ForceSet(NanNew<String>("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
+        o->ForceSet(NanNew<String>("createdInThisSession"), NanNew<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
         return NanEscapeScope(o);
     }
 
@@ -843,9 +844,9 @@ public:
             struct ACL *acl = &aclv->data[i];
 
             Local<Object> obj = NanNew<Object>();
-            obj->Set(NanNew<String>("perms"), NanNew<Integer>(acl->perms), ReadOnly);
-            obj->Set(NanNew<String>("scheme"), NanNew<String>(acl->id.scheme), ReadOnly);
-            obj->Set(NanNew<String>("auth"), NanNew<String>(acl->id.id), ReadOnly);
+            obj->ForceSet(NanNew<String>("perms"), NanNew<Integer>(acl->perms), ReadOnly);
+            obj->ForceSet(NanNew<String>("scheme"), NanNew<String>(acl->id.scheme), ReadOnly);
+            obj->ForceSet(NanNew<String>("auth"), NanNew<String>(acl->id.id), ReadOnly);
 
             arr->Set(i, obj);
         }
