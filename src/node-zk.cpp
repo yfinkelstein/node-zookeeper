@@ -375,13 +375,14 @@ public:
     static void main_watcher (zhandle_t *zzh, int type, int state, const char *path, void* context) {
         LOG_DEBUG(("main watcher event: type=%d, state=%d, path=%s", type, state, (path ? path: "null")));
         ZooKeeper *zk = static_cast<ZooKeeper *>(context);
+        NanScope();
 
         if (type == ZOO_SESSION_EVENT) {
             if (state == ZOO_CONNECTED_STATE) {
                 zk->myid = *(zoo_client_id(zzh));
-                zk->DoEmitPath(on_connected, path);
+                zk->DoEmitPath(NanNew(on_connected), path);
             } else if (state == ZOO_CONNECTING_STATE) {
-                zk->DoEmitPath (on_connecting, path);
+                zk->DoEmitPath (NanNew(on_connecting), path);
             } else if (state == ZOO_AUTH_FAILED_STATE) {
                 LOG_ERROR(("Authentication failure. Shutting down...\n"));
                 zk->realClose(ZOO_AUTH_FAILED_STATE);
@@ -390,15 +391,15 @@ public:
                 zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             }
         } else if (type == ZOO_CREATED_EVENT) {
-            zk->DoEmitPath(on_event_created, path);
+            zk->DoEmitPath(NanNew(on_event_created), path);
         } else if (type == ZOO_DELETED_EVENT) {
-            zk->DoEmitPath(on_event_deleted, path);
+            zk->DoEmitPath(NanNew(on_event_deleted), path);
         } else if (type == ZOO_CHANGED_EVENT) {
-            zk->DoEmitPath(on_event_changed, path);
+            zk->DoEmitPath(NanNew(on_event_changed), path);
         } else if (type == ZOO_CHILD_EVENT) {
-            zk->DoEmitPath(on_event_child, path);
+            zk->DoEmitPath(NanNew(on_event_child), path);
         } else if (type == ZOO_NOTWATCHING_EVENT) {
-            zk->DoEmitPath(on_event_notwatching, path);
+            zk->DoEmitPath(NanNew(on_event_notwatching), path);
         } else {
             LOG_WARN(("Unknonwn watcher event type %s",type));
         }
@@ -436,7 +437,7 @@ public:
         }
     }
 
-    void DoEmitPath (Handle<String> event_name, const char* path = NULL) {
+    void DoEmitPath (Local<String> event_name, const char* path = NULL) {
         NanScope();
         Local<Value> str;
 
@@ -451,19 +452,19 @@ public:
         this->DoEmit(event_name, str);
     }
 
-    void DoEmitClose (Handle<String> event_name, int code) {
+    void DoEmitClose (Local<String> event_name, int code) {
         NanScope();
         Local<Value> v8code = NanNew<Number>(code);
 
         this->DoEmit(event_name, v8code);
     }
 
-    void DoEmit (Handle<String> event_name, Handle<Value> data) {
+    void DoEmit (Local<String> event_name, Handle<Value> data) {
         NanScope();
 
         Local<Value> argv[3];
-        argv[0] = NanNew<String>(event_name);
-        argv[1] = NanNew<Object>(handle_);
+        argv[0] = event_name;
+        argv[1] = NanObjectWrapHandle(this);
         argv[2] = NanNew<Value>(data);
 
         Local<Value> emit_v = handle_->Get(NanNew<String>("emit"));
@@ -954,7 +955,8 @@ public:
                 uv_poll_stop(&zk_io);
             }
             Unref();
-            DoEmitClose (on_closed, code);
+            NanScope();
+            DoEmitClose (NanNew(on_closed), code);
         }
     }
 
