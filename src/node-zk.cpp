@@ -443,10 +443,10 @@ public:
 
         if (path != 0) {
             str = NanNew<String>(path);
-            LOG_DEBUG(("calling Emit(%s, path='%s')", *String::Utf8Value(event_name), path));
+            LOG_DEBUG(("calling Emit(%s, path='%s')", *NanUtf8String(NanNew(event_name)), path));
         } else {
             str = NanUndefined();
-            LOG_DEBUG(("calling Emit(%s, path=null)", *String::Utf8Value(event_name)));
+            LOG_DEBUG(("calling Emit(%s, path=null)", *NanUtf8String(NanNew(event_name))));
         }
 
         this->DoEmit(event_name, str);
@@ -577,14 +577,14 @@ public:
     static NAN_METHOD(ACreate) {
         A_METHOD_PROLOG(4);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         uint32_t flags = args[2]->ToUint32()->Uint32Value();
 
         if (Buffer::HasInstance(args[1])) { // buffer
             Local<Object> _data = args[1]->ToObject();
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
-            String::Utf8Value _data (args[1]->ToString());
+            NanUtf8String _data (args[1]->ToString());
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         }
     }
@@ -607,7 +607,7 @@ public:
 
     static NAN_METHOD(ADelete) {
         A_METHOD_PROLOG(3);
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         uint32_t version = args[1]->ToUint32()->Uint32Value();
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
@@ -648,7 +648,7 @@ public:
     static NAN_METHOD(AExists) {
         A_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
@@ -656,7 +656,7 @@ public:
 
     static NAN_METHOD(AWExists) {
         AW_METHOD_PROLOG(3);
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         METHOD_EPILOG(zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
     }
 
@@ -681,7 +681,7 @@ public:
 
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(args.This());   
         assert(zk);
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         uint32_t version = args[1]->ToUint32()->Uint32Value();
   
         int ret = zoo_delete(zk->zhandle, *_path, version);
@@ -691,7 +691,7 @@ public:
     static NAN_METHOD(AGet) {
         A_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
@@ -705,7 +705,7 @@ public:
     static NAN_METHOD(AWGet) {
         AW_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
 
         METHOD_EPILOG(zoo_awget(zk->zhandle, *_path, &watcher_fn, cbw, &data_completion, cb));
     }
@@ -713,14 +713,14 @@ public:
     static NAN_METHOD(ASet) {
         A_METHOD_PROLOG(4);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         uint32_t version = args[2]->ToUint32()->Uint32Value();
 
         if (Buffer::HasInstance(args[1])) { // buffer
             Local<Object> _data = args[1]->ToObject();
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
-            String::Utf8Value _data(args[1]->ToString());
+            NanUtf8String _data(args[1]->ToString());
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
         }
     }
@@ -746,7 +746,7 @@ public:
     static NAN_METHOD(AGetChildren) {
         A_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
@@ -755,7 +755,7 @@ public:
     static NAN_METHOD(AWGetChildren) {
         AW_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
 
         METHOD_EPILOG(zoo_awget_children(zk->zhandle, *_path, &watcher_fn, cbw, &strings_completion, cb));
     }
@@ -783,7 +783,7 @@ public:
     static NAN_METHOD(AGetChildren2) {
         A_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         bool watch = args[1]->ToBoolean()->BooleanValue();
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
@@ -792,7 +792,7 @@ public:
     static NAN_METHOD(AWGetChildren2) {
         AW_METHOD_PROLOG(3);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
 
         METHOD_EPILOG(zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
     }
@@ -800,7 +800,7 @@ public:
     static NAN_METHOD(AGetAcl) {
         A_METHOD_PROLOG(2);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
 
         METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
     }
@@ -808,7 +808,7 @@ public:
     static NAN_METHOD(ASetAcl) {
         A_METHOD_PROLOG(4);
 
-        String::Utf8Value _path (args[0]->ToString());
+        NanUtf8String _path (args[0]->ToString());
         uint32_t _version = args[1]->ToUint32()->Uint32Value();
         Local<Array> arr = Local<Array>::Cast(args[2]);
 
@@ -825,8 +825,8 @@ public:
     static NAN_METHOD(AddAuth) {
         A_METHOD_PROLOG(3);
 
-        String::Utf8Value _scheme (args[0]->ToString());
-        String::Utf8Value _auth (args[1]->ToString());
+        NanUtf8String _scheme (args[0]->ToString());
+        NanUtf8String _auth (args[1]->ToString());
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -865,8 +865,8 @@ public:
         for (int i = 0, l = aclv->count; i < l; i++) {
             Local<Object> obj = Local<Object>::Cast(arr->Get(i));
 
-            String::Utf8Value _scheme (obj->Get(NanNew<String>("scheme"))->ToString());
-            String::Utf8Value _auth (obj->Get(NanNew<String>("auth"))->ToString());
+            NanUtf8String _scheme (obj->Get(NanNew<String>("scheme"))->ToString());
+            NanUtf8String _auth (obj->Get(NanNew<String>("auth"))->ToString());
             uint32_t _perms = obj->Get(NanNew<String>("perms"))->ToUint32()->Uint32Value();
 
             struct Id id;
