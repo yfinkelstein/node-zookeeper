@@ -979,7 +979,7 @@ public:
     }
 
 
-    ZooKeeper () : zhandle(0), clientIdFile(0), fd(-1) {
+    ZooKeeper () : zhandle(0), fd(-1) {
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -988,7 +988,6 @@ public:
 private:
     zhandle_t *zhandle;
     clientid_t myid;
-    const char *clientIdFile;
     uv_poll_t zk_io;
     uv_timer_t zk_timer;
     int fd;
