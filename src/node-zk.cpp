@@ -107,6 +107,14 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
 
+        //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+
+
         Local<Function> constructor = constructor_template->GetFunction();
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
@@ -129,13 +137,6 @@ public:
         acl_creator->ForceSet(NanNew<String>("scheme"), NanNew<String>("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         acl_creator->ForceSet(NanNew<String>("auth"), NanNew<String>(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         constructor->ForceSet(NanNew<String>("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-
-        //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
-        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
