@@ -106,6 +106,7 @@ public:
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_get_acl", AGetAcl);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_set_acl", ASetAcl);
         NODE_SET_PROTOTYPE_METHOD(constructor_template, "add_auth", AddAuth);
+        NODE_SET_PROTOTYPE_METHOD(constructor_template, "a_sync", ASync);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         constructor_template->InstanceTemplate()->SetAccessor(NanNew<String>("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
@@ -809,6 +810,14 @@ public:
         data->data = aclv;
 
         METHOD_EPILOG(zoo_aset_acl(zk->zhandle, *_path, _version, aclv, void_completion, data));
+    }
+
+    static NAN_METHOD(ASync) {
+        A_METHOD_PROLOG(2);
+
+        NanUtf8String _path (args[0]->ToString());
+
+        METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
     }
 
     static NAN_METHOD(AddAuth) {
