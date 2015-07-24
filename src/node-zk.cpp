@@ -288,7 +288,12 @@ public:
         zk->yield();
     }
 
+
+#if UV_VERSION_MAJOR > 0
+    static void zk_timer_cb (uv_timer_t *w) {
+#else
     static void zk_timer_cb (uv_timer_t *w, int status) {
+#endif
         LOG_DEBUG(("zk_timer_cb fired"));
 
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
