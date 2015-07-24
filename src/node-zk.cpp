@@ -467,23 +467,14 @@ public:
 
     void DoEmit (Local<String> event_name, Handle<Value> data) {
         NanScope();
+        Local<Object> thisObj = NanObjectWrapHandle(this);
 
         Local<Value> argv[3];
         argv[0] = event_name;
-        argv[1] = NanObjectWrapHandle(this);
+        argv[1] = thisObj;
         argv[2] = NanNew<Value>(data);
 
-        Local<Value> emit_v = NanObjectWrapHandle(this)->Get(NanNew<String>("emit"));
-        assert(emit_v->IsFunction());
-        Local<Function> emit_fn = emit_v.As<Function>();
-        
-        TryCatch tc;
-
-        emit_fn->Call(NanObjectWrapHandle(this), 3, argv);
-
-        if(tc.HasCaught()) {
-            FatalException(tc);
-        }
+        NanMakeCallback(thisObj, "emit", 3, argv);
     }
 
 #define CALLBACK_PROLOG(args) \
@@ -501,19 +492,11 @@ public:
         argv[1] = NanNew<String>(zerror(rc))
 
 #define CALLBACK_EPILOG() \
-        TryCatch try_catch; \
         callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
-        if (try_catch.HasCaught()) { \
-            FatalException(try_catch); \
-        }; \
         delete callback
 
 #define WATCHER_CALLBACK_EPILOG() \
-        TryCatch try_catch; \
         callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
-        if (try_catch.HasCaught()) { \
-            FatalException(try_catch); \
-        };
 
 #define A_METHOD_PROLOG(nargs) \
         NanScope();                                                       \
