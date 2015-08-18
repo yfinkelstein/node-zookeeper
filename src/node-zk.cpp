@@ -319,6 +319,14 @@ public:
     }
 
     inline bool realInit (const char* hostPort, int session_timeout, clientid_t *client_id) {
+        bool need_timer_init = true;
+        if (zhandle) {
+            // In case this is not the first call to realInit,
+            // stop the current timer and skip re-initializing the timer
+            need_timer_init = true;
+            uv_timer_stop(&zk_timer);
+        }
+      
         myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
@@ -327,8 +335,10 @@ public:
         }
         Ref();
 
-        uv_timer_init(uv_default_loop(), &zk_timer);
-        zk_io.data = zk_timer.data = this;
+        if (need_timer_init) {
+            uv_timer_init(uv_default_loop(), &zk_timer);
+            zk_io.data = zk_timer.data = this;
+        }
 
         yield();
         return true;
