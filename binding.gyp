@@ -11,13 +11,17 @@
             ['OS=="solaris"', {
                 'cflags': ['-Wno-strict-aliasing'],
                 'defines': ['_POSIX_PTHREAD_SEMANTICS'],
-                'include_dirs': ['/opt/local/include/zookeeper'],
-                'ldflags': ['-lzookeeper_st'],
+                'include_dirs': [
+                    '/opt/local/include/zookeeper',
+                    '<!(node -e "require(\'nan\')")'
+                ],
+	            'ldflags': ['-lzookeeper_st'],
             }],
             ['OS=="mac"',{
                 'include_dirs': [
                     '<(module_root_dir)/deps/zookeeper/src/c/include',
-                    '<(module_root_dir)/deps/zookeeper/src/c/generated'
+                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<!(node -e "require(\'nan\')")'
                 ],
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
                 'xcode_settings': {
@@ -27,7 +31,8 @@
             }],['OS=="linux"',{
                 'include_dirs': [
                     '<(module_root_dir)/deps/zookeeper/src/c/include',
-                    '<(module_root_dir)/deps/zookeeper/src/c/generated'
+                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<!(node -e "require(\'nan\')")'
                 ],
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
             }]

@@ -3,6 +3,8 @@ var assert = require('assert');
 var log4js = require('log4js');
 var async = require('async');
 
+var connect  = (process.argv[2] || 'localhost:2181');
+
 //
 // based on node-leader
 // https://github.com/mcavage/node-leader
@@ -45,7 +47,7 @@ function startZK(options, callback) {
 
 if (require.main === module) {
   var options = {
-    zookeeper: 'localhost:2181',
+    zookeeper: connect,
     log4js: log4js
   };
 
