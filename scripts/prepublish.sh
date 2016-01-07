@@ -6,7 +6,7 @@ cd $DEPS
 
 echo "Downloading $ZK from $ZK_URL"
 
-curl --output $ZK_FILE $ZK_URL || wget $ZK_URL -O $ZK_FILE
+curl -C - --fail --output $ZK_FILE $ZK_URL || wget --continue $ZK_URL -O $ZK_FILE
 
 if [ $? != 0 ] ; then
     echo "Unable to download zookeeper library"
