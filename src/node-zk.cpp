@@ -386,7 +386,7 @@ public:
         assert(zk);
 
         if (!zk->realInit(*_hostPort, session_timeout, &local_client)) {
-            RETURN_VALUE(info, Nan::NanErrnoException(errno, "zookeeper_init", "failed to init", __FILE__));
+            RETURN_VALUE(info, Nan::ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__));
         } else {
             RETURN_THIS(info);
         }
