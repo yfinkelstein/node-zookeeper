@@ -354,14 +354,14 @@ public:
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
         Local<Object> arg = info[0]->ToObject();
 
-        int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->ToInt32()->Value();
+        int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->Int32Value();
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
         bool order = arg->Get(LOCAL_STRING("host_order_deterministic"))->ToBoolean()->BooleanValue();
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString());
-        int32_t session_timeout = arg->Get(LOCAL_STRING("timeout"))->ToInt32()->Value();
+        int32_t session_timeout = arg->Get(LOCAL_STRING("timeout"))->Int32Value();
         if (session_timeout == 0) {
             session_timeout = 20000;
         }
@@ -579,7 +579,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (info[0]->ToString());
-        uint32_t flags = info[2]->ToUint32()->Uint32Value();
+        uint32_t flags = info[2]->Uint32Value();
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = info[1]->ToObject();
@@ -609,7 +609,7 @@ public:
     static void ADelete(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
         Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[1]->ToUint32()->Uint32Value();
+        uint32_t version = info[1]->Uint32Value();
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -681,7 +681,7 @@ public:
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());   
         assert(zk);
         Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[1]->ToUint32()->Uint32Value();
+        uint32_t version = info[1]->Uint32Value();
 
         int ret = zoo_delete(zk->zhandle, *_path, version);
         RETURN_VALUE(info, Nan::New<Int32>(ret));
@@ -713,7 +713,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[2]->ToUint32()->Uint32Value();
+        uint32_t version = info[2]->Uint32Value();
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = info[1]->ToObject();
@@ -808,7 +808,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (info[0]->ToString());
-        uint32_t _version = info[1]->ToUint32()->Uint32Value();
+        uint32_t _version = info[1]->Uint32Value();
         Local<Array> arr = Local<Array>::Cast(info[2]);
 
         struct ACL_vector *aclv = zk->createAclVector(arr);
@@ -874,7 +874,7 @@ public:
 
             Nan::Utf8String _scheme (obj->Get(LOCAL_STRING("scheme"))->ToString());
             Nan::Utf8String _auth (obj->Get(LOCAL_STRING("auth"))->ToString());
-            uint32_t _perms = obj->Get(LOCAL_STRING("perms"))->ToUint32()->Uint32Value();
+            uint32_t _perms = obj->Get(LOCAL_STRING("perms"))->Uint32Value();
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
