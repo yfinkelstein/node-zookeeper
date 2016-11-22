@@ -80,6 +80,10 @@ DECLARE_SYMBOL (HIDDEN_PROP_HANDBACK);
 
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
+void delete_on_close(uv_handle_t* handle) {
+    free(handle);
+}
+
 struct completion_data {
     Nan::Callback *cb;
     int32_t type;
@@ -246,10 +250,11 @@ public:
 
         last_activity = uv_now(uv_default_loop());
 
+        int oldFd = fd;
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
 
-        if (uv_is_active((uv_handle_t*) &zk_io)) {
-            uv_poll_stop(&zk_io);
+        if (zk_io && uv_is_active((uv_handle_t*) zk_io)) {
+            uv_poll_stop(zk_io);
         }
 
         if (rc) {
@@ -258,6 +263,10 @@ public:
         }
 
         if (fd == -1 ) {
+            if (zk_io) {
+                uv_close((uv_handle_t*) zk_io, delete_on_close);
+                zk_io = NULL;
+            }
             return;
         }
 
@@ -270,8 +279,28 @@ public:
                    events & UV_WRITABLE ? "true" : "false",
                    delay));
 
-        uv_poll_init(uv_default_loop(), &zk_io, fd);
-        uv_poll_start(&zk_io, events, &zk_io_cb);
+        // If the file descriptor to watch has changed, then
+        // a new uv_poll_t handle needs to be created to watch it.
+        if (oldFd != fd) {
+            // If there was an existing handle, then clean it up
+            if (zk_io) {
+                uv_close((uv_handle_t*) zk_io, delete_on_close);
+                zk_io = NULL;
+            }
+
+            LOG_DEBUG(("yield: creating a new poll handle for %lp", this));
+            zk_io = (uv_poll_t*)malloc(sizeof(uv_poll_t));
+            if (!zk_io) {
+                LOG_ERROR(("Failed to malloc memory for uv_poll_t"));
+                return;
+             }
+
+             zk_io->data = this;
+             uv_poll_init(uv_default_loop(), zk_io, fd);
+        }
+
+        LOG_DEBUG(("yield: starting poll for %lp from thread %lp", this));
+        uv_poll_start(zk_io, events, &zk_io_cb);
 
         uv_timer_start(&zk_timer, &zk_timer_cb, delay, delay);
     }
@@ -342,7 +371,7 @@ public:
 
         if (need_timer_init) {
             uv_timer_init(uv_default_loop(), &zk_timer);
-            zk_io.data = zk_timer.data = this;
+            zk_timer.data = this;
         }
 
         yield();
@@ -664,7 +693,7 @@ public:
     static void data_completion (int rc, const char *value, int value_len, const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(4);
 
-        LOG_DEBUG(("rc=%d, rc_string=%s, value=%s", rc, zerror(rc), value));
+        LOG_DEBUG(("rc=%d, rc_string=%s, value=%.*s", rc, zerror(rc), value_len, value));
 
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Nan::Null().As<Object>();
 
@@ -953,13 +982,26 @@ public:
 
             LOG_DEBUG(("zookeeper_close() returned"));
 
-            if (uv_is_active((uv_handle_t*) &zk_io)) {
-                uv_poll_stop(&zk_io);
+            if (zk_io) {
+                int rc = uv_poll_stop(zk_io);
+                LOG_DEBUG(("zookeeper_close(%lp) uv_poll_stop result: %d", this, rc));
+
+                uv_close((uv_handle_t*) zk_io, delete_on_close); 
+                zk_io = NULL;
             }
-            Unref();
+
+            // Close the timer and finally Unref the ZooKeeper instance when it's done
+            // Unrefing after is important to avoid memory being freed too early.
+            uv_close((uv_handle_t*) &zk_timer, timer_closed); 
+
             Nan::HandleScope scope;
             DoEmitClose (Nan::New(on_closed), code);
         }
+    }
+    
+    static void timer_closed(uv_handle_t* handle) {
+        ZooKeeper *zk = static_cast<ZooKeeper *>(handle->data);
+        zk->Unref();
     }
 
     static void Close(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -984,7 +1026,8 @@ public:
 private:
     zhandle_t *zhandle;
     clientid_t myid;
-    uv_poll_t zk_io;
+    uv_poll_t* zk_io;
+
     uv_timer_t zk_timer;
     int fd;
     int interest;
