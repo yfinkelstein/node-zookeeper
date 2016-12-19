@@ -22,7 +22,7 @@
   ,"dependencies": {
     "async": "~2.1.4"
     ,"nan": "~2.4.0"
-    ,"underscore": "*"
+    ,"lodash": "~4.17.2"
   }
   ,"devDependencies": {
     "log4js": "~1.0.1"
