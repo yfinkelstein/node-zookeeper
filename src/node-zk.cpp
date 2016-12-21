@@ -75,8 +75,8 @@ DECLARE_STRING (on_event_notwatching);
 #define DECLARE_SYMBOL(ev)   DECLARE_STRING(ev)
 #define INITIALIZE_SYMBOL(ev) INITIALIZE_STRING(ev, #ev)
   
-DECLARE_SYMBOL (HIDDEN_PROP_ZK);
-DECLARE_SYMBOL (HIDDEN_PROP_HANDBACK);
+DECLARE_SYMBOL (PRIVATE_PROP_ZK);
+DECLARE_SYMBOL (PRIVATE_PROP_HANDBACK);
 
 #define ZOOKEEPER_PASSWORD_BYTE_COUNT 16
 
@@ -524,8 +524,7 @@ public:
         Nan::HandleScope scope; \
         Nan::Callback *callback = (Nan::Callback*)(cb); \
         assert (callback); \
-        Local<Value> lv = callback->GetFunction()->GetHiddenValue(Nan::New(HIDDEN_PROP_ZK)); \
-        /*(*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK);*/ \
+        Local<Value> lv = Nan::GetPrivate(callback->GetFunction(), Nan::New(PRIVATE_PROP_ZK)).ToLocalChecked(); \
         Local<Object> zk_handle = Local<Object>::Cast(lv); \
         ZooKeeper *zkk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
         assert(zkk);\
@@ -547,7 +546,7 @@ public:
         THROW_IF_NOT (info.Length() >= nargs, "expected "#nargs" arguments") \
         assert (info[nargs-1]->IsFunction()); \
         Nan::Callback *cb = new Nan::Callback(info[nargs-1].As<Function>()); \
-        cb->GetFunction()->SetHiddenValue(Nan::New(HIDDEN_PROP_ZK), zk->handle()); \
+        Nan::SetPrivate(cb->GetFunction(), Nan::New(PRIVATE_PROP_ZK), zk->handle()); \
 
 #define METHOD_EPILOG(call) \
         int ret = (call); \
@@ -558,8 +557,7 @@ public:
         Nan::HandleScope scope;                                                    \
         Nan::Callback *callback = (Nan::Callback*)(watcherCtx);            \
         assert (callback); \
-        Local<Value> lv_zk = callback->GetFunction()->GetHiddenValue(Nan::New(HIDDEN_PROP_ZK)); \
-        /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_ZK); */ \
+        Local<Value> lv_zk = Nan::GetPrivate(callback->GetFunction(), Nan::New(PRIVATE_PROP_ZK)).ToLocalChecked(); \
         Local<Object> zk_handle = Local<Object>::Cast(lv_zk); \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(zk_handle); \
         assert(zk);\
@@ -569,8 +567,7 @@ public:
         argv[0] = Nan::New<Integer>(type);   \
         argv[1] = Nan::New<Integer>(state);  \
         argv[2] = LOCAL_STRING(path);                                 \
-        Local<Value> lv_hb = callback->GetFunction()->GetHiddenValue(Nan::New(HIDDEN_PROP_HANDBACK)); \
-        /* (*callback)->DeleteHiddenValue(HIDDEN_PROP_HANDBACK); */ \
+        Local<Value> lv_hb = Nan::GetPrivate(callback->GetFunction(), Nan::New(PRIVATE_PROP_HANDBACK)).ToLocalChecked(); \
         argv[3] = Nan::Undefined();    \
         if (!lv_hb.IsEmpty()) argv[3] = lv_hb
 
@@ -580,17 +577,11 @@ public:
         THROW_IF_NOT (info.Length() >= nargs, "expected at least "#nargs" arguments") \
         assert (info[nargs-1]->IsFunction()); \
         Nan::Callback *cb = new Nan::Callback (info[nargs-1].As<Function>()); \
-        cb->GetFunction()->SetHiddenValue(Nan::New(HIDDEN_PROP_ZK), zk->handle()); \
+        Nan::SetPrivate(cb->GetFunction(), Nan::New(PRIVATE_PROP_ZK), zk->handle()); \
         \
         assert (info[nargs-2]->IsFunction()); \
         Nan::Callback *cbw = new Nan::Callback (info[nargs-2].As<Function>()); \
-        cbw->GetFunction()->SetHiddenValue(Nan::New(HIDDEN_PROP_ZK), zk->handle())
-
-/*
-        if (info.Length() > nargs) { \
-            (*cbw)->SetHiddenValue(HIDDEN_PROP_HANDBACK, info[nargs]); \
-        }
-*/
+        Nan::SetPrivate(cbw->GetFunction(), Nan::New(PRIVATE_PROP_ZK), zk->handle())
 
     static void string_completion (int rc, const char *value, const void *cb) {
         if (value == 0) {
@@ -1048,8 +1039,8 @@ extern "C" void init(Handle<Object> target) {
     INITIALIZE_STRING (zk::on_event_child,       "child");
     INITIALIZE_STRING (zk::on_event_notwatching, "notwatching");
 
-    INITIALIZE_SYMBOL (zk::HIDDEN_PROP_ZK);
-    INITIALIZE_SYMBOL (zk::HIDDEN_PROP_HANDBACK);
+    INITIALIZE_SYMBOL (zk::PRIVATE_PROP_ZK);
+    INITIALIZE_SYMBOL (zk::PRIVATE_PROP_HANDBACK);
 
     zk::ZooKeeper::Initialize(target);
 }
