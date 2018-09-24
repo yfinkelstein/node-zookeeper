@@ -6,7 +6,6 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
-#include <v8-debug.h>
 using namespace v8;
 using namespace node;
 #undef THREADED
