@@ -15,6 +15,7 @@ const variables = {
     ZK_VERSION: version,
     ZK_VERSION_SHA1: '0285717bf5ea87a7a36936bf37851d214a32bb99',
     ZK: name,
+    ZK_DEPS: `${root}/deps/zookeeper`,
     ZK_FILE: fileName,
     ZK_URL:`http://archive.apache.org/dist/zookeeper/${name}/${fileName}`,
     PATCHES: patches,
