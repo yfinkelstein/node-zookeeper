@@ -43,7 +43,7 @@
                 'action_name': 'build_zk_client_lib',
                 'inputs': [''],
                 'outputs': [''],
-                'action': ['sh', 'scripts/build.sh']
+                'action': ['node', 'scripts/build.js']
             }]
         },
         {

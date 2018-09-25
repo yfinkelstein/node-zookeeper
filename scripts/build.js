@@ -1,4 +1,4 @@
-const env = require('env');
+const env = require('./env.js');
 const fs = require('fs');
 const shell = require('shelljs');
 
