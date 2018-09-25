@@ -54,7 +54,7 @@
                 "action_name": "symlink",
                 "inputs": ["<@(PRODUCT_DIR)/zookeeper.node"],
                 "outputs": ["<(module_root_dir)/build/zookeeper.node"],
-                "action": ["sh", "scripts/symlink.sh", "<@(_inputs)"]
+                "action": ["node", "scripts/symlink.js", "<@(_inputs)"]
             }]
     }],
 }
