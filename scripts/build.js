@@ -25,7 +25,7 @@ function handleSunOS() {
     }
 }
 
-if (os.platform() === 'SunOS') {
+if (os.platform().toLowerCase().includes('sunos')) {
     handleSunOS();
     return;
 }
