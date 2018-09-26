@@ -44,7 +44,7 @@ download(env.ZK_URL, env.ZK_FILE)
     .then(() => {
         shell.rm('-rf', env.ZK_DEPS);
 
-        decompress(env.ZK_FILE, `${env.ZK}/src/c`, {
+        decompress(env.ZK_FILE, './', {
             plugins: [
                 decompressTargz()
             ]
