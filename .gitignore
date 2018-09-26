@@ -1,5 +1,6 @@
 build
 node_modules
 npm-debug.log
+.idea
 *.tgz
 deps/zookeeper*

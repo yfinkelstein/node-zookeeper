@@ -49,13 +49,11 @@ download(env.ZK_URL, env.ZK_FILE)
                 decompressTargz()
             ]
         }).then(() => {
-            shell.echo('Files decompressed');
             shell.mv(env.ZK, env.ZK_DEPS);
-            shell.echo('Files moved');
         });
 
     })
     .catch((e) => {
-        shell.echo(`Unable to download zookeeper libray. Error: ${e.message}`);
+        shell.echo(`Unable to download zookeeper library. Error: ${e.message}`);
         shell.exit(1);
     });
