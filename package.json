@@ -35,7 +35,7 @@
   ,"scripts" : {
      "build" : "node-gyp configure build"
      ,"test" : "pushd test; ./test; popd"
-     ,"prepublish" : "./scripts/prepublish.sh"
+     ,"prepublish" : "node ./scripts/prepublish.js"
   }
   ,"engines": { "node": ">=0.10" }
 }
