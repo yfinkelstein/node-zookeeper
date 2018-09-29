@@ -5,7 +5,7 @@ const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 const env = require('./env.js');
 
-function writeFileExecutor(url, destination, resolve, reject) {
+function writeFile(url, destination, resolve, reject) {
     const file = fs.createWriteStream(destination);
 
     const req = http.get(url, (res) => {
@@ -37,7 +37,7 @@ function download(url, destination) {
         return Promise.resolve();
     }
 
-    const executor = writeFileExecutor.bind(null, url, destination);
+    const executor = writeFile.bind(null, url, destination);
     return new Promise(executor);
 }
 
