@@ -5,6 +5,31 @@ const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 const env = require('./env.js');
 
+function writeFileExecutor(url, destination, resolve, reject) {
+    const file = fs.createWriteStream(destination);
+
+    const req = http.get(url, (res) => {
+        res.on('data', function (chunk) {
+            file.write(chunk);
+        });
+
+        res.on('end', function () {
+            file.end();
+            resolve();
+        })
+    });
+
+    req.on('error', (e) => {
+        file.unlink(destination);
+        reject(e);
+    });
+
+    file.on('error', () => {
+        file.unlink(destination);
+        reject(new Error('File error'));
+    });
+}
+
 function download(url, destination) {
     if (fs.existsSync(destination)) {
         shell.echo(`${destination} already exists. Skipping download.`);
@@ -12,30 +37,8 @@ function download(url, destination) {
         return Promise.resolve();
     }
 
-    const file = fs.createWriteStream(destination);
-
-    return new Promise((resolve, reject) => {
-        const req = http.get(`${env.ZK_URL}`, (res) => {
-            res.on('data', function (chunk) {
-                file.write(chunk);
-            });
-
-            res.on('end', function () {
-                file.end();
-                resolve();
-            })
-        });
-
-        req.on('error', (e) => {
-            file.unlink(destination);
-            reject(e);
-        });
-
-        file.on('error', () => {
-            file.unlink(destination);
-            reject(new Error('File error'));
-        });
-    });
+    const executor = writeFileExecutor.bind(null, url, destination);
+    return new Promise(executor);
 }
 
 shell.cd(env.DEPS);
