@@ -33,7 +33,7 @@
      "build" : "node-gyp configure build"
      ,"test" : "pushd test; ./test; popd"
      ,"deps": "npm install shelljs@0.8.x decompress@4.2.x decompress-targz@4.1.x"
-     ,"prepublish" : "npm run deps && node ./scripts/prepublish.js"
+     ,"prepare" : "npm run deps && node ./scripts/prepublish.js"
   }
   ,"engines": { "node": ">=0.10" }
 }
