@@ -23,9 +23,6 @@
     "async": "~2.1.4"
     ,"nan": "~2.5.0"
     ,"lodash": "~4.17.2"
-    ,"shelljs": "~0.8.2"
-    ,"decompress": "~4.2.0"
-    ,"decompress-targz": "~4.1.1"
   }
   ,"devDependencies": {
     "log4js": "~1.0.1"
@@ -35,7 +32,8 @@
   ,"scripts" : {
      "build" : "node-gyp configure build"
      ,"test" : "pushd test; ./test; popd"
-     ,"prepublish" : "node ./scripts/prepublish.js"
+     ,"deps": "npm install shelljs@0.8.x decompress@4.2.x decompress-targz@4.1.x"
+     ,"prepublish" : "npm run deps && node ./scripts/prepublish.js"
   }
   ,"engines": { "node": ">=0.10" }
 }
