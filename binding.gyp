@@ -25,7 +25,11 @@
                 ],
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
                 'xcode_settings': {
-                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
+                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                    'MACOSX_DEPLOYMENT_TARGET': '10.7',
+                    'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
+                    'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++1y',  # -std=gnu++1y
+                    'CLANG_CXX_LIBRARY': 'libc++',
                 }
             }],['OS=="linux"',{
                 'include_dirs': [
