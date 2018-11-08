@@ -34,13 +34,14 @@
                     '<!(node -e "require(\'nan\')")'
                 ],
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
-            }], ['OS=="win"',{
-                     'include_dirs': [
-                     '<(module_root_dir)/deps/zookeeper/src/c/include',
-                     '<(module_root_dir)/deps/zookeeper/src/c/generated',
-                     '<!(node -e "require(\'nan\')")'
+            }],['OS=="win"',{
+                'defines': ['DLL_EXPORT'],
+                'include_dirs': [
+                    '<(module_root_dir)/deps/zookeeper/src/c/include',
+                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<!(node -e "require(\'nan\')")'
                 ],
-                'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
+                'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib'],
             }]
         ]},
         {
