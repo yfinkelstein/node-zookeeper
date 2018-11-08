@@ -19,7 +19,7 @@ using namespace node;
 
 #ifdef WIN32
     #define ZK_FD	SOCKET
-#else
+#endif
 
 
 // @param c must be in [0-15]
