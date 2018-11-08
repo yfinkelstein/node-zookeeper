@@ -8,7 +8,7 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
-#include <v8-debug.h>
+#include <v8.h>
 using namespace v8;
 using namespace node;
 #undef THREADED
@@ -19,6 +19,8 @@ using namespace node;
 
 #ifdef WIN32
     #define ZK_FD	SOCKET
+#else
+    #define ZK_FD	int
 #endif
 
 
@@ -259,9 +261,10 @@ public:
             return;
         }
 
+        ZK_FD fd;
         last_activity = uv_now(uv_default_loop());
 
-        int oldFd = fd;
+        ZK_FD oldFd = fd;
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
 
         if (zk_io && uv_is_active((uv_handle_t*) zk_io)) {
