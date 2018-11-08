@@ -1,5 +1,7 @@
 #include <string.h>
-#include <strings.h>
+#ifndef WIN32
+    #include <strings.h>
+#endif
 #include <errno.h>
 #include <assert.h>
 #include <stdarg.h>
@@ -14,6 +16,11 @@ using namespace node;
 #include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
+
+#ifdef WIN32
+    #define ZK_FD	SOCKET
+#else
+
 
 // @param c must be in [0-15]
 // @return '0'..'9','A'..'F'
@@ -41,7 +48,11 @@ static void hexToUchar(const char *hex, unsigned char *c) {
 }
 
 namespace zk {
-#define ZERO_MEM(member) bzero(&(member), sizeof(member))
+#ifdef WIN32
+	#define ZERO_MEM(member) memset(&(member), 0x0, sizeof(member))
+#else
+	#define ZERO_MEM(member) bzero(&(member), sizeof(member))
+#endif
 #define _LL_CAST_ (long long)
 #define _LLP_CAST_ (long long *)
 
