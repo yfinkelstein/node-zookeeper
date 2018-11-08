@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const root = process.cwd();
-const version = '3.4.9';
+const version = '3.4.12';
 const name = `zookeeper-${version}`;
 const suffix = '.tar.gz';
 const fileName = `${name}${suffix}`;
