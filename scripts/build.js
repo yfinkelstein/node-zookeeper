@@ -40,7 +40,8 @@ if (isAlreadyBuilt) {
 
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
-if (os.platform().toLowerCase().includes('win')) {
+
+if (os.platform().toLowerCase().includes('win32')) {
     exec('cmake .');
     exec('cmake --build');
 } else {
