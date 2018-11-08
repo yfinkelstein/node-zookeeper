@@ -40,8 +40,13 @@ if (isAlreadyBuilt) {
 
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
-exec('./configure --without-syncapi --enable-static --disable-shared --with-pic');
-exec('make');
+if (os.platform().toLowerCase().includes('win')) {
+    exec('cmake .');
+    exec('cmake --build');
+} else {
+    exec('./configure --without-syncapi --enable-static --disable-shared --with-pic');
+    exec('make');
+}
 
 shell.cd(env.ROOT);
 
