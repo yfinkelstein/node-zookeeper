@@ -1,8 +1,10 @@
 #include <string.h>
 #ifndef WIN32
-    #include <strings.h>
-#endif
+#include <strings.h>
 #include <errno.h>
+#else
+#define _MSC_STDINT_H_
+#endif
 #include <assert.h>
 #include <stdarg.h>
 #include <node.h>
