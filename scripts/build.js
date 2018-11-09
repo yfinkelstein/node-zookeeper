@@ -42,7 +42,7 @@ shell.cd(`${env.ZK_DEPS}/src/c`);
 
 
 if (os.platform().toLowerCase().includes('win32')) {
-    exec('cmake .');
+    exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${os.arch()} .`);
     exec('cmake --build .');
 } else {
     exec('./configure --without-syncapi --enable-static --disable-shared --with-pic');
