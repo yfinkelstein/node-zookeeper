@@ -42,7 +42,11 @@
                     '<(module_root_dir)/deps/zookeeper/src/c/generated',
                     '<!(node -e "require(\'nan\')")'
                 ],
-                'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib', 'Ws2_32.lib'],
+                'libraries': [
+                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib',
+                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/hashtable.lib',
+                    'Ws2_32.lib'
+                ],
             }]
         ]},
         {
