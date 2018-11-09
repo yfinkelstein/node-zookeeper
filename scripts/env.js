@@ -1,8 +1,7 @@
 const fs = require('fs');
-const os = require('os');
 
 function setRoot() {
-    if (os.platform().toLowerCase().includes('win32')) {
+    if (process.platform.toLowerCase().includes('win32')) {
         if (process.cwd().endsWith('build')) {
             process.chdir('../');
         }

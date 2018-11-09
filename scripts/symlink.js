@@ -13,4 +13,13 @@ const parsed = path.parse(fileName);
 const name = parsed.base;
 const folder = parsed.dir.split('/').pop();
 
-shell.ln('-s', `${folder}/${name}`, `build/${name}`);
+const source = `${folder}/${name}`;
+let destination = `build/${name}`;
+
+if (process.platform.toLowerCase().includes('win32')) {
+    if (process.cwd().endsWith('build')) {
+        destination = name;
+    }
+}
+
+shell.ln('-s', source, destination);

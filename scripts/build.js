@@ -1,4 +1,3 @@
-const os = require('os');
 const fs = require('fs');
 const shell = require('shelljs');
 const env = require('./env.js');
@@ -25,7 +24,7 @@ function handleSunOS() {
     }
 }
 
-if (os.platform().toLowerCase().includes('sunos')) {
+if (process.platform.toLowerCase().includes('sunos')) {
     handleSunOS();
     return;
 }
@@ -41,8 +40,8 @@ if (isAlreadyBuilt) {
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
 
-if (os.platform().toLowerCase().includes('win32')) {
-    exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${os.arch()} .`);
+if (process.platform.toLowerCase().includes('win32')) {
+    exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
     exec('./configure --without-syncapi --enable-static --disable-shared --with-pic');
