@@ -1,6 +1,18 @@
 const fs = require('fs');
+const os = require('os');
 
-const root = process.cwd();
+function setRoot() {
+    if (os.platform().toLowerCase().includes('win32')) {
+        if (process.cwd().endsWith('build')) {
+            process.chdir('../');
+        }
+    }
+
+    return process.cwd();
+}
+
+let root = setRoot();
+
 const version = '3.4.12';
 const name = `zookeeper-${version}`;
 const suffix = '.tar.gz';
