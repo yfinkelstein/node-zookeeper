@@ -21,11 +21,11 @@
   ,"keywords": ["apache", "zookeeper", "client"]
   ,"dependencies": {
     "async": "~2.6.1"
-    ,"decompress": "^4.2.0"
-    ,"decompress-targz": "^4.1.1"
-    ,"lodash": "~4.17.11"
+    ,"decompress": "4.2.x"
+    ,"decompress-targz": "4.1.x"
+    ,"lodash": "~4.17.x"
     ,"nan": "~2.11.0"
-    ,"shelljs": "^0.8.2"
+    ,"shelljs": "0.8.x"
   }
   ,"devDependencies": {
     "log4js": "~3.0.5"
@@ -34,9 +34,8 @@
   ,"main": "lib/index"
   ,"scripts" : {
      "build" : "node-gyp configure build"
+     ,"install": "node ./scripts/prepublish.js && npm run build"
      ,"test" : "pushd test; ./test; popd"
-     ,"deps": "npm install shelljs@0.8.x decompress@4.2.x decompress-targz@4.1.x"
-     ,"prepare" : "npm run deps && node ./scripts/prepublish.js"
   }
   ,"engines": { "node": ">=0.10" }
 }
