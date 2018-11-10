@@ -53,6 +53,9 @@ download(env.ZK_URL, env.ZK_FILE)
             ]
         }).then(() => {
             shell.mv(env.ZK, env.ZK_DEPS);
+        }).catch((e) => {
+            shell.echo(`Unable to decompress the zookeeper library. Error: ${e.message}`);
+            shell.exit(1);
         });
 
     })
