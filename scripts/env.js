@@ -10,7 +10,7 @@ function setRoot(env) {
     return process.cwd();
 }
 
-function isAlreadyBuilt(env) {
+function checkifAlreadyBuilt(env) {
     if (env.isWindows) {
         return fs.existsSync(`${env.ZK_DEPS}/src/c/Debug/zookeeper.lib`);
     }
@@ -25,7 +25,7 @@ const root = setRoot({
     isWindows,
 });
 
-const isAlreadyBuilt = isAlreadyBuilt({
+const isAlreadyBuilt = checkifAlreadyBuilt({
     isWindows,
 });
 
