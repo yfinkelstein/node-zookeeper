@@ -268,8 +268,8 @@ DDOPSON-2011-11-30 - are these issues still relevant?  unknown.
 
 # See Also
 
-- [http://hadoop.apache.org/zookeeper/releases.html](http://hadoop.apache.org/zookeeper/releases.html)
-- [http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API)
+- [http://zookeeper.apache.org/releases.html](http://zookeeper.apache.org/releases.html)
+- [http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API)
 - [http://github.com/kriszyp/node-promise](http://github.com/kriszyp/node-promise)
 - [http://github.com/pgriess/node-webworker](http://github.com/pgriess/node-webworker)
 
