@@ -24,14 +24,20 @@ function handleSunOS() {
     }
 }
 
-if (process.platform.toLowerCase().includes('sunos')) {
+function isAlreadyBuilt() {
+    if (env.isWindows) {
+        return fs.existsSync(`${env.ZK_DEPS}/src/c/Debug/zookeeper.lib`);
+    }
+
+    return fs.existsSync(`${env.BUILD}/lib/libzookeeper_st.la`);
+}
+
+if (env.isSunOs) {
     handleSunOS();
     return;
 }
 
-const isAlreadyBuilt = fs.existsSync(`${env.BUILD}/lib/libzookeeper_st.la`);
-
-if (isAlreadyBuilt) {
+if (isAlreadyBuilt()) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
     return;
@@ -39,7 +45,7 @@ if (isAlreadyBuilt) {
 
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
-if (process.platform.toLowerCase().includes('win32')) {
+if (env.isWindows) {
     exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
