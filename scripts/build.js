@@ -39,7 +39,6 @@ if (isAlreadyBuilt) {
 
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
-
 if (process.platform.toLowerCase().includes('win32')) {
     exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
