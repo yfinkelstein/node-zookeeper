@@ -24,20 +24,12 @@ function handleSunOS() {
     }
 }
 
-function isAlreadyBuilt() {
-    if (env.isWindows) {
-        return fs.existsSync(`${env.ZK_DEPS}/src/c/Debug/zookeeper.lib`);
-    }
-
-    return fs.existsSync(`${env.BUILD}/lib/libzookeeper_st.la`);
-}
-
 if (env.isSunOs) {
     handleSunOS();
     return;
 }
 
-if (isAlreadyBuilt()) {
+if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
     return;

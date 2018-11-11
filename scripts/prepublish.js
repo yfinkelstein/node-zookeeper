@@ -41,6 +41,12 @@ function download(url, destination) {
     return new Promise(executor);
 }
 
+if (env.isAlreadyBuilt) {
+    shell.echo('Zookeeper has already been built');
+    shell.exit(0);
+    return;
+}
+
 shell.cd(env.DEPS);
 
 download(env.ZK_URL, env.ZK_FILE)
