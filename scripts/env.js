@@ -10,7 +10,7 @@ function setRoot(env) {
     return process.cwd();
 }
 
-function checkifAlreadyBuilt(env) {
+function checkIfAlreadyBuilt(env) {
     if (env.isWindows) {
         return fs.existsSync(`${env.ZK_DEPS}/src/c/Debug/zookeeper.lib`);
     }
@@ -20,14 +20,7 @@ function checkifAlreadyBuilt(env) {
 
 const isWindows = process.platform.toLowerCase().includes('win32');
 const isSunOs = process.platform.toLowerCase().includes('sunos');
-
-const root = setRoot({
-    isWindows,
-});
-
-const isAlreadyBuilt = checkifAlreadyBuilt({
-    isWindows,
-});
+const root = setRoot({ isWindows });
 
 const version = '3.4.12';
 const name = `zookeeper-${version}`;
@@ -49,7 +42,8 @@ const variables = {
     PATCHES: patches,
     isWindows,
     isSunOs,
-    isAlreadyBuilt,
 };
+
+variables.isAlreadyBuilt = checkIfAlreadyBuilt(variables);
 
 module.exports = variables;
