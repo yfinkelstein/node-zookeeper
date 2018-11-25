@@ -1,15 +1,15 @@
 #include <string.h>
-#ifndef WIN32
-    #include <strings.h>
-    #include <errno.h>
+#ifdef WIN32
+    #define _MSC_STDINT_H_
+    #include <winport.h>
     #include <windows.h>
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <stdlib.h>
     #include <stdio.h>
 #else
-    #define _MSC_STDINT_H_
-    #include <winport.h>
+    #include <strings.h>
+    #include <errno.h>
 #endif
 #include <assert.h>
 #include <stdarg.h>
