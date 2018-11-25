@@ -1,9 +1,15 @@
 #include <string.h>
 #ifndef WIN32
-#include <strings.h>
-#include <errno.h>
+    #include <strings.h>
+    #include <errno.h>
+    #include <windows.h>
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <stdlib.h>
+    #include <stdio.h>
 #else
-#define _MSC_STDINT_H_
+    #define _MSC_STDINT_H_
+    #include <winport.h>
 #endif
 #include <assert.h>
 #include <stdarg.h>
@@ -23,6 +29,12 @@ using namespace node;
     #define ZK_FD	SOCKET
 #else
     #define ZK_FD	int
+#endif
+
+#ifdef WIN32
+    #pragma comment (lib, "Ws2_32.lib")
+    #pragma comment (lib, "Mswsock.lib")
+    #pragma comment (lib, "AdvApi32.lib")
 #endif
 
 
@@ -263,7 +275,10 @@ public:
             return;
         }
 
-        ZK_FD fd;
+        #ifdef WIN32
+            ZK_FD fd = socket(2, 1, 6);
+        #endif
+
         last_activity = uv_now(uv_default_loop());
 
         ZK_FD oldFd = fd;
