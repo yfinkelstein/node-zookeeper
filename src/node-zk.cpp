@@ -6,7 +6,6 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
-#include <v8-debug.h>
 using namespace v8;
 using namespace node;
 #undef THREADED
@@ -130,24 +129,24 @@ public:
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
         Local<Object> acl_open = Nan::New<Object>();
-        Nan::ForceSet(acl_open, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_open, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_open, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(constructor, LOCAL_STRING("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_open, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_open, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_open, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
         Local<Object> acl_read = Nan::New<Object>();
-        Nan::ForceSet(acl_read, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_read, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_read, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(constructor, LOCAL_STRING("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_read, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_read, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_read, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
         Local<Object> acl_creator = Nan::New<Object>();
-        Nan::ForceSet(acl_creator, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_creator, LOCAL_STRING("scheme"), LOCAL_STRING("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
-        Nan::ForceSet(constructor, LOCAL_STRING("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("scheme"), LOCAL_STRING("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+        Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
@@ -642,18 +641,18 @@ public:
     Local<Object> createStatObject (const struct Stat *stat) {
         Nan::EscapableHandleScope scope;
         Local<Object> o = Nan::New<Object>();
-        Nan::ForceSet(o, LOCAL_STRING("czxid"), Nan::New<Number>(stat->czxid), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("mzxid"), Nan::New<Number>(stat->mzxid), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("pzxid"), Nan::New<Number>(stat->pzxid), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("dataLength"), Nan::New<Integer>(stat->dataLength), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("numChildren"), Nan::New<Integer>(stat->numChildren), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("version"), Nan::New<Integer>(stat->version), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("cversion"), Nan::New<Integer>(stat->cversion), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("aversion"), Nan::New<Integer>(stat->aversion), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
-        Nan::ForceSet(o, LOCAL_STRING("createdInThisSession"), Nan::New<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("czxid"), Nan::New<Number>(stat->czxid), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("mzxid"), Nan::New<Number>(stat->mzxid), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("pzxid"), Nan::New<Number>(stat->pzxid), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("dataLength"), Nan::New<Integer>(stat->dataLength), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("numChildren"), Nan::New<Integer>(stat->numChildren), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("version"), Nan::New<Integer>(stat->version), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("cversion"), Nan::New<Integer>(stat->cversion), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("aversion"), Nan::New<Integer>(stat->aversion), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("createdInThisSession"), Nan::New<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
         return scope.Escape(o);
     }
 
@@ -872,9 +871,9 @@ public:
             struct ACL *acl = &aclv->data[i];
 
             Local<Object> obj = Nan::New<Object>();
-            Nan::ForceSet(obj, LOCAL_STRING("perms"), Nan::New<Integer>(acl->perms), ReadOnly);
-            Nan::ForceSet(obj, LOCAL_STRING("scheme"), LOCAL_STRING(acl->id.scheme), ReadOnly);
-            Nan::ForceSet(obj, LOCAL_STRING("auth"), LOCAL_STRING(acl->id.id), ReadOnly);
+            Nan::DefineOwnProperty(obj, LOCAL_STRING("perms"), Nan::New<Integer>(acl->perms), ReadOnly);
+            Nan::DefineOwnProperty(obj, LOCAL_STRING("scheme"), LOCAL_STRING(acl->id.scheme), ReadOnly);
+            Nan::DefineOwnProperty(obj, LOCAL_STRING("auth"), LOCAL_STRING(acl->id.id), ReadOnly);
 
             arr->Set(i, obj);
         }
