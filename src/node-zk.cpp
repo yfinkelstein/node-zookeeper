@@ -1,12 +1,13 @@
 #include <string.h>
 #ifdef WIN32
     #define _MSC_STDINT_H_
-    #include <winport.h>
-    #include <windows.h>
+    #include <iostream>
+    #include <stdint.h>
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <stdlib.h>
     #include <stdio.h>
+    #include <windows.h>
 #else
     #include <strings.h>
     #include <errno.h>
