@@ -276,9 +276,7 @@ public:
             return;
         }
 
-        #ifdef WIN32
-            ZK_FD fd = socket(2, 1, 6);
-        #endif
+        ZK_FD fd;
 
         last_activity = uv_now(uv_default_loop());
 
