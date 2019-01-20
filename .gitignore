@@ -4,3 +4,4 @@ npm-debug.log
 .idea
 *.tgz
 deps/zookeeper*
+.DS_Store
