@@ -326,7 +326,11 @@ public:
              }
 
              zk_io->data = this;
-             uv_poll_init(uv_default_loop(), zk_io, fd);
+             #ifdef WIN32
+             	uv_poll_init_socket(uv_default_loop(), zk_io, fd);
+             #else
+             	uv_poll_init(uv_default_loop(), zk_io, fd);
+             #endif
         }
 
         LOG_DEBUG(("yield: starting poll for %lp from thread %lp", this));
@@ -336,7 +340,7 @@ public:
     }
 
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
-        LOG_DEBUG(("zk_io_cb fired"));
+        LOG_DEBUG(("zk_io_cb fired, status: %d, revents: %d", status, revents));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 
         int events;
