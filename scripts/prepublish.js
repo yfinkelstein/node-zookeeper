@@ -58,7 +58,7 @@ function validateFile(fileName) {
     }
 
     if (res !== env.ZK_VERSION_SHA1) {
-        throw new Error(`shasum mismatch! Remove the file ${fileName}.`);
+        throw new Error(`Wrong sha1 for ${fileName}! Expected "${env.ZK_VERSION_SHA1}", got "${res}".`);
     }
 }
 
