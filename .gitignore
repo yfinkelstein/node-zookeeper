@@ -5,3 +5,4 @@ npm-debug.log
 *.tgz
 deps/zookeeper*
 .DS_Store
+package-lock.json
