@@ -10,14 +10,7 @@ function writeFile(url, destination, resolve, reject) {
     const file = fs.createWriteStream(destination);
 
     const req = http.get(url, (res) => {
-        res.on('data', function (chunk) {
-            file.write(chunk);
-        });
-
-        res.on('end', function () {
-            file.end();
-            resolve();
-        })
+        res.pipe(file);
     });
 
     req.on('error', (e) => {
@@ -29,6 +22,8 @@ function writeFile(url, destination, resolve, reject) {
         file.unlink(destination);
         reject(new Error('File error'));
     });
+
+    file.on('finish', resolve);
 }
 
 function download(url, destination) {
