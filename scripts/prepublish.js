@@ -54,7 +54,7 @@ function validateFile(fileName) {
         const sha1 = output[1];
         res = `${sha1}  ${name}`;
     } else {
-        res = exec(`shasum ${fileName}`).trim();
+        res = exec(`shasum -a 1 ${fileName}`).trim();
     }
 
     if (res !== env.ZK_VERSION_SHA1) {
