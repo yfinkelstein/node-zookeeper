@@ -1,14 +1,6 @@
 const shell = require('shelljs');
 const env = require('./env.js');
-
-function exec(action) {
-    const res = shell.exec(action);
-
-    if (res.code !== 0) {
-        shell.echo('Unable to build zookeeper library');
-        shell.exit(1);
-    }
-}
+const { exec } = require('./helper.js');
 
 function handleSunOS() {
     const uname = shell.exec('uname -v');

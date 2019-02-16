@@ -34,7 +34,7 @@ const variables = {
     DEPS: `${root}/deps`,
     BUILD: `${root}/build/zk`,
     ZK_VERSION: version,
-    ZK_VERSION_SHA1: '0285717bf5ea87a7a36936bf37851d214a32bb99',
+    ZK_VERSION_SHA1:`8e2cc8784794e24df90fa1a9dbe6cd1695c79a44  ${fileName}`,
     ZK: name,
     ZK_DEPS: `${root}/deps/zookeeper`,
     ZK_FILE: fileName,

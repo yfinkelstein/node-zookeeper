@@ -4,6 +4,7 @@ const shell = require('shelljs');
 const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 const env = require('./env.js');
+const { exec } = require('./helper.js');
 
 function writeFile(url, destination, resolve, reject) {
     const file = fs.createWriteStream(destination);
@@ -41,6 +42,24 @@ function download(url, destination) {
     return new Promise(executor);
 }
 
+function validateFile(fileName) {
+    let res;
+
+    if (env.isWindows) {
+        const output = exec(`certutil -hashfile ${fileName} sha1`).split('\r\n');
+        const prefix = 'SHA1 hash of ';
+        const name = output[0].slice(prefix.length, -1);
+        const sha1 = output[1];
+        res = `${sha1}  ${name}`;
+    } else {
+        res = exec(`shasum ${fileName}`).trim();
+    }
+
+    if (res !== env.ZK_VERSION_SHA1) {
+        throw new Error(`shasum mismatch! Remove the file ${fileName}.`);
+    }
+}
+
 if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
@@ -51,6 +70,8 @@ shell.cd(env.DEPS);
 
 download(env.ZK_URL, env.ZK_FILE)
     .then(() => {
+        validateFile(env.ZK_FILE);
+
         shell.rm('-rf', env.ZK_DEPS);
 
         decompress(env.ZK_FILE, './', {
