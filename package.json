@@ -43,6 +43,6 @@
     "test": "pushd test; ./test; popd"
   },
   "engines": {
-    "node": ">=0.10"
+    "node": ">=8.9.4"
   }
 }
