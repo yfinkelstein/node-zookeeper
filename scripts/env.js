@@ -22,10 +22,14 @@ const isWindows = process.platform.toLowerCase().includes('win32');
 const isSunOs = process.platform.toLowerCase().includes('sunos');
 const root = setRoot({ isWindows });
 
+// Don't forget to also update the sha1sum variable when upgrading the Zookeeper version
 const version = '3.4.12';
 const name = `zookeeper-${version}`;
 const suffix = '.tar.gz';
 const fileName = `${name}${suffix}`;
+
+// Update the checksum when upgrading the Zookeeper version
+const sha1sum = `8e2cc8784794e24df90fa1a9dbe6cd1695c79a44  ${fileName}`;
 
 const patches = fs.readdirSync(`${root}/patches`).find(file => file.endsWith('.patch'));
 
@@ -34,7 +38,7 @@ const variables = {
     DEPS: `${root}/deps`,
     BUILD: `${root}/build/zk`,
     ZK_VERSION: version,
-    ZK_VERSION_SHA1:`8e2cc8784794e24df90fa1a9dbe6cd1695c79a44  ${fileName}`,
+    ZK_VERSION_SHA1: sha1sum,
     ZK: name,
     ZK_DEPS: `${root}/deps/zookeeper`,
     ZK_FILE: fileName,
