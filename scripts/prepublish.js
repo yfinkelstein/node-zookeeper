@@ -47,8 +47,10 @@ function validateFile(fileName) {
 
     if (env.isWindows) {
         const output = exec(`certutil -hashfile ${fileName} sha1`).split('\r\n');
-        const prefix = 'SHA1 hash of ';
-        const name = output[0].slice(prefix.length, -1);
+
+        const arr = output[0].replace(':', '').split(' ');
+        const name = arr.find(n => n === fileName);
+
         const sha1 = output[1];
         res = `${sha1}  ${name}`;
     } else {
