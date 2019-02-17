@@ -24,7 +24,7 @@ function onConnect(client, err) {
 const zk = new ZooKeeper({
     connect: '127.0.0.1:2181',
     timeout: 200000,
-    debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
+    debug_level: ZooKeeper.ZOO_LOG_LEVEL_DEBUG,
     host_order_deterministic: false,
 });
 

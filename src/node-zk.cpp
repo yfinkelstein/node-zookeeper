@@ -384,11 +384,9 @@ public:
     }
 
     inline bool realInit (const char* hostPort, int session_timeout, clientid_t *client_id) {
-        bool need_timer_init = true;
         if (zhandle) {
             // In case this is not the first call to realInit,
             // stop the current timer and skip re-initializing the timer
-            need_timer_init = true;
             uv_timer_stop(&zk_timer);
         }
       
@@ -400,10 +398,8 @@ public:
         }
         Ref();
 
-        if (need_timer_init) {
-            uv_timer_init(uv_default_loop(), &zk_timer);
-            zk_timer.data = this;
-        }
+        uv_timer_init(uv_default_loop(), &zk_timer);
+        zk_timer.data = this;
 
         yield();
         return true;
