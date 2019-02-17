@@ -29,7 +29,7 @@ if (env.isAlreadyBuilt) {
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
 if (env.isWindows) {
-    exec(`cmake -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
+    exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
     exec('./configure --without-syncapi --enable-static --disable-shared --with-pic');
