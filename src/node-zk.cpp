@@ -27,12 +27,6 @@ using namespace node;
 #include "buffer_compat.h"
 
 #ifdef WIN32
-    #define ZK_FD	SOCKET
-#else
-    #define ZK_FD	int
-#endif
-
-#ifdef WIN32
     #pragma comment (lib, "Ws2_32.lib")
     #pragma comment (lib, "Mswsock.lib")
     #pragma comment (lib, "AdvApi32.lib")
@@ -276,11 +270,14 @@ public:
             return;
         }
 
-        ZK_FD fd;
-
         last_activity = uv_now(uv_default_loop());
 
-        ZK_FD oldFd = fd;
+        #ifdef WIN32
+            SOCKET oldFd = fd;
+        #else
+            int oldFd = fd;
+        #endif
+
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
 
         if (zk_io && uv_is_active((uv_handle_t*) zk_io)) {
@@ -1054,7 +1051,13 @@ private:
     uv_poll_t* zk_io;
 
     uv_timer_t zk_timer;
-    int fd;
+
+    #ifdef WIN32
+        SOCKET fd;
+    #else
+        int fd;
+    #endif
+
     int interest;
     timeval tv;
     int64_t last_activity; // time of last zookeeper event loop activity
