@@ -36,7 +36,6 @@
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
             }],['OS=="win"',{
                 'defines': ['DLL_EXPORT'],
-                "sources": [ "src/node-zk.def" ],
                 'include_dirs': [
                     '<(module_root_dir)/deps/zookeeper/src/c/include',
                     '<(module_root_dir)/deps/zookeeper/src/c/generated',
@@ -44,10 +43,7 @@
                 ],
                 'libraries': [
                     '<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib',
-                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/hashtable.lib',
-                    'Ws2_32.lib',
-                    'Mswsock.lib',
-                    'AdvApi32.lib'
+                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/hashtable.lib'
                 ],
             }]
         ]},
