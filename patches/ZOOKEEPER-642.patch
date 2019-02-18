@@ -1,7 +1,7 @@
-Index: src/c/src/zookeeper.c
+Index: zookeeper/src/c/src/zookeeper.c
 ===================================================================
---- src/c/src/zookeeper.c       (revision 1173876)
-+++ src/c/src/zookeeper.c       (working copy)
+--- zookeeper/src/c/src/zookeeper.c       (revision 1173876)
++++ zookeeper/src/c/src/zookeeper.c       (working copy)
 @@ -1543,7 +1543,9 @@
      gettimeofday(&now, 0);
      if(zh->next_deadline.tv_sec!=0 || zh->next_deadline.tv_usec!=0){

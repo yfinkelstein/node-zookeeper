@@ -57,6 +57,16 @@ function validateFile(fileName) {
     }
 }
 
+function patch() {
+    if (env.isWindows) {
+        shell.cp(`${env.ROOT}/patches/windows/zookeeper.c`, 'zookeeper/src/s/src/zookeeper.c');
+        shell.cp(`${env.ROOT}/patches/windows/zk_log.c`, 'zookeeper/src/s/src/zk_log.c');
+        return;
+    }
+
+    exec(`patch -p0 < ${env.ROOT}/patches/ZOOKEEPER-642.patch`);
+}
+
 if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
@@ -77,6 +87,7 @@ download(env.ZK_URL, env.ZK_FILE)
             ]
         }).then(() => {
             shell.mv(env.ZK, env.ZK_DEPS);
+            patch();
         }).catch((e) => {
             shell.echo(`Unable to decompress the zookeeper library. Error: ${e.message}`);
             shell.exit(1);
