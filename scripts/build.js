@@ -32,7 +32,7 @@ if (env.isWindows) {
     exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
-    exec('./configure --without-syncapi --disable-shared');
+    exec('./configure --without-syncapi --disable-shared --with-pic');
     exec('make');
 }
 
