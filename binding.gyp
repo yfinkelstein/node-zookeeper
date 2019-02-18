@@ -36,7 +36,7 @@
                 ],
                 'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
             }],['OS=="win"',{
-                'defines': ['WIN32', 'USE_STATIC_LIB', 'THREADED'],
+                'defines': ['WIN32', 'USE_STATIC_LIB'],
                 'msvs_settings': {
                     'VCLinkerTool':{
                         'IgnoreDefaultLibraryNames': ['msvcrtd.lib', 'msvcmrtd.lib', 'libcmt.lib'],
