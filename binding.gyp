@@ -39,7 +39,7 @@
                 'defines': ['WIN32', 'USE_STATIC_LIB', 'THREADED'],
                 'msvs_settings': {
                     'VCLinkerTool':{
-                        'IgnoreDefaultLibraryNames': ['msvctrd.lib', 'msvcmrtd.lib', 'libcmt.lib'],
+                        'IgnoreDefaultLibraryNames': ['msvcrtd.lib', 'msvcmrtd.lib', 'libcmt.lib'],
                     }
                 },
                 'include_dirs': [
