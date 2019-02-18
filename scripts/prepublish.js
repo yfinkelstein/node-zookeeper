@@ -59,8 +59,9 @@ function validateFile(fileName) {
 
 function patch() {
     if (env.isWindows) {
-        shell.cp(`${env.ROOT}/patches/windows/zookeeper.c`, 'zookeeper/src/s/src/zookeeper.c');
-        shell.cp(`${env.ROOT}/patches/windows/zk_log.c`, 'zookeeper/src/s/src/zk_log.c');
+        const destination = `${env.ROOT}/deps/zookeeper/src/c/src`;
+        shell.cp(`${env.ROOT}/patches/windows/zookeeper.c`, `${destination}/zookeeper.c`);
+        shell.cp(`${env.ROOT}/patches/windows/zk_log.c`, `${destination}/zk_log.c`);
         return;
     }
 
