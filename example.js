@@ -28,6 +28,7 @@ const zk = new ZooKeeper({
     host_order_deterministic: false,
 });
 
+zk.setLogger(console.log);
 try {
     zk.connect(onConnect.bind(null, zk));
 } catch (e) {
