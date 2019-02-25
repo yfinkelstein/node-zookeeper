@@ -1034,8 +1034,12 @@ public:
         LOG_INFO(("ZooKeeper destructor invoked"));
     }
 
-
+#ifdef WIN32
+    ZooKeeper () : zhandle(0) {
+        fd = socket(AF_INET, SOCK_STREAM, 0);
+#else
     ZooKeeper () : zhandle(0), fd(-1) {
+#endif
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
