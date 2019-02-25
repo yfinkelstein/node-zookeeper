@@ -90,7 +90,7 @@ download(env.ZK_URL, env.ZK_FILE)
             shell.mv(env.ZK, env.ZK_DEPS);
             patch();
         }).catch((e) => {
-            shell.echo(`Unable to decompress the zookeeper library. Error: ${e.message}`);
+            shell.echo(`Error: ${e.message}`);
             shell.exit(1);
         });
 
