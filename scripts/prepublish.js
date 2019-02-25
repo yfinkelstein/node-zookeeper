@@ -59,7 +59,7 @@ function validateFile(fileName) {
 
 function patch() {
     if (env.isWindows) {
-        const destination = `${env.ROOT}/deps/zookeeper/src/c/src`;
+        const destination = `${env.ZK_DEPS}/src/c/src`;
         shell.cp(`${env.ROOT}/patches/windows/zookeeper.c`, `${destination}/zookeeper.c`);
         shell.cp(`${env.ROOT}/patches/windows/zk_log.c`, `${destination}/zk_log.c`);
         return;
