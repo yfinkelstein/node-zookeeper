@@ -66,8 +66,13 @@ function clearPath() {
 }
 
 function moveFolder() {
-    shell.cp('-r', env.downloadedFolderName, env.sourceFolder);
-    shell.rm('-rf', env.downloadedFolderName);
+    if (env.isWindows) {
+        shell.cp('-r', env.downloadedFolderName, env.sourceFolder);
+        shell.rm('-rf', env.downloadedFolderName);
+        return;
+    }
+
+    shell.mv(env.downloadedFolderName, env.sourceFolder);
 }
 
 function applyPatches() {
