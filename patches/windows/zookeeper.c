@@ -86,6 +86,7 @@
 #define EAI_ADDRFAMILY WSAEINVAL /* is this still needed? */
 #define EHOSTDOWN EPIPE
 #define ESTALE ENODEV
+#include "winport.h"
 #endif
 
 #define IF_DEBUG(x) if(logLevel==ZOO_LOG_LEVEL_DEBUG) {x;}
@@ -521,7 +522,7 @@ int getaddrs(zhandle_t *zh)
         return ZSYSTEMERROR;
     }
     zh->addrs = 0;
-    host=strtok_s(hosts, ",", &strtok_last);
+    host=strtok_r(hosts, ",", &strtok_last);
     while(host) {
         char *port_spec = strrchr(host, ':');
         char *end_port_spec;
@@ -595,7 +596,7 @@ int getaddrs(zhandle_t *zh)
                          addr->ss_family, zh->hostname));
             }
         }
-        host = strtok_s(0, ",", &strtok_last);
+        host = strtok_r(0, ",", &strtok_last);
         }
 #else
         {
@@ -678,7 +679,7 @@ int getaddrs(zhandle_t *zh)
 
             freeaddrinfo(res0);
 
-            host = strtok_s(0, ",", &strtok_last);
+            host = strtok_r(0, ",", &strtok_last);
         }
 #endif
     }

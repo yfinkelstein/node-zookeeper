@@ -51,7 +51,10 @@
                     '<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib',
                     '<(module_root_dir)/deps/zookeeper/src/c/Debug/hashtable.lib',
                     'msvcrt.lib',
-                    'msvcmrt.lib'
+                    'msvcmrt.lib',
+                    'Ws2_32.lib',
+                    'Mswsock.lib',
+                    'AdvApi32.lib'
                 ],
             }]
         ]},

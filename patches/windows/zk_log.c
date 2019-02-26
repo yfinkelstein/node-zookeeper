@@ -26,6 +26,7 @@
 #else
 typedef DWORD pid_t;
 #include <process.h> /* for getpid */
+#include "winport.h"
 #endif
 
 #include <stdarg.h>
@@ -37,8 +38,6 @@ typedef DWORD pid_t;
 #ifdef THREADED
 #ifndef WIN32
 #include <pthread.h>
-#else
-#include "winport.h"
 #endif
 
 static pthread_key_t time_now_buffer;
@@ -108,7 +107,7 @@ static const char* time_now(char* now_str){
     gettimeofday(&tv,0);
 
     now = tv.tv_sec;
-    localtime_s(&now, &lt);
+    localtime_r(&now, &lt);
 
     // clone the format used by log4j ISO8601DateFormat
     // specifically: "yyyy-MM-dd HH:mm:ss,SSS"
