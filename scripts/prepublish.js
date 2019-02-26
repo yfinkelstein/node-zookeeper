@@ -52,38 +52,35 @@ function validateFile(fileName) {
         res = exec(`shasum -a 1 ${fileName}`).trim();
     }
 
-    if (res !== env.ZK_VERSION_SHA1) {
-        throw new Error(`Wrong sha1 for ${fileName}! Expected "${env.ZK_VERSION_SHA1}", got "${res}".`);
+    if (res !== env.sha1sum) {
+        throw new Error(`Wrong sha1 for ${fileName}! Expected "${env.sha1sum}", got "${res}".`);
     }
 }
 
 function clearPath() {
-    if (!shell.test('-d', env.ZK_DEPS)) {
+    if (!shell.test('-d', env.sourceFolder)) {
         return;
     }
 
-    shell.rm('-rf', env.ZK_DEPS);
+    shell.rm('-rf', env.sourceFolder);
 }
 
 function moveFolder() {
-    if (env.isWindows) {
-        shell.exec(`robocopy ${env.ZK} ${env.ZK_DEPS} /E /sl /LOG:robolog.txt`);
-        return;
-    }
-
-    shell.mv(env.ZK, env.ZK_DEPS);
+    shell.cp('-r', env.downloadedFolderName, env.sourceFolder);
+    shell.rm('-rf', env.downloadedFolderName);
 }
 
-function patch() {
+function applyPatches() {
     if (env.isWindows) {
-        const destination = `${env.ZK_DEPS}/src/c/src`;
-        shell.cp(`${env.ROOT}/patches/windows/zookeeper.c`, `${destination}/zookeeper.c`);
-        shell.cp(`${env.ROOT}/patches/windows/zk_log.c`, `${destination}/zk_log.c`);
-        shell.cp(`${env.ROOT}/patches/windows/zk_adaptor.h`, `${destination}/zk_adaptor.h`);
+        const source = `${env.rootFolder}/patches/windows`;
+        const destination = `${env.sourceFolder}/src/c/src`;
+        shell.cp(`${source}/zookeeper.c`, `${destination}/zookeeper.c`);
+        shell.cp(`${source}/zk_log.c`, `${destination}/zk_log.c`);
+        shell.cp(`${source}/zk_adaptor.h`, `${destination}/zk_adaptor.h`);
         return;
     }
 
-    exec(`patch -p0 < ${env.ROOT}/patches/ZOOKEEPER-642.patch`);
+    exec(`patch -p0 < ${env.rootFolder}/patches/ZOOKEEPER-642.patch`);
 }
 
 if (env.isAlreadyBuilt) {
@@ -95,21 +92,21 @@ if (env.isAlreadyBuilt) {
 shell.config.fatal = true;
 shell.config.verbose = true;
 
-shell.cd(env.DEPS);
+shell.cd(env.workFolder);
 
-download(env.ZK_URL, env.ZK_FILE)
+download(env.downloadUrl, env.downloadedFileName)
     .then(() => {
-        validateFile(env.ZK_FILE);
+        validateFile(env.downloadedFileName);
 
         clearPath();
 
-        decompress(env.ZK_FILE, './', {
+        decompress(env.downloadedFileName, './', {
             plugins: [
                 decompressTargz()
             ]
         }).then(() => {
             moveFolder();
-            patch();
+            applyPatches();
         }).catch((e) => {
             shell.echo(`Error: ${e.message}`);
             shell.exit(1);

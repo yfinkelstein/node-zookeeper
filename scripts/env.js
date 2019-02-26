@@ -12,38 +12,35 @@ function setRoot(env) {
 
 function checkIfAlreadyBuilt(env) {
     if (env.isWindows) {
-        return fs.existsSync(`${env.ZK_DEPS}/src/c/Debug/zookeeper.lib`);
+        return fs.existsSync(`${env.sourceFolder}/src/c/Debug/zookeeper.lib`);
     }
 
-    return fs.existsSync(`${env.BUILD}/lib/libzookeeper_st.la`);
+    return fs.existsSync(`${env.buildFolder}/lib/libzookeeper_st.la`);
 }
 
 const isWindows = process.platform.toLowerCase().includes('win32');
 const isSunOs = process.platform.toLowerCase().includes('sunos');
-const root = setRoot({ isWindows });
+const rootFolder = setRoot({ isWindows });
 
 // Don't forget to also update the sha1sum variable when upgrading the Zookeeper version
-const version = '3.4.13';
-const name = `zookeeper-${version}`;
+const zookeeperVersion = '3.4.13';
+const downloadedFolderName = `zookeeper-${zookeeperVersion}`;
 const suffix = '.tar.gz';
-const fileName = `${name}${suffix}`;
+const downloadedFileName = `${downloadedFolderName}${suffix}`;
 
 // Update the checksum when upgrading the Zookeeper version
-const sha1sum = `a989b527f3f990d471e6d47ee410e57d8be7620b  ${fileName}`;
-
-const patches = fs.readdirSync(`${root}/patches`).find(file => file.endsWith('.patch'));
+const sha1sum = `a989b527f3f990d471e6d47ee410e57d8be7620b  ${downloadedFileName}`;
 
 const variables = {
-    ROOT: root,
-    DEPS: `${root}/deps`,
-    BUILD: `${root}/build/zk`,
-    ZK_VERSION: version,
-    ZK_VERSION_SHA1: sha1sum,
-    ZK: name,
-    ZK_DEPS: `${root}/deps/zookeeper`,
-    ZK_FILE: fileName,
-    ZK_URL:`http://archive.apache.org/dist/zookeeper/${name}/${fileName}`,
-    PATCHES: patches,
+    rootFolder,
+    workFolder: `${rootFolder}/deps`,
+    buildFolder: `${rootFolder}/build/zk`,
+    zookeeperVersion,
+    sha1sum,
+    downloadedFolderName,
+    sourceFolder: `${rootFolder}/deps/zookeeper`,
+    downloadedFileName,
+    downloadUrl:`http://archive.apache.org/dist/zookeeper/${downloadedFolderName}/${downloadedFileName}`,
     isWindows,
     isSunOs,
 };
