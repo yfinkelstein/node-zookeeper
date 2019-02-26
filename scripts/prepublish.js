@@ -57,6 +57,23 @@ function validateFile(fileName) {
     }
 }
 
+function clearPath() {
+    if (!shell.test('-d', env.ZK_DEPS)) {
+        return;
+    }
+
+    shell.rm('-rf', env.ZK_DEPS);
+}
+
+function moveFolder() {
+    if (env.isWindows) {
+        shell.exec(`robocopy ${env.ZK} ${env.ZK_DEPS} /E /sl /LOG:robolog.txt`);
+        return;
+    }
+
+    shell.mv(env.ZK, env.ZK_DEPS);
+}
+
 function patch() {
     if (env.isWindows) {
         const destination = `${env.ZK_DEPS}/src/c/src`;
@@ -75,20 +92,23 @@ if (env.isAlreadyBuilt) {
     return;
 }
 
+shell.config.fatal = true;
+shell.config.verbose = true;
+
 shell.cd(env.DEPS);
 
 download(env.ZK_URL, env.ZK_FILE)
     .then(() => {
         validateFile(env.ZK_FILE);
 
-        shell.rm('-rf', env.ZK_DEPS);
+        clearPath();
 
         decompress(env.ZK_FILE, './', {
             plugins: [
                 decompressTargz()
             ]
         }).then(() => {
-            shell.mv(env.ZK, env.ZK_DEPS);
+            moveFolder();
             patch();
         }).catch((e) => {
             shell.echo(`Error: ${e.message}`);

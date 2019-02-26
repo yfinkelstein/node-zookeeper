@@ -26,6 +26,9 @@ if (env.isAlreadyBuilt) {
     return;
 }
 
+shell.config.fatal = true;
+shell.config.verbose = true;
+
 shell.cd(`${env.ZK_DEPS}/src/c`);
 
 if (env.isWindows) {

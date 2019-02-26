@@ -2,6 +2,9 @@ const path = require('path');
 const shell = require('shelljs');
 const env = require('./env.js');
 
+shell.config.fatal = true;
+shell.config.verbose = true;
+
 if (process.argv.length !== 3) {
     shell.echo(`Usage: node ${process.argv[1]} <PRODUCT_DIR>`);
     shell.exit(1);
