@@ -183,6 +183,12 @@ For more details please refer to ZooKeeper docs.
 * tests are not standalone, must run a zk server (easiest if you run at localhost:2181, if not you must pass the connect string to the tests)
 * only asynchronous ZK methods are implemented. Hey, this is node.js ... no sync calls are allowed
 
+# Windows support
+Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon. 
+
+Also, run `npm install` in a Powershell window as an __Administrator__.
+
+Windows support has been enabled mainly for supporting development, not for production.
 # Implementation Notes
 
 ### NOTE on Module Status (DDOPSON-2011-11-30):
