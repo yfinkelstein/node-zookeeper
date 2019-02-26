@@ -104,18 +104,18 @@ const int ZOO_ASSOCIATING_STATE = ASSOCIATING_STATE_DEF;
 const int ZOO_CONNECTED_STATE = CONNECTED_STATE_DEF;
 static __attribute__ ((unused)) const char* state2String(int state){
     switch(state){
-        case 0:
-            return "ZOO_CLOSED_STATE";
-        case CONNECTING_STATE_DEF:
-            return "ZOO_CONNECTING_STATE";
-        case ASSOCIATING_STATE_DEF:
-            return "ZOO_ASSOCIATING_STATE";
-        case CONNECTED_STATE_DEF:
-            return "ZOO_CONNECTED_STATE";
-        case EXPIRED_SESSION_STATE_DEF:
-            return "ZOO_EXPIRED_SESSION_STATE";
-        case AUTH_FAILED_STATE_DEF:
-            return "ZOO_AUTH_FAILED_STATE";
+    case 0:
+        return "ZOO_CLOSED_STATE";
+    case CONNECTING_STATE_DEF:
+        return "ZOO_CONNECTING_STATE";
+    case ASSOCIATING_STATE_DEF:
+        return "ZOO_ASSOCIATING_STATE";
+    case CONNECTED_STATE_DEF:
+        return "ZOO_CONNECTED_STATE";
+    case EXPIRED_SESSION_STATE_DEF:
+        return "ZOO_EXPIRED_SESSION_STATE";
+    case AUTH_FAILED_STATE_DEF:
+        return "ZOO_AUTH_FAILED_STATE";
     }
     return "INVALID_STATE";
 }
@@ -128,20 +128,20 @@ const int ZOO_SESSION_EVENT = SESSION_EVENT_DEF;
 const int ZOO_NOTWATCHING_EVENT = NOTWATCHING_EVENT_DEF;
 static __attribute__ ((unused)) const char* watcherEvent2String(int ev){
     switch(ev){
-        case 0:
-            return "ZOO_ERROR_EVENT";
-        case CREATED_EVENT_DEF:
-            return "ZOO_CREATED_EVENT";
-        case DELETED_EVENT_DEF:
-            return "ZOO_DELETED_EVENT";
-        case CHANGED_EVENT_DEF:
-            return "ZOO_CHANGED_EVENT";
-        case CHILD_EVENT_DEF:
-            return "ZOO_CHILD_EVENT";
-        case SESSION_EVENT_DEF:
-            return "ZOO_SESSION_EVENT";
-        case NOTWATCHING_EVENT_DEF:
-            return "ZOO_NOTWATCHING_EVENT";
+    case 0:
+        return "ZOO_ERROR_EVENT";
+    case CREATED_EVENT_DEF:
+        return "ZOO_CREATED_EVENT";
+    case DELETED_EVENT_DEF:
+        return "ZOO_DELETED_EVENT";
+    case CHANGED_EVENT_DEF:
+        return "ZOO_CHANGED_EVENT";
+    case CHILD_EVENT_DEF:
+        return "ZOO_CHILD_EVENT";
+    case SESSION_EVENT_DEF:
+        return "ZOO_SESSION_EVENT";
+    case NOTWATCHING_EVENT_DEF:
+        return "ZOO_NOTWATCHING_EVENT";
     }
     return "INVALID_EVENT";
 }
@@ -212,18 +212,18 @@ static int deserialize_multi(int xid, completion_list_t *cptr, struct iarchive *
 
 /* completion routine forward declarations */
 static int add_completion(zhandle_t *zh, int xid, int completion_type,
-                          const void *dc, const void *data, int add_to_front,
-                          watcher_registration_t* wo, completion_head_t *clist);
+        const void *dc, const void *data, int add_to_front,
+        watcher_registration_t* wo, completion_head_t *clist);
 static completion_list_t* create_completion_entry(int xid, int completion_type,
-                                                  const void *dc, const void *data, watcher_registration_t* wo,
-                                                  completion_head_t *clist);
+        const void *dc, const void *data, watcher_registration_t* wo,
+        completion_head_t *clist);
 static void destroy_completion_entry(completion_list_t* c);
 static void queue_completion_nolock(completion_head_t *list, completion_list_t *c,
-                                    int add_to_front);
+        int add_to_front);
 static void queue_completion(completion_head_t *list, completion_list_t *c,
-                             int add_to_front);
+        int add_to_front);
 static int handle_socket_error_msg(zhandle_t *zh, int line, int rc,
-                                   const char* format,...);
+    const char* format,...);
 static void cleanup_bufs(zhandle_t *zh,int callCompletion,int rc);
 
 static int disable_conn_permute=0; // permute enabled by default
@@ -240,9 +240,9 @@ static ssize_t zookeeper_send(int s, const void* buf, size_t len)
 #endif
 {
 #ifdef __linux__
-    return send(s, buf, len, MSG_NOSIGNAL);
+  return send(s, buf, len, MSG_NOSIGNAL);
 #else
-    return send(s, buf, len, 0);
+  return send(s, buf, len, 0);
 #endif
 }
 
@@ -483,16 +483,16 @@ static void setup_random()
  */
 static int getaddrinfo_errno(int rc) {
     switch(rc) {
-        case EAI_NONAME:
+    case EAI_NONAME:
 // ZOOKEEPER-1323 EAI_NODATA and EAI_ADDRFAMILY are deprecated in FreeBSD.
 #if defined EAI_NODATA && EAI_NODATA != EAI_NONAME
-            case EAI_NODATA:
+    case EAI_NODATA:
 #endif
-            return ENOENT;
-        case EAI_MEMORY:
-            return ENOMEM;
-        default:
-            return EINVAL;
+        return ENOENT;
+    case EAI_MEMORY:
+        return ENOMEM;
+    default:
+        return EINVAL;
     }
 }
 #endif
@@ -517,7 +517,7 @@ int getaddrs(zhandle_t *zh)
         zh->addrs = 0;
     }
     if (!hosts) {
-        LOG_ERROR(("out of memory"));
+         LOG_ERROR(("out of memory"));
         errno=ENOMEM;
         return ZSYSTEMERROR;
     }
@@ -600,27 +600,27 @@ int getaddrs(zhandle_t *zh)
         }
 #else
         {
-            struct addrinfo hints, *res, *res0;
+        struct addrinfo hints, *res, *res0;
 
-            memset(&hints, 0, sizeof(hints));
+        memset(&hints, 0, sizeof(hints));
 #ifdef AI_ADDRCONFIG
-            hints.ai_flags = AI_ADDRCONFIG;
+        hints.ai_flags = AI_ADDRCONFIG;
 #else
-            hints.ai_flags = 0;
+        hints.ai_flags = 0;
 #endif
-            hints.ai_family = AF_UNSPEC;
-            hints.ai_socktype = SOCK_STREAM;
-            hints.ai_protocol = IPPROTO_TCP;
+        hints.ai_family = AF_UNSPEC;
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_protocol = IPPROTO_TCP;
 
-            while(isspace(*host) && host != strtok_last)
-                host++;
+        while(isspace(*host) && host != strtok_last)
+            host++;
 
-            if ((rc = getaddrinfo(host, port_spec, &hints, &res0)) != 0) {
-                //bug in getaddrinfo implementation when it returns
-                //EAI_BADFLAGS or EAI_ADDRFAMILY with AF_UNSPEC and
-                // ai_flags as AI_ADDRCONFIG
+        if ((rc = getaddrinfo(host, port_spec, &hints, &res0)) != 0) {
+            //bug in getaddrinfo implementation when it returns
+            //EAI_BADFLAGS or EAI_ADDRFAMILY with AF_UNSPEC and
+            // ai_flags as AI_ADDRCONFIG
 #ifdef AI_ADDRCONFIG
-                if ((hints.ai_flags == AI_ADDRCONFIG) &&
+            if ((hints.ai_flags == AI_ADDRCONFIG) &&
 // ZOOKEEPER-1323 EAI_NODATA and EAI_ADDRFAMILY are deprecated in FreeBSD.
 #ifdef EAI_ADDRFAMILY
                 ((rc ==EAI_BADFLAGS) || (rc == EAI_ADDRFAMILY))) {
@@ -633,53 +633,53 @@ int getaddrs(zhandle_t *zh)
                 rc = getaddrinfo(host, port_spec, &hints, &res0);
             }
 #endif
-                if (rc != 0) {
-                    errno = getaddrinfo_errno(rc);
+            if (rc != 0) {
+                errno = getaddrinfo_errno(rc);
 #ifdef WIN32
-                    LOG_ERROR(("Win32 message: %s\n", gai_strerror(rc)));
+                LOG_ERROR(("Win32 message: %s\n", gai_strerror(rc)));
 #else
-                    LOG_ERROR(("getaddrinfo: %s\n", strerror(errno)));
+                LOG_ERROR(("getaddrinfo: %s\n", strerror(errno)));
 #endif
+                rc=ZSYSTEMERROR;
+                goto fail;
+            }
+        }
+
+        for (res = res0; res; res = res->ai_next) {
+            // Expand address list if needed
+            if (zh->addrs_count == alen) {
+                void *tmpaddr;
+                alen += 16;
+                tmpaddr = realloc(zh->addrs, sizeof(*zh->addrs)*alen);
+                if (tmpaddr == 0) {
+                    LOG_ERROR(("out of memory"));
+                    errno=ENOMEM;
                     rc=ZSYSTEMERROR;
                     goto fail;
                 }
+                zh->addrs=tmpaddr;
             }
 
-            for (res = res0; res; res = res->ai_next) {
-                // Expand address list if needed
-                if (zh->addrs_count == alen) {
-                    void *tmpaddr;
-                    alen += 16;
-                    tmpaddr = realloc(zh->addrs, sizeof(*zh->addrs)*alen);
-                    if (tmpaddr == 0) {
-                        LOG_ERROR(("out of memory"));
-                        errno=ENOMEM;
-                        rc=ZSYSTEMERROR;
-                        goto fail;
-                    }
-                    zh->addrs=tmpaddr;
-                }
-
-                // Copy addrinfo into address list
-                addr = &zh->addrs[zh->addrs_count];
-                switch (res->ai_family) {
-                    case AF_INET:
+            // Copy addrinfo into address list
+            addr = &zh->addrs[zh->addrs_count];
+            switch (res->ai_family) {
+            case AF_INET:
 #if defined(AF_INET6)
-                        case AF_INET6:
+            case AF_INET6:
 #endif
-                        memcpy(addr, res->ai_addr, res->ai_addrlen);
-                        ++zh->addrs_count;
-                        break;
-                    default:
-                        LOG_WARN(("skipping unknown address family %x for %s",
-                                res->ai_family, zh->hostname));
-                        break;
-                }
+                memcpy(addr, res->ai_addr, res->ai_addrlen);
+                ++zh->addrs_count;
+                break;
+            default:
+                LOG_WARN(("skipping unknown address family %x for %s",
+                res->ai_family, zh->hostname));
+                break;
             }
+        }
 
-            freeaddrinfo(res0);
+        freeaddrinfo(res0);
 
-            host = strtok_r(0, ",", &strtok_last);
+        host = strtok_r(0, ",", &strtok_last);
         }
 #endif
     }
@@ -698,7 +698,7 @@ int getaddrs(zhandle_t *zh)
         }
     }
     return ZOK;
-    fail:
+fail:
     if (zh->addrs) {
         free(zh->addrs);
         zh->addrs=0;
@@ -720,15 +720,15 @@ watcher_fn zoo_set_watcher(zhandle_t *zh,watcher_fn newFn)
 {
     watcher_fn oldWatcher=zh->watcher;
     if (newFn) {
-        zh->watcher = newFn;
+       zh->watcher = newFn;
     } else {
-        zh->watcher = null_watcher_fn;
+       zh->watcher = null_watcher_fn;
     }
     return oldWatcher;
 }
 
 struct sockaddr* zookeeper_get_connected_host(zhandle_t *zh,
-                                              struct sockaddr *addr, socklen_t *addr_len)
+                 struct sockaddr *addr, socklen_t *addr_len)
 {
     if (zh->state!=ZOO_CONNECTED_STATE) {
         return NULL;
@@ -740,62 +740,62 @@ struct sockaddr* zookeeper_get_connected_host(zhandle_t *zh,
 }
 
 static void log_env() {
-    char buf[2048];
+  char buf[2048];
 #ifdef HAVE_SYS_UTSNAME_H
-    struct utsname utsname;
+  struct utsname utsname;
 #endif
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETPWUID_R)
-    struct passwd pw;
+  struct passwd pw;
   struct passwd *pwp = NULL;
   uid_t uid = 0;
 #endif
 
-    LOG_INFO(("Client environment:zookeeper.version=%s", PACKAGE_STRING));
+  LOG_INFO(("Client environment:zookeeper.version=%s", PACKAGE_STRING));
 
 #ifdef HAVE_GETHOSTNAME
-    gethostname(buf, sizeof(buf));
+  gethostname(buf, sizeof(buf));
   LOG_INFO(("Client environment:host.name=%s", buf));
 #else
-    LOG_INFO(("Client environment:host.name=<not implemented>"));
+  LOG_INFO(("Client environment:host.name=<not implemented>"));
 #endif
 
 #ifdef HAVE_SYS_UTSNAME_H
-    uname(&utsname);
+  uname(&utsname);
   LOG_INFO(("Client environment:os.name=%s", utsname.sysname));
   LOG_INFO(("Client environment:os.arch=%s", utsname.release));
   LOG_INFO(("Client environment:os.version=%s", utsname.version));
 #else
-    LOG_INFO(("Client environment:os.name=<not implemented>"));
-    LOG_INFO(("Client environment:os.arch=<not implemented>"));
-    LOG_INFO(("Client environment:os.version=<not implemented>"));
+  LOG_INFO(("Client environment:os.name=<not implemented>"));
+  LOG_INFO(("Client environment:os.arch=<not implemented>"));
+  LOG_INFO(("Client environment:os.version=<not implemented>"));
 #endif
 
 #ifdef HAVE_GETLOGIN
-    LOG_INFO(("Client environment:user.name=%s", getlogin()));
+  LOG_INFO(("Client environment:user.name=%s", getlogin()));
 #else
-    LOG_INFO(("Client environment:user.name=<not implemented>"));
+  LOG_INFO(("Client environment:user.name=<not implemented>"));
 #endif
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETPWUID_R)
-    uid = getuid();
+  uid = getuid();
   if (!getpwuid_r(uid, &pw, buf, sizeof(buf), &pwp)) {
     LOG_INFO(("Client environment:user.home=%s", pw.pw_dir));
   } else {
     LOG_INFO(("Client environment:user.home=<NA>"));
   }
 #else
-    LOG_INFO(("Client environment:user.home=<not implemented>"));
+  LOG_INFO(("Client environment:user.home=<not implemented>"));
 #endif
 
 #ifdef HAVE_GETCWD
-    if (!getcwd(buf, sizeof(buf))) {
+  if (!getcwd(buf, sizeof(buf))) {
     LOG_INFO(("Client environment:user.dir=<toolong>"));
   } else {
     LOG_INFO(("Client environment:user.dir=%s", buf));
   }
 #else
-    LOG_INFO(("Client environment:user.dir=<not implemented>"));
+  LOG_INFO(("Client environment:user.dir=<not implemented>"));
 #endif
 }
 
@@ -803,7 +803,7 @@ static void log_env() {
  * Create a zookeeper handle associated with the given host and port.
  */
 zhandle_t *zookeeper_init(const char *host, watcher_fn watcher,
-                          int recv_timeout, const clientid_t *clientid, void *context, int flags)
+  int recv_timeout, const clientid_t *clientid, void *context, int flags)
 {
     int errnosave = 0;
     zhandle_t *zh = NULL;
@@ -811,21 +811,21 @@ zhandle_t *zookeeper_init(const char *host, watcher_fn watcher,
 
     log_env();
 #ifdef WIN32
-    if (Win32WSAStartup()){
+       if (Win32WSAStartup()){
                LOG_ERROR(("Error initializing ws2_32.dll"));
                return 0;
        }
 #endif
     LOG_INFO(("Initiating client connection, host=%s sessionTimeout=%d watcher=%p"
-              " sessionId=%#llx sessionPasswd=%s context=%p flags=%d",
-            host,
-            recv_timeout,
-            watcher,
-            (clientid == 0 ? 0 : clientid->client_id),
-            ((clientid == 0) || (clientid->passwd[0] == 0) ?
-             "<null>" : "<hidden>"),
-            context,
-            flags));
+          " sessionId=%#llx sessionPasswd=%s context=%p flags=%d",
+              host,
+              recv_timeout,
+              watcher,
+              (clientid == 0 ? 0 : clientid->client_id),
+              ((clientid == 0) || (clientid->passwd[0] == 0) ?
+               "<null>" : "<hidden>"),
+              context,
+              flags));
 
     zh = calloc(1, sizeof(*zh));
     if (!zh) {
@@ -837,9 +837,9 @@ zhandle_t *zookeeper_init(const char *host, watcher_fn watcher,
     zh->recv_timeout = recv_timeout;
     init_auth_info(&zh->auth_h);
     if (watcher) {
-        zh->watcher = watcher;
+       zh->watcher = watcher;
     } else {
-        zh->watcher = null_watcher_fn;
+       zh->watcher = null_watcher_fn;
     }
     if (host == 0 || *host == 0) { // what we shouldn't dup
         errno=EINVAL;
@@ -900,7 +900,7 @@ zhandle_t *zookeeper_init(const char *host, watcher_fn watcher,
     }
 
     return zh;
-    abort:
+abort:
     errnosave=errno;
     destroy(zh);
     free(zh);
@@ -945,7 +945,7 @@ char* sub_string(zhandle_t *zh, const char* server_path) {
     //ZOOKEEPER-1027
     if (strncmp(server_path, zh->chroot, strlen(zh->chroot)) != 0) {
         LOG_ERROR(("server path %s does not include chroot path %s",
-                server_path, zh->chroot));
+                   server_path, zh->chroot));
         return (char *) server_path;
     }
     if (strlen(server_path) == strlen(zh->chroot)) {
@@ -1083,7 +1083,7 @@ static int send_buffer(int fd, buffer_list_t *buff)
 #ifndef _WINDOWS
             if (errno != EAGAIN) {
 #else
-                if (WSAGetLastError() != WSAEWOULDBLOCK) {
+            if (WSAGetLastError() != WSAEWOULDBLOCK) {
 #endif
                 return -1;
             } else {
@@ -1102,7 +1102,7 @@ static int send_buffer(int fd, buffer_list_t *buff)
 #ifndef _WINDOWS
             if (errno != EAGAIN) {
 #else
-                if (WSAGetLastError() != WSAEWOULDBLOCK) {
+            if (WSAGetLastError() != WSAEWOULDBLOCK) {
 #endif
                 return -1;
             }
@@ -1134,19 +1134,19 @@ static int recv_buffer(int fd, buffer_list_t *buff)
         rc = recv(fd, buffer+off, sizeof(int)-off, 0);
         //fprintf(LOGSTREAM, "rc = %d, off = %d, line %d\n", rc, off, __LINE__);
         switch(rc) {
-            case 0:
-                errno = EHOSTDOWN;
-            case -1:
+        case 0:
+            errno = EHOSTDOWN;
+        case -1:
 #ifndef _WINDOWS
-                if (errno == EAGAIN) {
+            if (errno == EAGAIN) {
 #else
-                    if (WSAGetLastError() == WSAEWOULDBLOCK) {
+            if (WSAGetLastError() == WSAEWOULDBLOCK) {
 #endif
-                    return 0;
-                }
-                return -1;
-            default:
-                buff->curr_offset += rc;
+                return 0;
+            }
+            return -1;
+        default:
+            buff->curr_offset += rc;
         }
         off = buff->curr_offset;
         if (buff->curr_offset == sizeof(buff->len)) {
@@ -1160,19 +1160,19 @@ static int recv_buffer(int fd, buffer_list_t *buff)
 
         rc = recv(fd, buff->buffer+off, buff->len-off, 0);
         switch(rc) {
-            case 0:
-                errno = EHOSTDOWN;
-            case -1:
+        case 0:
+            errno = EHOSTDOWN;
+        case -1:
 #ifndef _WINDOWS
-                if (errno == EAGAIN) {
+            if (errno == EAGAIN) {
 #else
-                    if (WSAGetLastError() == WSAEWOULDBLOCK) {
+            if (WSAGetLastError() == WSAEWOULDBLOCK) {
 #endif
-                    break;
-                }
-                return -1;
-            default:
-                buff->curr_offset += rc;
+                break;
+            }
+            return -1;
+        default:
+            buff->curr_offset += rc;
         }
     }
     return buff->curr_offset == buff->len + sizeof(buff->len);
@@ -1204,7 +1204,7 @@ void free_completions(zhandle_t *zh,int callCompletion,int reason)
             tmp_list.head = cptr->next;
             if (cptr->c.data_result == SYNCHRONOUS_MARKER) {
                 struct sync_completion
-                        *sc = (struct sync_completion*)cptr->data;
+                            *sc = (struct sync_completion*)cptr->data;
                 sc->rc = reason;
                 notify_sync_completion(sc);
                 zh->outstanding_sync--;
@@ -1283,7 +1283,7 @@ static void handle_error(zhandle_t *zh,int rc)
 }
 
 static int handle_socket_error_msg(zhandle_t *zh, int line, int rc,
-                                   const char* format, ...)
+        const char* format, ...)
 {
     if(logLevel>=ZOO_LOG_LEVEL_ERROR){
         va_list va;
@@ -1291,8 +1291,8 @@ static int handle_socket_error_msg(zhandle_t *zh, int line, int rc,
         va_start(va,format);
         vsnprintf(buf, sizeof(buf)-1,format,va);
         log_message(ZOO_LOG_LEVEL_ERROR,line,__func__,
-                    format_log_message("Socket [%s] zk retcode=%d, errno=%d(%s): %s",
-                                       format_current_endpoint_info(zh),rc,errno,strerror(errno),buf));
+            format_log_message("Socket [%s] zk retcode=%d, errno=%d(%s): %s",
+            format_current_endpoint_info(zh),rc,errno,strerror(errno),buf));
         va_end(va);
     }
     handle_error(zh,rc);
@@ -1322,7 +1322,7 @@ static void auth_completion_func(int rc, zhandle_t* zh)
     zoo_unlock_auth(zh);
     if (rc) {
         LOG_ERROR(("Authentication scheme %s failed. Connection closed.",
-                zh->auth_h.auth->scheme));
+                   zh->auth_h.auth->scheme));
     }
     else {
         LOG_INFO(("Authentication scheme %s succeeded", zh->auth_h.auth->scheme));
@@ -1352,7 +1352,7 @@ static int send_info_packet(zhandle_t *zh, auth_info* auth) {
     rc = rc < 0 ? rc : serialize_AuthPacket(oa, "req", &req);
     /* add this buffer to the head of the send queue */
     rc = rc < 0 ? rc : queue_front_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                                get_buffer_len(oa));
+            get_buffer_len(oa));
     /* We queued the buffer, so don't free it */
     close_buffer_oarchive(&oa, 0);
 
@@ -1387,8 +1387,8 @@ static int send_last_auth_info(zhandle_t *zh)
     zoo_lock_auth(zh);
     auth = get_last_auth(&zh->auth_h);
     if(auth==NULL) {
-        zoo_unlock_auth(zh);
-        return ZOK; // there is nothing to send
+      zoo_unlock_auth(zh);
+      return ZOK; // there is nothing to send
     }
     rc = send_info_packet(zh, auth);
     zoo_unlock_auth(zh);
@@ -1433,7 +1433,7 @@ static int send_set_watches(zhandle_t *zh)
     rc = rc < 0 ? rc : serialize_SetWatches(oa, "req", &req);
     /* add this buffer to the head of the send queue */
     rc = rc < 0 ? rc : queue_front_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                                get_buffer_len(oa));
+            get_buffer_len(oa));
     /* We queued the buffer, so don't free it */
     close_buffer_oarchive(&oa, 0);
     free_key_list(req.dataWatches.data, req.dataWatches.count);
@@ -1471,32 +1471,32 @@ static int serialize_prime_connect(struct connect_req *req, char* buffer){
     return 0;
 }
 
-static int deserialize_prime_response(struct prime_struct *req, char* buffer){
-    //this should be the order of deserialization
-    int offset = 0;
-    memcpy(&req->len, buffer + offset, sizeof(req->len));
-    offset = offset +  sizeof(req->len);
+ static int deserialize_prime_response(struct prime_struct *req, char* buffer){
+     //this should be the order of deserialization
+     int offset = 0;
+     memcpy(&req->len, buffer + offset, sizeof(req->len));
+     offset = offset +  sizeof(req->len);
 
-    req->len = ntohl(req->len);
-    memcpy(&req->protocolVersion, buffer + offset, sizeof(req->protocolVersion));
-    offset = offset +  sizeof(req->protocolVersion);
+     req->len = ntohl(req->len);
+     memcpy(&req->protocolVersion, buffer + offset, sizeof(req->protocolVersion));
+     offset = offset +  sizeof(req->protocolVersion);
 
-    req->protocolVersion = ntohl(req->protocolVersion);
-    memcpy(&req->timeOut, buffer + offset, sizeof(req->timeOut));
-    offset = offset +  sizeof(req->timeOut);
+     req->protocolVersion = ntohl(req->protocolVersion);
+     memcpy(&req->timeOut, buffer + offset, sizeof(req->timeOut));
+     offset = offset +  sizeof(req->timeOut);
 
-    req->timeOut = ntohl(req->timeOut);
-    memcpy(&req->sessionId, buffer + offset, sizeof(req->sessionId));
-    offset = offset +  sizeof(req->sessionId);
+     req->timeOut = ntohl(req->timeOut);
+     memcpy(&req->sessionId, buffer + offset, sizeof(req->sessionId));
+     offset = offset +  sizeof(req->sessionId);
 
-    req->sessionId = zoo_htonll(req->sessionId);
-    memcpy(&req->passwd_len, buffer + offset, sizeof(req->passwd_len));
-    offset = offset +  sizeof(req->passwd_len);
+     req->sessionId = zoo_htonll(req->sessionId);
+     memcpy(&req->passwd_len, buffer + offset, sizeof(req->passwd_len));
+     offset = offset +  sizeof(req->passwd_len);
 
-    req->passwd_len = ntohl(req->passwd_len);
-    memcpy(req->passwd, buffer + offset, sizeof(req->passwd));
-    return 0;
-}
+     req->passwd_len = ntohl(req->passwd_len);
+     memcpy(req->passwd, buffer + offset, sizeof(req->passwd));
+     return 0;
+ }
 
 static int prime_connection(zhandle_t *zh)
 {
@@ -1519,7 +1519,7 @@ static int prime_connection(zhandle_t *zh)
     rc=rc<0 ? rc : zookeeper_send(zh->fd, buffer_req, len);
     if (rc<0) {
         return handle_socket_error_msg(zh, __LINE__, ZCONNECTIONLOSS,
-                                       "failed to send a handshake packet: %s", strerror(errno));
+                "failed to send a handshake packet: %s", strerror(errno));
     }
     zh->state = ZOO_ASSOCIATING_STATE;
 
@@ -1533,7 +1533,7 @@ static int prime_connection(zhandle_t *zh)
 }
 
 static inline int calculate_interval(const struct timeval *start,
-                                     const struct timeval *end)
+        const struct timeval *end)
 {
     int interval;
     struct timeval i = *end;
@@ -1554,13 +1554,13 @@ static struct timeval get_timeval(int interval)
     return tv;
 }
 
-static int add_void_completion(zhandle_t *zh, int xid, void_completion_t dc,
-                               const void *data);
-static int add_string_completion(zhandle_t *zh, int xid,
-                                 string_completion_t dc, const void *data);
+ static int add_void_completion(zhandle_t *zh, int xid, void_completion_t dc,
+     const void *data);
+ static int add_string_completion(zhandle_t *zh, int xid,
+     string_completion_t dc, const void *data);
 
-int send_ping(zhandle_t* zh)
-{
+ int send_ping(zhandle_t* zh)
+ {
     int rc;
     struct oarchive *oa = create_buffer_oarchive();
     struct RequestHeader h = { STRUCT_INITIALIZER(xid ,PING_XID), STRUCT_INITIALIZER (type , ZOO_PING_OP) };
@@ -1569,7 +1569,7 @@ int send_ping(zhandle_t* zh)
     enter_critical(zh);
     gettimeofday(&zh->last_ping, 0);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     close_buffer_oarchive(&oa, 0);
     return rc<0 ? rc : adaptor_send_queue(zh, 0);
@@ -1583,7 +1583,7 @@ int zookeeper_interest(zhandle_t *zh, SOCKET *fd, int *interest,
     ULONG nonblocking_flag = 1;
 #else
 int zookeeper_interest(zhandle_t *zh, int *fd, int *interest,
-                       struct timeval *tv)
+     struct timeval *tv)
 {
 #endif
     struct timeval now;
@@ -1636,7 +1636,7 @@ int zookeeper_interest(zhandle_t *zh, int *fd, int *interest,
                 rc = connect(zh->fd, (struct sockaddr*) &zh->addrs[zh->connect_index], sizeof(struct sockaddr_in6));
             } else {
 #else
-            LOG_DEBUG(("[zk] connect()\n"));
+               LOG_DEBUG(("[zk] connect()\n"));
             {
 #endif
                 rc = connect(zh->fd, (struct sockaddr*) &zh->addrs[zh->connect_index], sizeof(struct sockaddr_in));
@@ -1671,7 +1671,7 @@ int zookeeper_interest(zhandle_t *zh, int *fd, int *interest,
                     zh->state = ZOO_CONNECTING_STATE;
                 else
                     return api_epilog(zh,handle_socket_error_msg(zh,__LINE__,
-                                                                 ZCONNECTIONLOSS,"connect() call failed"));
+                            ZCONNECTIONLOSS,"connect() call failed"));
             } else {
                 if((rc=prime_connection(zh))!=0)
                     return api_epilog(zh,rc);
@@ -1702,10 +1702,10 @@ int zookeeper_interest(zhandle_t *zh, int *fd, int *interest,
             *interest=0;
             *tv = get_timeval(0);
             return api_epilog(zh,handle_socket_error_msg(zh,
-                                                         __LINE__,ZOPERATIONTIMEOUT,
-                                                         "connection to %s timed out (exceeded timeout by %dms)",
-                                                         format_endpoint_info(&zh->addrs[zh->connect_index]),
-                                                         -recv_to));
+                    __LINE__,ZOPERATIONTIMEOUT,
+                    "connection to %s timed out (exceeded timeout by %dms)",
+                    format_endpoint_info(&zh->addrs[zh->connect_index]),
+                    -recv_to));
 
         }
         // We only allow 1/3 of our timeout time to expire before sending
@@ -1737,7 +1737,7 @@ int zookeeper_interest(zhandle_t *zh, int *fd, int *interest,
         /* we are interested in a write if we are connected and have something
          * to send, or we are waiting for a connect to finish. */
         if ((zh->to_send.head && (zh->state == ZOO_CONNECTED_STATE))
-            || zh->state == ZOO_CONNECTING_STATE) {
+        || zh->state == ZOO_CONNECTING_STATE) {
             *interest |= ZOOKEEPER_WRITE;
         }
     }
@@ -1759,7 +1759,7 @@ static int check_events(zhandle_t *zh, int events)
             if (rc == 0)
                 errno = error;
             return handle_socket_error_msg(zh, __LINE__,ZCONNECTIONLOSS,
-                                           "server refused to accept the client");
+                "server refused to accept the client");
         }
         if((rc=prime_connection(zh))!=0)
             return rc;
@@ -1772,7 +1772,7 @@ static int check_events(zhandle_t *zh, int events)
         int rc=flush_send_queue(zh,0);
         if (rc < 0)
             return handle_socket_error_msg(zh,__LINE__,ZCONNECTIONLOSS,
-                                           "failed while flushing send queue");
+                "failed while flushing send queue");
     }
     if (events&ZOOKEEPER_READ) {
         int rc;
@@ -1783,7 +1783,7 @@ static int check_events(zhandle_t *zh, int events)
         rc = recv_buffer(zh->fd, zh->input_buffer);
         if (rc < 0) {
             return handle_socket_error_msg(zh, __LINE__,ZCONNECTIONLOSS,
-                                           "failed while receiving a server response");
+                "failed while receiving a server response");
         }
         if (rc > 0) {
             gettimeofday(&zh->last_recv, 0);
@@ -1801,7 +1801,7 @@ static int check_events(zhandle_t *zh, int events)
                     zh->state = ZOO_EXPIRED_SESSION_STATE;
                     errno = ESTALE;
                     return handle_socket_error_msg(zh,__LINE__,ZSESSIONEXPIRED,
-                                                   "sessionId=%#llx has expired.",oldid);
+                            "sessionId=%#llx has expired.",oldid);
                 } else {
                     zh->recv_timeout = zh->primer_storage.timeOut;
                     zh->client_id.client_id = newid;
@@ -1810,8 +1810,8 @@ static int check_events(zhandle_t *zh, int events)
                            sizeof(zh->client_id.passwd));
                     zh->state = ZOO_CONNECTED_STATE;
                     LOG_INFO(("session establishment complete on server [%s], sessionId=%#llx, negotiated timeout=%d",
-                            format_endpoint_info(&zh->addrs[zh->connect_index]),
-                            newid, zh->recv_timeout));
+                              format_endpoint_info(&zh->addrs[zh->connect_index]),
+                              newid, zh->recv_timeout));
                     /* we want the auth to be sent for, but since both call push to front
                        we need to call send_watch_set first */
                     send_set_watches(zh);
@@ -1900,7 +1900,7 @@ static int queue_session_event(zhandle_t *zh, int state)
         process_completions(zh);
     }
     return ZOK;
-    error:
+error:
     errno=ENOMEM;
     return ZSYSTEMERROR;
 }
@@ -1926,98 +1926,98 @@ static void process_sync_completion(
         completion_list_t *cptr,
         struct sync_completion *sc,
         struct iarchive *ia,
-        zhandle_t *zh)
+	zhandle_t *zh)
 {
     LOG_DEBUG(("Processing sync_completion with type=%d xid=%#x rc=%d",
             cptr->c.type, cptr->xid, sc->rc));
 
     switch(cptr->c.type) {
-        case COMPLETION_DATA:
-            if (sc->rc==0) {
-                struct GetDataResponse res;
-                int len;
-                deserialize_GetDataResponse(ia, "reply", &res);
-                if (res.data.len <= sc->u.data.buff_len) {
-                    len = res.data.len;
-                } else {
-                    len = sc->u.data.buff_len;
-                }
-                sc->u.data.buff_len = len;
-                // check if len is negative
-                // just of NULL which is -1 int
-                if (len == -1) {
-                    sc->u.data.buffer = NULL;
-                } else {
-                    memcpy(sc->u.data.buffer, res.data.buff, len);
-                }
-                sc->u.data.stat = res.stat;
-                deallocate_GetDataResponse(&res);
+    case COMPLETION_DATA:
+        if (sc->rc==0) {
+            struct GetDataResponse res;
+            int len;
+            deserialize_GetDataResponse(ia, "reply", &res);
+            if (res.data.len <= sc->u.data.buff_len) {
+                len = res.data.len;
+            } else {
+                len = sc->u.data.buff_len;
             }
-            break;
-        case COMPLETION_STAT:
-            if (sc->rc==0) {
-                struct SetDataResponse res;
-                deserialize_SetDataResponse(ia, "reply", &res);
-                sc->u.stat = res.stat;
-                deallocate_SetDataResponse(&res);
+            sc->u.data.buff_len = len;
+            // check if len is negative
+            // just of NULL which is -1 int
+            if (len == -1) {
+                sc->u.data.buffer = NULL;
+            } else {
+                memcpy(sc->u.data.buffer, res.data.buff, len);
             }
-            break;
-        case COMPLETION_STRINGLIST:
-            if (sc->rc==0) {
-                struct GetChildrenResponse res;
-                deserialize_GetChildrenResponse(ia, "reply", &res);
-                sc->u.strs2 = res.children;
-                /* We don't deallocate since we are passing it back */
-                // deallocate_GetChildrenResponse(&res);
+            sc->u.data.stat = res.stat;
+            deallocate_GetDataResponse(&res);
+        }
+        break;
+    case COMPLETION_STAT:
+        if (sc->rc==0) {
+            struct SetDataResponse res;
+            deserialize_SetDataResponse(ia, "reply", &res);
+            sc->u.stat = res.stat;
+            deallocate_SetDataResponse(&res);
+        }
+        break;
+    case COMPLETION_STRINGLIST:
+        if (sc->rc==0) {
+            struct GetChildrenResponse res;
+            deserialize_GetChildrenResponse(ia, "reply", &res);
+            sc->u.strs2 = res.children;
+            /* We don't deallocate since we are passing it back */
+            // deallocate_GetChildrenResponse(&res);
+        }
+        break;
+    case COMPLETION_STRINGLIST_STAT:
+        if (sc->rc==0) {
+            struct GetChildren2Response res;
+            deserialize_GetChildren2Response(ia, "reply", &res);
+            sc->u.strs_stat.strs2 = res.children;
+            sc->u.strs_stat.stat2 = res.stat;
+            /* We don't deallocate since we are passing it back */
+            // deallocate_GetChildren2Response(&res);
+        }
+        break;
+    case COMPLETION_STRING:
+        if (sc->rc==0) {
+            struct CreateResponse res;
+            int len;
+            const char * client_path;
+            deserialize_CreateResponse(ia, "reply", &res);
+            //ZOOKEEPER-1027
+            client_path = sub_string(zh, res.path);
+            len = strlen(client_path) + 1;if (len > sc->u.str.str_len) {
+                len = sc->u.str.str_len;
             }
-            break;
-        case COMPLETION_STRINGLIST_STAT:
-            if (sc->rc==0) {
-                struct GetChildren2Response res;
-                deserialize_GetChildren2Response(ia, "reply", &res);
-                sc->u.strs_stat.strs2 = res.children;
-                sc->u.strs_stat.stat2 = res.stat;
-                /* We don't deallocate since we are passing it back */
-                // deallocate_GetChildren2Response(&res);
+            if (len > 0) {
+                memcpy(sc->u.str.str, client_path, len - 1);
+                sc->u.str.str[len - 1] = '\0';
             }
-            break;
-        case COMPLETION_STRING:
-            if (sc->rc==0) {
-                struct CreateResponse res;
-                int len;
-                const char * client_path;
-                deserialize_CreateResponse(ia, "reply", &res);
-                //ZOOKEEPER-1027
-                client_path = sub_string(zh, res.path);
-                len = strlen(client_path) + 1;if (len > sc->u.str.str_len) {
-                    len = sc->u.str.str_len;
-                }
-                if (len > 0) {
-                    memcpy(sc->u.str.str, client_path, len - 1);
-                    sc->u.str.str[len - 1] = '\0';
-                }
-                free_duplicate_path(client_path, res.path);
-                deallocate_CreateResponse(&res);
-            }
-            break;
-        case COMPLETION_ACLLIST:
-            if (sc->rc==0) {
-                struct GetACLResponse res;
-                deserialize_GetACLResponse(ia, "reply", &res);
-                sc->u.acl.acl = res.acl;
-                sc->u.acl.stat = res.stat;
-                /* We don't deallocate since we are passing it back */
-                //deallocate_GetACLResponse(&res);
-            }
-            break;
-        case COMPLETION_VOID:
-            break;
-        case COMPLETION_MULTI:
-            sc->rc = deserialize_multi(cptr->xid, cptr, ia);
-            break;
-        default:
-            LOG_DEBUG(("Unsupported completion type=%d", cptr->c.type));
-            break;
+            free_duplicate_path(client_path, res.path);
+            deallocate_CreateResponse(&res);
+        }
+        break;
+    case COMPLETION_ACLLIST:
+        if (sc->rc==0) {
+            struct GetACLResponse res;
+            deserialize_GetACLResponse(ia, "reply", &res);
+            sc->u.acl.acl = res.acl;
+            sc->u.acl.stat = res.stat;
+            /* We don't deallocate since we are passing it back */
+            //deallocate_GetACLResponse(&res);
+        }
+        break;
+    case COMPLETION_VOID:
+        break;
+    case COMPLETION_MULTI:
+        sc->rc = deserialize_multi(cptr->xid, cptr, ia);
+        break;
+    default:
+        LOG_DEBUG(("Unsupported completion type=%d", cptr->c.type));
+        break;
     }
 }
 
@@ -2055,95 +2055,95 @@ static int deserialize_multi(int xid, completion_list_t *cptr, struct iarchive *
 static void deserialize_response(int type, int xid, int failed, int rc, completion_list_t *cptr, struct iarchive *ia)
 {
     switch (type) {
-        case COMPLETION_DATA:
-            LOG_DEBUG(("Calling COMPLETION_DATA for xid=%#x failed=%d rc=%d",
+    case COMPLETION_DATA:
+        LOG_DEBUG(("Calling COMPLETION_DATA for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.data_result(rc, 0, 0, 0, cptr->data);
-            } else {
-                struct GetDataResponse res;
-                deserialize_GetDataResponse(ia, "reply", &res);
-                cptr->c.data_result(rc, res.data.buff, res.data.len,
-                                    &res.stat, cptr->data);
-                deallocate_GetDataResponse(&res);
-            }
-            break;
-        case COMPLETION_STAT:
-            LOG_DEBUG(("Calling COMPLETION_STAT for xid=%#x failed=%d rc=%d",
+        if (failed) {
+            cptr->c.data_result(rc, 0, 0, 0, cptr->data);
+        } else {
+            struct GetDataResponse res;
+            deserialize_GetDataResponse(ia, "reply", &res);
+            cptr->c.data_result(rc, res.data.buff, res.data.len,
+                    &res.stat, cptr->data);
+            deallocate_GetDataResponse(&res);
+        }
+        break;
+    case COMPLETION_STAT:
+        LOG_DEBUG(("Calling COMPLETION_STAT for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.stat_result(rc, 0, cptr->data);
-            } else {
-                struct SetDataResponse res;
-                deserialize_SetDataResponse(ia, "reply", &res);
-                cptr->c.stat_result(rc, &res.stat, cptr->data);
-                deallocate_SetDataResponse(&res);
-            }
-            break;
-        case COMPLETION_STRINGLIST:
-            LOG_DEBUG(("Calling COMPLETION_STRINGLIST for xid=%#x failed=%d rc=%d",
+        if (failed) {
+            cptr->c.stat_result(rc, 0, cptr->data);
+        } else {
+            struct SetDataResponse res;
+            deserialize_SetDataResponse(ia, "reply", &res);
+            cptr->c.stat_result(rc, &res.stat, cptr->data);
+            deallocate_SetDataResponse(&res);
+        }
+        break;
+    case COMPLETION_STRINGLIST:
+        LOG_DEBUG(("Calling COMPLETION_STRINGLIST for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.strings_result(rc, 0, cptr->data);
-            } else {
-                struct GetChildrenResponse res;
-                deserialize_GetChildrenResponse(ia, "reply", &res);
-                cptr->c.strings_result(rc, &res.children, cptr->data);
-                deallocate_GetChildrenResponse(&res);
-            }
-            break;
-        case COMPLETION_STRINGLIST_STAT:
-            LOG_DEBUG(("Calling COMPLETION_STRINGLIST_STAT for xid=%#x failed=%d rc=%d",
+        if (failed) {
+            cptr->c.strings_result(rc, 0, cptr->data);
+        } else {
+            struct GetChildrenResponse res;
+            deserialize_GetChildrenResponse(ia, "reply", &res);
+            cptr->c.strings_result(rc, &res.children, cptr->data);
+            deallocate_GetChildrenResponse(&res);
+        }
+        break;
+    case COMPLETION_STRINGLIST_STAT:
+        LOG_DEBUG(("Calling COMPLETION_STRINGLIST_STAT for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.strings_stat_result(rc, 0, 0, cptr->data);
-            } else {
-                struct GetChildren2Response res;
-                deserialize_GetChildren2Response(ia, "reply", &res);
-                cptr->c.strings_stat_result(rc, &res.children, &res.stat, cptr->data);
-                deallocate_GetChildren2Response(&res);
-            }
-            break;
-        case COMPLETION_STRING:
-            LOG_DEBUG(("Calling COMPLETION_STRING for xid=%#x failed=%d, rc=%d",
+        if (failed) {
+            cptr->c.strings_stat_result(rc, 0, 0, cptr->data);
+        } else {
+            struct GetChildren2Response res;
+            deserialize_GetChildren2Response(ia, "reply", &res);
+            cptr->c.strings_stat_result(rc, &res.children, &res.stat, cptr->data);
+            deallocate_GetChildren2Response(&res);
+        }
+        break;
+    case COMPLETION_STRING:
+        LOG_DEBUG(("Calling COMPLETION_STRING for xid=%#x failed=%d, rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.string_result(rc, 0, cptr->data);
-            } else {
-                struct CreateResponse res;
-                memset(&res, 0, sizeof(res));
-                deserialize_CreateResponse(ia, "reply", &res);
-                cptr->c.string_result(rc, res.path, cptr->data);
-                deallocate_CreateResponse(&res);
-            }
-            break;
-        case COMPLETION_ACLLIST:
-            LOG_DEBUG(("Calling COMPLETION_ACLLIST for xid=%#x failed=%d rc=%d",
+        if (failed) {
+            cptr->c.string_result(rc, 0, cptr->data);
+        } else {
+            struct CreateResponse res;
+            memset(&res, 0, sizeof(res));
+            deserialize_CreateResponse(ia, "reply", &res);
+            cptr->c.string_result(rc, res.path, cptr->data);
+            deallocate_CreateResponse(&res);
+        }
+        break;
+    case COMPLETION_ACLLIST:
+        LOG_DEBUG(("Calling COMPLETION_ACLLIST for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            if (failed) {
-                cptr->c.acl_result(rc, 0, 0, cptr->data);
-            } else {
-                struct GetACLResponse res;
-                deserialize_GetACLResponse(ia, "reply", &res);
-                cptr->c.acl_result(rc, &res.acl, &res.stat, cptr->data);
-                deallocate_GetACLResponse(&res);
-            }
-            break;
-        case COMPLETION_VOID:
-            LOG_DEBUG(("Calling COMPLETION_VOID for xid=%#x failed=%d rc=%d",
+        if (failed) {
+            cptr->c.acl_result(rc, 0, 0, cptr->data);
+        } else {
+            struct GetACLResponse res;
+            deserialize_GetACLResponse(ia, "reply", &res);
+            cptr->c.acl_result(rc, &res.acl, &res.stat, cptr->data);
+            deallocate_GetACLResponse(&res);
+        }
+        break;
+    case COMPLETION_VOID:
+        LOG_DEBUG(("Calling COMPLETION_VOID for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            assert(cptr->c.void_result);
-            cptr->c.void_result(rc, cptr->data);
-            break;
-        case COMPLETION_MULTI:
-            LOG_DEBUG(("Calling COMPLETION_MULTI for xid=%#x failed=%d rc=%d",
+        assert(cptr->c.void_result);
+        cptr->c.void_result(rc, cptr->data);
+        break;
+    case COMPLETION_MULTI:
+        LOG_DEBUG(("Calling COMPLETION_MULTI for xid=%#x failed=%d rc=%d",
                     cptr->xid, failed, rc));
-            rc = deserialize_multi(xid, cptr, ia);
-            assert(cptr->c.void_result);
-            cptr->c.void_result(rc, cptr->data);
-            break;
-        default:
-            LOG_DEBUG(("Unsupported completion type=%d", cptr->c.type));
+        rc = deserialize_multi(xid, cptr, ia);
+        assert(cptr->c.void_result);
+        cptr->c.void_result(rc, cptr->data);
+        break;
+    default:
+        LOG_DEBUG(("Unsupported completion type=%d", cptr->c.type));
     }
 }
 
@@ -2156,7 +2156,7 @@ void process_completions(zhandle_t *zh)
         struct ReplyHeader hdr;
         buffer_list_t *bptr = cptr->buffer;
         struct iarchive *ia = create_buffer_iarchive(bptr->buffer,
-                                                     bptr->len);
+                bptr->len);
         deserialize_ReplyHeader(ia, "hdr", &hdr);
 
         if (hdr.xid == WATCHER_EVENT_XID) {
@@ -2168,8 +2168,8 @@ void process_completions(zhandle_t *zh)
             state = evt.state;
             /* This is a notification so there aren't any pending requests */
             LOG_DEBUG(("Calling a watcher for node [%s], type = %d event=%s",
-                    (evt.path==NULL?"NULL":evt.path), cptr->c.type,
-                    watcherEvent2String(type)));
+                       (evt.path==NULL?"NULL":evt.path), cptr->c.type,
+                       watcherEvent2String(type)));
             deliverWatchers(zh,type,state,evt.path, &cptr->c.watcher_result);
             deallocate_WatcherEvent(&evt);
         } else {
@@ -2191,7 +2191,7 @@ static void isSocketReadable(zhandle_t* zh)
         zh->socket_readable.tv_sec=zh->socket_readable.tv_usec=0;
     }
 #else
-        fd_set rfds;
+    fd_set rfds;
     struct timeval waittime = {0, 0};
     FD_ZERO(&rfds);
     FD_SET( zh->fd , &rfds);
@@ -2241,7 +2241,7 @@ int zookeeper_process(zhandle_t *zh, int events)
     while (rc >= 0 && (bptr=dequeue_buffer(&zh->to_process))) {
         struct ReplyHeader hdr;
         struct iarchive *ia = create_buffer_iarchive(
-                bptr->buffer, bptr->curr_offset);
+                                    bptr->buffer, bptr->curr_offset);
         deserialize_ReplyHeader(ia, "hdr", &hdr);
         if (hdr.zxid > 0) {
             zh->last_zxid = hdr.zxid;
@@ -2318,8 +2318,8 @@ int zookeeper_process(zhandle_t *zh, int events)
                 queue_completion(&zh->sent_requests,cptr,1);
                 return api_epilog(zh,
                                   handle_socket_error_msg(zh, __LINE__,ZRUNTIMEINCONSISTENCY,
-                                                          "unexpected server response: expected %#x, but received %#x",
-                                                          hdr.xid,cptr->xid));
+                                  "unexpected server response: expected %#x, but received %#x",
+                                  hdr.xid,cptr->xid));
             }
 
             activateWatcher(zh, cptr->watcher, rc);
@@ -2358,7 +2358,7 @@ int zoo_state(zhandle_t *zh)
 }
 
 static watcher_registration_t* create_watcher_registration(const char* path,
-                                                           result_checker_fn checker,watcher_fn watcher,void* ctx){
+        result_checker_fn checker,watcher_fn watcher,void* ctx){
     watcher_registration_t* wo;
     if(watcher==0)
         return 0;
@@ -2378,7 +2378,7 @@ static void destroy_watcher_registration(watcher_registration_t* wo){
 }
 
 static completion_list_t* create_completion_entry(int xid, int completion_type,
-                                                  const void *dc, const void *data,watcher_registration_t* wo, completion_head_t *clist)
+        const void *dc, const void *data,watcher_registration_t* wo, completion_head_t *clist)
 {
     completion_list_t *c = calloc(1,sizeof(completion_list_t));
     if (!c) {
@@ -2388,32 +2388,32 @@ static completion_list_t* create_completion_entry(int xid, int completion_type,
     c->c.type = completion_type;
     c->data = data;
     switch(c->c.type) {
-        case COMPLETION_VOID:
-            c->c.void_result = (void_completion_t)dc;
-            break;
-        case COMPLETION_STRING:
-            c->c.string_result = (string_completion_t)dc;
-            break;
-        case COMPLETION_DATA:
-            c->c.data_result = (data_completion_t)dc;
-            break;
-        case COMPLETION_STAT:
-            c->c.stat_result = (stat_completion_t)dc;
-            break;
-        case COMPLETION_STRINGLIST:
-            c->c.strings_result = (strings_completion_t)dc;
-            break;
-        case COMPLETION_STRINGLIST_STAT:
-            c->c.strings_stat_result = (strings_stat_completion_t)dc;
-            break;
-        case COMPLETION_ACLLIST:
-            c->c.acl_result = (acl_completion_t)dc;
-            break;
-        case COMPLETION_MULTI:
-            assert(clist);
-            c->c.void_result = (void_completion_t)dc;
-            c->c.clist = *clist;
-            break;
+    case COMPLETION_VOID:
+        c->c.void_result = (void_completion_t)dc;
+        break;
+    case COMPLETION_STRING:
+        c->c.string_result = (string_completion_t)dc;
+        break;
+    case COMPLETION_DATA:
+        c->c.data_result = (data_completion_t)dc;
+        break;
+    case COMPLETION_STAT:
+        c->c.stat_result = (stat_completion_t)dc;
+        break;
+    case COMPLETION_STRINGLIST:
+        c->c.strings_result = (strings_completion_t)dc;
+        break;
+    case COMPLETION_STRINGLIST_STAT:
+        c->c.strings_stat_result = (strings_stat_completion_t)dc;
+        break;
+    case COMPLETION_ACLLIST:
+        c->c.acl_result = (acl_completion_t)dc;
+        break;
+    case COMPLETION_MULTI:
+        assert(clist);
+        c->c.void_result = (void_completion_t)dc;
+        c->c.clist = *clist;
+        break;
     }
     c->xid = xid;
     c->watcher = wo;
@@ -2455,7 +2455,7 @@ static void queue_completion_nolock(completion_head_t *list,
 }
 
 static void queue_completion(completion_head_t *list, completion_list_t *c,
-                             int add_to_front)
+        int add_to_front)
 {
 
     lock_completion_list(list);
@@ -2464,11 +2464,11 @@ static void queue_completion(completion_head_t *list, completion_list_t *c,
 }
 
 static int add_completion(zhandle_t *zh, int xid, int completion_type,
-                          const void *dc, const void *data, int add_to_front,
-                          watcher_registration_t* wo, completion_head_t *clist)
+        const void *dc, const void *data, int add_to_front,
+        watcher_registration_t* wo, completion_head_t *clist)
 {
     completion_list_t *c =create_completion_entry(xid, completion_type, dc,
-                                                  data, wo, clist);
+            data, wo, clist);
     int rc = 0;
     if (!c)
         return ZSYSTEMERROR;
@@ -2488,49 +2488,49 @@ static int add_completion(zhandle_t *zh, int xid, int completion_type,
 }
 
 static int add_data_completion(zhandle_t *zh, int xid, data_completion_t dc,
-                               const void *data,watcher_registration_t* wo)
+        const void *data,watcher_registration_t* wo)
 {
     return add_completion(zh, xid, COMPLETION_DATA, dc, data, 0, wo, 0);
 }
 
 static int add_stat_completion(zhandle_t *zh, int xid, stat_completion_t dc,
-                               const void *data,watcher_registration_t* wo)
+        const void *data,watcher_registration_t* wo)
 {
     return add_completion(zh, xid, COMPLETION_STAT, dc, data, 0, wo, 0);
 }
 
 static int add_strings_completion(zhandle_t *zh, int xid,
-                                  strings_completion_t dc, const void *data,watcher_registration_t* wo)
+        strings_completion_t dc, const void *data,watcher_registration_t* wo)
 {
     return add_completion(zh, xid, COMPLETION_STRINGLIST, dc, data, 0, wo, 0);
 }
 
 static int add_strings_stat_completion(zhandle_t *zh, int xid,
-                                       strings_stat_completion_t dc, const void *data,watcher_registration_t* wo)
+        strings_stat_completion_t dc, const void *data,watcher_registration_t* wo)
 {
     return add_completion(zh, xid, COMPLETION_STRINGLIST_STAT, dc, data, 0, wo, 0);
 }
 
 static int add_acl_completion(zhandle_t *zh, int xid, acl_completion_t dc,
-                              const void *data)
+        const void *data)
 {
     return add_completion(zh, xid, COMPLETION_ACLLIST, dc, data, 0, 0, 0);
 }
 
 static int add_void_completion(zhandle_t *zh, int xid, void_completion_t dc,
-                               const void *data)
+        const void *data)
 {
     return add_completion(zh, xid, COMPLETION_VOID, dc, data, 0, 0, 0);
 }
 
 static int add_string_completion(zhandle_t *zh, int xid,
-                                 string_completion_t dc, const void *data)
+        string_completion_t dc, const void *data)
 {
     return add_completion(zh, xid, COMPLETION_STRING, dc, data, 0, 0, 0);
 }
 
 static int add_multi_completion(zhandle_t *zh, int xid, void_completion_t dc,
-                                const void *data, completion_head_t *clist)
+        const void *data, completion_head_t *clist)
 {
     return add_completion(zh, xid, COMPLETION_MULTI, dc, data, 0,0, clist);
 }
@@ -2547,7 +2547,7 @@ int zookeeper_close(zhandle_t *zh)
          * completions from calling zookeeper_close before we have
          * completed the adaptor_finish call below. */
 
-        /* Signal any syncronous completions before joining the threads */
+	/* Signal any syncronous completions before joining the threads */
         enter_critical(zh);
         free_completions(zh,1,ZCLOSING);
         leave_critical(zh);
@@ -2568,7 +2568,7 @@ int zookeeper_close(zhandle_t *zh)
         oa = create_buffer_oarchive();
         rc = serialize_RequestHeader(oa, "header", &h);
         rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                              get_buffer_len(oa));
+                get_buffer_len(oa));
         /* We queued the buffer, so don't free it */
         close_buffer_oarchive(&oa, 0);
         if (rc < 0) {
@@ -2585,7 +2585,7 @@ int zookeeper_close(zhandle_t *zh)
         rc = ZOK;
     }
 
-    finish:
+finish:
     destroy(zh);
     adaptor_destroy(zh);
     free(zh);
@@ -2601,42 +2601,42 @@ static int isValidPath(const char* path, const int flags) {
     char c;
     int i = 0;
 
-    if (path == 0)
-        return 0;
-    len = strlen(path);
-    if (len == 0)
-        return 0;
-    if (path[0] != '/')
-        return 0;
-    if (len == 1) // done checking - it's the root
-        return 1;
-    if (path[len - 1] == '/' && !(flags & ZOO_SEQUENCE))
-        return 0;
-
-    i = 1;
-    for (; i < len; lastc = path[i], i++) {
-        c = path[i];
-
-        if (c == 0) {
-            return 0;
-        } else if (c == '/' && lastc == '/') {
-            return 0;
-        } else if (c == '.' && lastc == '.') {
-            if (path[i-2] == '/' && (((i + 1 == len) && !(flags & ZOO_SEQUENCE))
-                                     || path[i+1] == '/')) {
-                return 0;
-            }
-        } else if (c == '.') {
-            if ((path[i-1] == '/') && (((i + 1 == len) && !(flags & ZOO_SEQUENCE))
-                                       || path[i+1] == '/')) {
-                return 0;
-            }
-        } else if (c > 0x00 && c < 0x1f) {
-            return 0;
-        }
-    }
-
+  if (path == 0)
+    return 0;
+  len = strlen(path);
+  if (len == 0)
+    return 0;
+  if (path[0] != '/')
+    return 0;
+  if (len == 1) // done checking - it's the root
     return 1;
+  if (path[len - 1] == '/' && !(flags & ZOO_SEQUENCE))
+    return 0;
+
+  i = 1;
+  for (; i < len; lastc = path[i], i++) {
+    c = path[i];
+
+    if (c == 0) {
+      return 0;
+    } else if (c == '/' && lastc == '/') {
+      return 0;
+    } else if (c == '.' && lastc == '.') {
+      if (path[i-2] == '/' && (((i + 1 == len) && !(flags & ZOO_SEQUENCE))
+                               || path[i+1] == '/')) {
+        return 0;
+      }
+    } else if (c == '.') {
+      if ((path[i-1] == '/') && (((i + 1 == len) && !(flags & ZOO_SEQUENCE))
+                                 || path[i+1] == '/')) {
+        return 0;
+      }
+    } else if (c > 0x00 && c < 0x1f) {
+      return 0;
+    }
+  }
+
+  return 1;
 }
 
 /*---------------------------------------------------------------------------*
@@ -2644,7 +2644,7 @@ static int isValidPath(const char* path, const int flags) {
  *---------------------------------------------------------------------------*/
 /* Common Request init helper functions to reduce code duplication */
 static int Request_path_init(zhandle_t *zh, int flags,
-                             char **path_out, const char *path)
+        char **path_out, const char *path)
 {
     assert(path_out);
 
@@ -2662,8 +2662,8 @@ static int Request_path_init(zhandle_t *zh, int flags,
 }
 
 static int Request_path_watch_init(zhandle_t *zh, int flags,
-                                   char **path_out, const char *path,
-                                   int32_t *watch_out, uint32_t watch)
+        char **path_out, const char *path,
+        int32_t *watch_out, uint32_t watch)
 {
     int rc = Request_path_init(zh, flags, path_out, path);
     if (rc != ZOK) {
@@ -2677,14 +2677,14 @@ static int Request_path_watch_init(zhandle_t *zh, int flags,
  * ASYNC API
  *---------------------------------------------------------------------------*/
 int zoo_aget(zhandle_t *zh, const char *path, int watch, data_completion_t dc,
-             const void *data)
+        const void *data)
 {
     return zoo_awget(zh,path,watch?zh->watcher:0,zh->context,dc,data);
 }
 
 int zoo_awget(zhandle_t *zh, const char *path,
-              watcher_fn watcher, void* watcherCtx,
-              data_completion_t dc, const void *data)
+        watcher_fn watcher, void* watcherCtx,
+        data_completion_t dc, const void *data)
 {
     struct oarchive *oa;
     char *server_path = prepend_string(zh, path);
@@ -2705,9 +2705,9 @@ int zoo_awget(zhandle_t *zh, const char *path,
     rc = rc < 0 ? rc : serialize_GetDataRequest(oa, "req", &req);
     enter_critical(zh);
     rc = rc < 0 ? rc : add_data_completion(zh, h.xid, dc, data,
-                                           create_watcher_registration(server_path,data_result_checker,watcher,watcherCtx));
+        create_watcher_registration(server_path,data_result_checker,watcher,watcherCtx));
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(server_path, path);
     /* We queued the buffer, so don't free it */
@@ -2721,7 +2721,7 @@ int zoo_awget(zhandle_t *zh, const char *path,
 }
 
 static int SetDataRequest_init(zhandle_t *zh, struct SetDataRequest *req,
-                               const char *path, const char *buffer, int buflen, int version)
+        const char *path, const char *buffer, int buflen, int version)
 {
     int rc;
     assert(req);
@@ -2737,7 +2737,7 @@ static int SetDataRequest_init(zhandle_t *zh, struct SetDataRequest *req,
 }
 
 int zoo_aset(zhandle_t *zh, const char *path, const char *buffer, int buflen,
-             int version, stat_completion_t dc, const void *data)
+        int version, stat_completion_t dc, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER(xid , get_xid()), STRUCT_INITIALIZER (type , ZOO_SETDATA_OP)};
@@ -2752,7 +2752,7 @@ int zoo_aset(zhandle_t *zh, const char *path, const char *buffer, int buflen,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_stat_completion(zh, h.xid, dc, data,0);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2766,8 +2766,8 @@ int zoo_aset(zhandle_t *zh, const char *path, const char *buffer, int buflen,
 }
 
 static int CreateRequest_init(zhandle_t *zh, struct CreateRequest *req,
-                              const char *path, const char *value,
-                              int valuelen, const struct ACL_vector *acl_entries, int flags)
+        const char *path, const char *value,
+        int valuelen, const struct ACL_vector *acl_entries, int flags)
 {
     int rc;
     assert(req);
@@ -2790,15 +2790,15 @@ static int CreateRequest_init(zhandle_t *zh, struct CreateRequest *req,
 }
 
 int zoo_acreate(zhandle_t *zh, const char *path, const char *value,
-                int valuelen, const struct ACL_vector *acl_entries, int flags,
-                string_completion_t completion, const void *data)
+        int valuelen, const struct ACL_vector *acl_entries, int flags,
+        string_completion_t completion, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid , get_xid()), STRUCT_INITIALIZER (type ,ZOO_CREATE_OP) };
     struct CreateRequest req;
 
     int rc = CreateRequest_init(zh, &req,
-                                path, value, valuelen, acl_entries, flags);
+            path, value, valuelen, acl_entries, flags);
     if (rc != ZOK) {
         return rc;
     }
@@ -2808,7 +2808,7 @@ int zoo_acreate(zhandle_t *zh, const char *path, const char *value,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_string_completion(zh, h.xid, completion, data);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2822,7 +2822,7 @@ int zoo_acreate(zhandle_t *zh, const char *path, const char *value,
 }
 
 int DeleteRequest_init(zhandle_t *zh, struct DeleteRequest *req,
-                       const char *path, int version)
+        const char *path, int version)
 {
     int rc = Request_path_init(zh, 0, &req->path, path);
     if (rc != ZOK) {
@@ -2833,7 +2833,7 @@ int DeleteRequest_init(zhandle_t *zh, struct DeleteRequest *req,
 }
 
 int zoo_adelete(zhandle_t *zh, const char *path, int version,
-                void_completion_t completion, const void *data)
+        void_completion_t completion, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid , get_xid()), STRUCT_INITIALIZER (type , ZOO_DELETE_OP)};
@@ -2848,7 +2848,7 @@ int zoo_adelete(zhandle_t *zh, const char *path, int version,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_void_completion(zh, h.xid, completion, data);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2862,20 +2862,20 @@ int zoo_adelete(zhandle_t *zh, const char *path, int version,
 }
 
 int zoo_aexists(zhandle_t *zh, const char *path, int watch,
-                stat_completion_t sc, const void *data)
+        stat_completion_t sc, const void *data)
 {
     return zoo_awexists(zh,path,watch?zh->watcher:0,zh->context,sc,data);
 }
 
 int zoo_awexists(zhandle_t *zh, const char *path,
-                 watcher_fn watcher, void* watcherCtx,
-                 stat_completion_t completion, const void *data)
+        watcher_fn watcher, void* watcherCtx,
+        stat_completion_t completion, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid ,get_xid()), STRUCT_INITIALIZER (type , ZOO_EXISTS_OP) };
     struct ExistsRequest req;
     int rc = Request_path_watch_init(zh, 0, &req.path, path,
-                                     &req.watch, watcher != NULL);
+            &req.watch, watcher != NULL);
     if (rc != ZOK) {
         return rc;
     }
@@ -2884,10 +2884,10 @@ int zoo_awexists(zhandle_t *zh, const char *path,
     rc = rc < 0 ? rc : serialize_ExistsRequest(oa, "req", &req);
     enter_critical(zh);
     rc = rc < 0 ? rc : add_stat_completion(zh, h.xid, completion, data,
-                                           create_watcher_registration(req.path,exists_result_checker,
-                                                                       watcher,watcherCtx));
+        create_watcher_registration(req.path,exists_result_checker,
+                watcher,watcherCtx));
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2901,15 +2901,15 @@ int zoo_awexists(zhandle_t *zh, const char *path,
 }
 
 static int zoo_awget_children_(zhandle_t *zh, const char *path,
-                               watcher_fn watcher, void* watcherCtx,
-                               strings_completion_t sc,
-                               const void *data)
+         watcher_fn watcher, void* watcherCtx,
+         strings_completion_t sc,
+         const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid , get_xid()), STRUCT_INITIALIZER (type , ZOO_GETCHILDREN_OP)};
     struct GetChildrenRequest req ;
     int rc = Request_path_watch_init(zh, 0, &req.path, path,
-                                     &req.watch, watcher != NULL);
+            &req.watch, watcher != NULL);
     if (rc != ZOK) {
         return rc;
     }
@@ -2918,9 +2918,9 @@ static int zoo_awget_children_(zhandle_t *zh, const char *path,
     rc = rc < 0 ? rc : serialize_GetChildrenRequest(oa, "req", &req);
     enter_critical(zh);
     rc = rc < 0 ? rc : add_strings_completion(zh, h.xid, sc, data,
-                                              create_watcher_registration(req.path,child_result_checker,watcher,watcherCtx));
+            create_watcher_registration(req.path,child_result_checker,watcher,watcherCtx));
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2934,30 +2934,30 @@ static int zoo_awget_children_(zhandle_t *zh, const char *path,
 }
 
 int zoo_aget_children(zhandle_t *zh, const char *path, int watch,
-                      strings_completion_t dc, const void *data)
+        strings_completion_t dc, const void *data)
 {
     return zoo_awget_children_(zh,path,watch?zh->watcher:0,zh->context,dc,data);
 }
 
 int zoo_awget_children(zhandle_t *zh, const char *path,
-                       watcher_fn watcher, void* watcherCtx,
-                       strings_completion_t dc,
-                       const void *data)
+         watcher_fn watcher, void* watcherCtx,
+         strings_completion_t dc,
+         const void *data)
 {
     return zoo_awget_children_(zh,path,watcher,watcherCtx,dc,data);
 }
 
 static int zoo_awget_children2_(zhandle_t *zh, const char *path,
-                                watcher_fn watcher, void* watcherCtx,
-                                strings_stat_completion_t ssc,
-                                const void *data)
+         watcher_fn watcher, void* watcherCtx,
+         strings_stat_completion_t ssc,
+         const void *data)
 {
     /* invariant: (sc == NULL) != (sc == NULL) */
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER( xid, get_xid()), STRUCT_INITIALIZER (type ,ZOO_GETCHILDREN2_OP)};
     struct GetChildren2Request req ;
     int rc = Request_path_watch_init(zh, 0, &req.path, path,
-                                     &req.watch, watcher != NULL);
+            &req.watch, watcher != NULL);
     if (rc != ZOK) {
         return rc;
     }
@@ -2966,9 +2966,9 @@ static int zoo_awget_children2_(zhandle_t *zh, const char *path,
     rc = rc < 0 ? rc : serialize_GetChildren2Request(oa, "req", &req);
     enter_critical(zh);
     rc = rc < 0 ? rc : add_strings_stat_completion(zh, h.xid, ssc, data,
-                                                   create_watcher_registration(req.path,child_result_checker,watcher,watcherCtx));
+            create_watcher_registration(req.path,child_result_checker,watcher,watcherCtx));
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -2982,21 +2982,21 @@ static int zoo_awget_children2_(zhandle_t *zh, const char *path,
 }
 
 int zoo_aget_children2(zhandle_t *zh, const char *path, int watch,
-                       strings_stat_completion_t dc, const void *data)
+        strings_stat_completion_t dc, const void *data)
 {
     return zoo_awget_children2_(zh,path,watch?zh->watcher:0,zh->context,dc,data);
 }
 
 int zoo_awget_children2(zhandle_t *zh, const char *path,
-                        watcher_fn watcher, void* watcherCtx,
-                        strings_stat_completion_t dc,
-                        const void *data)
+         watcher_fn watcher, void* watcherCtx,
+         strings_stat_completion_t dc,
+         const void *data)
 {
     return zoo_awget_children2_(zh,path,watcher,watcherCtx,dc,data);
 }
 
 int zoo_async(zhandle_t *zh, const char *path,
-              string_completion_t completion, const void *data)
+        string_completion_t completion, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid , get_xid()), STRUCT_INITIALIZER (type , ZOO_SYNC_OP)};
@@ -3011,7 +3011,7 @@ int zoo_async(zhandle_t *zh, const char *path,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_string_completion(zh, h.xid, completion, data);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -3026,7 +3026,7 @@ int zoo_async(zhandle_t *zh, const char *path,
 
 
 int zoo_aget_acl(zhandle_t *zh, const char *path, acl_completion_t completion,
-                 const void *data)
+        const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER (xid , get_xid()), STRUCT_INITIALIZER(type ,ZOO_GETACL_OP)};
@@ -3041,7 +3041,7 @@ int zoo_aget_acl(zhandle_t *zh, const char *path, acl_completion_t completion,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_acl_completion(zh, h.xid, completion, data);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -3055,7 +3055,7 @@ int zoo_aget_acl(zhandle_t *zh, const char *path, acl_completion_t completion,
 }
 
 int zoo_aset_acl(zhandle_t *zh, const char *path, int version,
-                 struct ACL_vector *acl, void_completion_t completion, const void *data)
+        struct ACL_vector *acl, void_completion_t completion, const void *data)
 {
     struct oarchive *oa;
     struct RequestHeader h = { STRUCT_INITIALIZER(xid ,get_xid()), STRUCT_INITIALIZER (type , ZOO_SETACL_OP)};
@@ -3072,7 +3072,7 @@ int zoo_aset_acl(zhandle_t *zh, const char *path, int version,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_void_completion(zh, h.xid, completion, data);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
     free_duplicate_path(req.path, path);
     /* We queued the buffer, so don't free it */
@@ -3094,13 +3094,13 @@ static void op_result_string_completion(int err, const char *value, const void *
 
     if (result->value && value) {
         int len = strlen(value) + 1;
-        if (len > result->valuelen) {
-            len = result->valuelen;
-        }
-        if (len > 0) {
-            memcpy(result->value, value, len - 1);
-            result->value[len - 1] = '\0';
-        }
+		if (len > result->valuelen) {
+			len = result->valuelen;
+		}
+		if (len > 0) {
+			memcpy(result->value, value, len - 1);
+			result->value[len - 1] = '\0';
+		}
     } else {
         result->value = NULL;
     }
@@ -3127,7 +3127,7 @@ static void op_result_stat_completion(int err, const struct Stat *stat, const vo
 }
 
 static int CheckVersionRequest_init(zhandle_t *zh, struct CheckVersionRequest *req,
-                                    const char *path, int version)
+        const char *path, int version)
 {
     int rc ;
     assert(req);
@@ -3141,7 +3141,7 @@ static int CheckVersionRequest_init(zhandle_t *zh, struct CheckVersionRequest *r
 }
 
 int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
-               zoo_op_result_t *results, void_completion_t completion, const void *data)
+        zoo_op_result_t *results, void_completion_t completion, const void *data)
 {
     struct RequestHeader h = { STRUCT_INITIALIZER(xid, get_xid()), STRUCT_INITIALIZER(type, ZOO_MULTI_OP) };
     struct MultiHeader mh = { STRUCT_INITIALIZER(type, -1), STRUCT_INITIALIZER(done, 1), STRUCT_INITIALIZER(err, -1) };
@@ -3164,12 +3164,12 @@ int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
                 struct CreateRequest req;
 
                 rc = rc < 0 ? rc : CreateRequest_init(zh, &req,
-                                                      op->create_op.path, op->create_op.data,
-                                                      op->create_op.datalen, op->create_op.acl,
-                                                      op->create_op.flags);
+                                        op->create_op.path, op->create_op.data,
+                                        op->create_op.datalen, op->create_op.acl,
+                                        op->create_op.flags);
                 rc = rc < 0 ? rc : serialize_CreateRequest(oa, "req", &req);
                 result->value = op->create_op.buf;
-                result->valuelen = op->create_op.buflen;
+				result->valuelen = op->create_op.buflen;
 
                 enter_critical(zh);
                 entry = create_completion_entry(h.xid, COMPLETION_STRING, op_result_string_completion, result, 0, 0);
@@ -3193,8 +3193,8 @@ int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
             case ZOO_SETDATA_OP: {
                 struct SetDataRequest req;
                 rc = rc < 0 ? rc : SetDataRequest_init(zh, &req,
-                                                       op->set_op.path, op->set_op.data,
-                                                       op->set_op.datalen, op->set_op.version);
+                                        op->set_op.path, op->set_op.data,
+                                        op->set_op.datalen, op->set_op.version);
                 rc = rc < 0 ? rc : serialize_SetDataRequest(oa, "req", &req);
                 result->stat = op->set_op.stat;
 
@@ -3208,7 +3208,7 @@ int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
             case ZOO_CHECK_OP: {
                 struct CheckVersionRequest req;
                 rc = rc < 0 ? rc : CheckVersionRequest_init(zh, &req,
-                                                            op->check_op.path, op->check_op.version);
+                                        op->check_op.path, op->check_op.version);
                 rc = rc < 0 ? rc : serialize_CheckVersionRequest(oa, "req", &req);
 
                 enter_critical(zh);
@@ -3232,7 +3232,7 @@ int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
     enter_critical(zh);
     rc = rc < 0 ? rc : add_multi_completion(zh, h.xid, completion, data, &clist);
     rc = rc < 0 ? rc : queue_buffer_bytes(&zh->to_send, get_buffer(oa),
-                                          get_buffer_len(oa));
+            get_buffer_len(oa));
     leave_critical(zh);
 
     /* We queued the buffer, so don't free it */
@@ -3247,8 +3247,8 @@ int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
 }
 
 void zoo_create_op_init(zoo_op_t *op, const char *path, const char *value,
-                        int valuelen,  const struct ACL_vector *acl, int flags,
-                        char *path_buffer, int path_buffer_len)
+        int valuelen,  const struct ACL_vector *acl, int flags,
+        char *path_buffer, int path_buffer_len)
 {
     assert(op);
     op->type = ZOO_CREATE_OP;
@@ -3270,7 +3270,7 @@ void zoo_delete_op_init(zoo_op_t *op, const char *path, int version)
 }
 
 void zoo_set_op_init(zoo_op_t *op, const char *path, const char *buffer,
-                     int buflen, int version, struct Stat *stat)
+        int buflen, int version, struct Stat *stat)
 {
     assert(op);
     op->type = ZOO_SETDATA_OP;
@@ -3378,63 +3378,63 @@ int flush_send_queue(zhandle_t*zh, int timeout)
 const char* zerror(int c)
 {
     switch (c){
-        case ZOK:
-            return "ok";
-        case ZSYSTEMERROR:
-            return "system error";
-        case ZRUNTIMEINCONSISTENCY:
-            return "run time inconsistency";
-        case ZDATAINCONSISTENCY:
-            return "data inconsistency";
-        case ZCONNECTIONLOSS:
-            return "connection loss";
-        case ZMARSHALLINGERROR:
-            return "marshalling error";
-        case ZUNIMPLEMENTED:
-            return "unimplemented";
-        case ZOPERATIONTIMEOUT:
-            return "operation timeout";
-        case ZBADARGUMENTS:
-            return "bad arguments";
-        case ZINVALIDSTATE:
-            return "invalid zhandle state";
-        case ZAPIERROR:
-            return "api error";
-        case ZNONODE:
-            return "no node";
-        case ZNOAUTH:
-            return "not authenticated";
-        case ZBADVERSION:
-            return "bad version";
-        case  ZNOCHILDRENFOREPHEMERALS:
-            return "no children for ephemerals";
-        case ZNODEEXISTS:
-            return "node exists";
-        case ZNOTEMPTY:
-            return "not empty";
-        case ZSESSIONEXPIRED:
-            return "session expired";
-        case ZINVALIDCALLBACK:
-            return "invalid callback";
-        case ZINVALIDACL:
-            return "invalid acl";
-        case ZAUTHFAILED:
-            return "authentication failed";
-        case ZCLOSING:
-            return "zookeeper is closing";
-        case ZNOTHING:
-            return "(not error) no server responses to process";
-        case ZSESSIONMOVED:
-            return "session moved to another server, so operation is ignored";
+    case ZOK:
+      return "ok";
+    case ZSYSTEMERROR:
+      return "system error";
+    case ZRUNTIMEINCONSISTENCY:
+      return "run time inconsistency";
+    case ZDATAINCONSISTENCY:
+      return "data inconsistency";
+    case ZCONNECTIONLOSS:
+      return "connection loss";
+    case ZMARSHALLINGERROR:
+      return "marshalling error";
+    case ZUNIMPLEMENTED:
+      return "unimplemented";
+    case ZOPERATIONTIMEOUT:
+      return "operation timeout";
+    case ZBADARGUMENTS:
+      return "bad arguments";
+    case ZINVALIDSTATE:
+      return "invalid zhandle state";
+    case ZAPIERROR:
+      return "api error";
+    case ZNONODE:
+      return "no node";
+    case ZNOAUTH:
+      return "not authenticated";
+    case ZBADVERSION:
+      return "bad version";
+    case  ZNOCHILDRENFOREPHEMERALS:
+      return "no children for ephemerals";
+    case ZNODEEXISTS:
+      return "node exists";
+    case ZNOTEMPTY:
+      return "not empty";
+    case ZSESSIONEXPIRED:
+      return "session expired";
+    case ZINVALIDCALLBACK:
+      return "invalid callback";
+    case ZINVALIDACL:
+      return "invalid acl";
+    case ZAUTHFAILED:
+      return "authentication failed";
+    case ZCLOSING:
+      return "zookeeper is closing";
+    case ZNOTHING:
+      return "(not error) no server responses to process";
+    case ZSESSIONMOVED:
+      return "session moved to another server, so operation is ignored";
     }
     if (c > 0) {
-        return strerror(c);
+      return strerror(c);
     }
     return "unknown error";
 }
 
 int zoo_add_auth(zhandle_t *zh,const char* scheme,const char* cert,
-                 int certLen,void_completion_t completion, const void *data)
+        int certLen,void_completion_t completion, const void *data)
 {
     struct buffer auth;
     auth_info *authinfo;
@@ -3496,8 +3496,8 @@ static const char* format_endpoint_info(const struct sockaddr_storage* ep)
         port=((struct sockaddr_in6*)ep)->sin6_port;
     } else {
 #endif
-    inaddr=&((struct sockaddr_in*)ep)->sin_addr;
-    port=((struct sockaddr_in*)ep)->sin_port;
+        inaddr=&((struct sockaddr_in*)ep)->sin_addr;
+        port=((struct sockaddr_in*)ep)->sin_port;
 #if defined(AF_INET6)
     }
 #endif
@@ -3525,8 +3525,8 @@ void zoo_deterministic_conn_order(int yesOrNo)
  * SYNC API
  *---------------------------------------------------------------------------*/
 int zoo_create(zhandle_t *zh, const char *path, const char *value,
-               int valuelen, const struct ACL_vector *acl, int flags,
-               char *path_buffer, int path_buffer_len)
+        int valuelen, const struct ACL_vector *acl, int flags,
+        char *path_buffer, int path_buffer_len)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3566,7 +3566,7 @@ int zoo_exists(zhandle_t *zh, const char *path, int watch, struct Stat *stat)
 }
 
 int zoo_wexists(zhandle_t *zh, const char *path,
-                watcher_fn watcher, void* watcherCtx, struct Stat *stat)
+        watcher_fn watcher, void* watcherCtx, struct Stat *stat)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3586,15 +3586,15 @@ int zoo_wexists(zhandle_t *zh, const char *path,
 }
 
 int zoo_get(zhandle_t *zh, const char *path, int watch, char *buffer,
-            int* buffer_len, struct Stat *stat)
+        int* buffer_len, struct Stat *stat)
 {
     return zoo_wget(zh,path,watch?zh->watcher:0,zh->context,
-                    buffer,buffer_len,stat);
+            buffer,buffer_len,stat);
 }
 
 int zoo_wget(zhandle_t *zh, const char *path,
-             watcher_fn watcher, void* watcherCtx,
-             char *buffer, int* buffer_len, struct Stat *stat)
+        watcher_fn watcher, void* watcherCtx,
+        char *buffer, int* buffer_len, struct Stat *stat)
 {
     struct sync_completion *sc;
     int rc=0;
@@ -3621,13 +3621,13 @@ int zoo_wget(zhandle_t *zh, const char *path,
 }
 
 int zoo_set(zhandle_t *zh, const char *path, const char *buffer, int buflen,
-            int version)
+        int version)
 {
-    return zoo_set2(zh, path, buffer, buflen, version, 0);
+  return zoo_set2(zh, path, buffer, buflen, version, 0);
 }
 
 int zoo_set2(zhandle_t *zh, const char *path, const char *buffer, int buflen,
-             int version, struct Stat *stat)
+        int version, struct Stat *stat)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3647,8 +3647,8 @@ int zoo_set2(zhandle_t *zh, const char *path, const char *buffer, int buflen,
 }
 
 static int zoo_wget_children_(zhandle_t *zh, const char *path,
-                              watcher_fn watcher, void* watcherCtx,
-                              struct String_vector *strings)
+        watcher_fn watcher, void* watcherCtx,
+        struct String_vector *strings)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3672,8 +3672,8 @@ static int zoo_wget_children_(zhandle_t *zh, const char *path,
 }
 
 static int zoo_wget_children2_(zhandle_t *zh, const char *path,
-                               watcher_fn watcher, void* watcherCtx,
-                               struct String_vector *strings, struct Stat *stat)
+        watcher_fn watcher, void* watcherCtx,
+        struct String_vector *strings, struct Stat *stat)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3699,33 +3699,33 @@ static int zoo_wget_children2_(zhandle_t *zh, const char *path,
 }
 
 int zoo_get_children(zhandle_t *zh, const char *path, int watch,
-                     struct String_vector *strings)
+        struct String_vector *strings)
 {
     return zoo_wget_children_(zh,path,watch?zh->watcher:0,zh->context,strings);
 }
 
 int zoo_wget_children(zhandle_t *zh, const char *path,
-                      watcher_fn watcher, void* watcherCtx,
-                      struct String_vector *strings)
+        watcher_fn watcher, void* watcherCtx,
+        struct String_vector *strings)
 {
     return zoo_wget_children_(zh,path,watcher,watcherCtx,strings);
 }
 
 int zoo_get_children2(zhandle_t *zh, const char *path, int watch,
-                      struct String_vector *strings, struct Stat *stat)
+        struct String_vector *strings, struct Stat *stat)
 {
     return zoo_wget_children2_(zh,path,watch?zh->watcher:0,zh->context,strings,stat);
 }
 
 int zoo_wget_children2(zhandle_t *zh, const char *path,
-                       watcher_fn watcher, void* watcherCtx,
-                       struct String_vector *strings, struct Stat *stat)
+        watcher_fn watcher, void* watcherCtx,
+        struct String_vector *strings, struct Stat *stat)
 {
     return zoo_wget_children2_(zh,path,watcher,watcherCtx,strings,stat);
 }
 
 int zoo_get_acl(zhandle_t *zh, const char *path, struct ACL_vector *acl,
-                struct Stat *stat)
+        struct Stat *stat)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3752,7 +3752,7 @@ int zoo_get_acl(zhandle_t *zh, const char *path, struct ACL_vector *acl,
 }
 
 int zoo_set_acl(zhandle_t *zh, const char *path, int version,
-                const struct ACL_vector *acl)
+        const struct ACL_vector *acl)
 {
     struct sync_completion *sc = alloc_sync_completion();
     int rc;
@@ -3760,7 +3760,7 @@ int zoo_set_acl(zhandle_t *zh, const char *path, int version,
         return ZSYSTEMERROR;
     }
     rc=zoo_aset_acl(zh, path, version, (struct ACL_vector*)acl,
-                    SYNCHRONOUS_MARKER, sc);
+            SYNCHRONOUS_MARKER, sc);
     if(rc==ZOK){
         wait_sync_completion(sc);
         rc = sc->rc;

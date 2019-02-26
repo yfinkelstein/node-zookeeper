@@ -113,8 +113,8 @@ static const char* time_now(char* now_str){
     // specifically: "yyyy-MM-dd HH:mm:ss,SSS"
 
     len = strftime(now_str, TIME_NOW_BUF_SIZE,
-                   "%Y-%m-%d %H:%M:%S",
-                   &lt);
+                          "%Y-%m-%d %H:%M:%S",
+                          &lt);
 
     len += snprintf(now_str + len,
                     TIME_NOW_BUF_SIZE - len,
@@ -125,10 +125,10 @@ static const char* time_now(char* now_str){
 }
 
 void log_message(ZooLogLevel curLevel,int line,const char* funcName,
-                 const char* message)
+    const char* message)
 {
     static const char* dbgLevelStr[]={"ZOO_INVALID","ZOO_ERROR","ZOO_WARN",
-                                      "ZOO_INFO","ZOO_DEBUG"};
+            "ZOO_INFO","ZOO_DEBUG"};
     static pid_t pid=0;
 #ifdef WIN32
     char timebuf [TIME_NOW_BUF_SIZE];
@@ -139,7 +139,7 @@ void log_message(ZooLogLevel curLevel,int line,const char* funcName,
     fprintf(LOGSTREAM, "%s:%ld:%s@%s@%d: %s\n", time_now(get_time_buffer()),(long)pid,
             dbgLevelStr[curLevel],funcName,line,message);
 #else
-    #ifdef WIN32
+#ifdef WIN32
     fprintf(LOGSTREAM, "%s:%d(0x%lx):%s@%s@%d: %s\n", time_now(timebuf),pid,
             (unsigned long int)(pthread_self().thread_id),
             dbgLevelStr[curLevel],funcName,line,message);
