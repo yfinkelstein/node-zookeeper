@@ -1,38 +1,48 @@
 {
-   "name": "zookeeper"
-  ,"description": "apache zookeeper client (zookeeper async API >= 3.4.0)"
-  ,"version": "3.4.9-4"
-  ,"author": "Yuri Finkelstein <yurif2003@yahoo.com>"
-  ,"contributors": [
-    "Yuri Finkelstein <yurif2003@yahoo.com>"
-    ,"Woody Anderson <woody.anderson@gmail.com>"
-    ,"Mark Cavage <mcavage@gmail.com>"
-    ,"Dave Dopson <ddopson@gmail.com>"
-    ,"David Trejo <david.daniel.trejo@gmail.com>"
-    ,"Pooya Karimian <pkarimian@sencha.com>"
-    ,"Jakub Lekstan <kuebzky@gmail.com>"
-    ,"Matt Lavin <matt.lavin@gmail.com>"
-    ,"Roy Cheng <roy.b.cheng@newegg.com>"
-  ]
-  ,"repository": {
-      "type": "git"
-      ,"url": "https://github.com/yfinkelstein/node-zookeeper"
+  "name": "zookeeper",
+  "description": "apache zookeeper client (zookeeper async API >= 3.4.0)",
+  "version": "4.0.0",
+  "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
+  "contributors": [
+    "Yuri Finkelstein <yurif2003@yahoo.com>",
+    "Woody Anderson <woody.anderson@gmail.com>",
+    "Mark Cavage <mcavage@gmail.com>",
+    "Dave Dopson <ddopson@gmail.com>",
+    "David Trejo <david.daniel.trejo@gmail.com>",
+    "Pooya Karimian <pkarimian@sencha.com>",
+    "Jakub Lekstan <kuebzky@gmail.com>",
+    "Matt Lavin <matt.lavin@gmail.com>",
+    "Roy Cheng <roy.b.cheng@newegg.com>",
+    "David Vujic github.com/DavidVujic"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yfinkelstein/node-zookeeper"
+  },
+  "keywords": [
+    "apache",
+    "zookeeper",
+    "client"
+  ],
+  "dependencies": {
+    "async": "2.6.x",
+    "decompress": "4.2.x",
+    "decompress-targz": "4.1.x",
+    "lodash": "4.x",
+    "nan": "2.x",
+    "shelljs": "0.8.x"
+  },
+  "devDependencies": {
+    "log4js": "4.x",
+    "webworker": "0.x"
+  },
+  "main": "lib/index",
+  "scripts": {
+    "build": "node-gyp configure build",
+    "install": "node ./scripts/prepublish.js && npm run build",
+    "test": "pushd test; ./test; popd"
+  },
+  "engines": {
+    "node": ">=8.9.4"
   }
-  ,"keywords": ["apache", "zookeeper", "client"]
-  ,"dependencies": {
-    "async": "~2.6.1"
-    ,"nan": "~2.11.0"
-    ,"lodash": "~4.17.11"
-  }
-  ,"devDependencies": {
-    "log4js": "~3.0.5"
-    ,"webworker": ">=0.8.4"
-  }
-  ,"main": "lib/index"
-  ,"scripts" : {
-     "build" : "node-gyp configure build"
-     ,"test" : "pushd test; ./test; popd"
-     ,"prepublish" : "./scripts/prepublish.sh"
-  }
-  ,"engines": { "node": ">=0.10" }
 }

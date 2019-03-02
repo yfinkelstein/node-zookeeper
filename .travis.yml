@@ -3,17 +3,16 @@ node_js:
   - "10"
   - "9"
   - "8"
-  - "7"
-  - "6"
-  - "5"
-  - "4"
-  - "0.10"
+os:
+  - linux
+  - osx
+  - windows
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-4.8; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"; fi
 install:
-  - npm run-script prepublish
   - npm install
 script: echo "Skipping tests for now"
-env:
-  - CXX=g++-4.8
 addons:
   apt:
     sources:

@@ -1,11 +1,23 @@
 #include <string.h>
-#include <strings.h>
-#include <errno.h>
+#ifdef WIN32
+    #define _MSC_STDINT_H_
+    #include <iostream>
+    #include <stdint.h>
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <windows.h>
+#else
+    #include <strings.h>
+    #include <errno.h>
+#endif
 #include <assert.h>
 #include <stdarg.h>
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
+#include <v8.h>
 using namespace v8;
 using namespace node;
 #undef THREADED
@@ -13,6 +25,13 @@ using namespace node;
 #include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
+
+#ifdef WIN32
+    #pragma comment (lib, "Ws2_32.lib")
+    #pragma comment (lib, "Mswsock.lib")
+    #pragma comment (lib, "AdvApi32.lib")
+#endif
+
 
 // @param c must be in [0-15]
 // @return '0'..'9','A'..'F'
@@ -40,7 +59,11 @@ static void hexToUchar(const char *hex, unsigned char *c) {
 }
 
 namespace zk {
-#define ZERO_MEM(member) bzero(&(member), sizeof(member))
+#ifdef WIN32
+	#define ZERO_MEM(member) memset(&(member), 0x0, sizeof(member))
+#else
+	#define ZERO_MEM(member) bzero(&(member), sizeof(member))
+#endif
 #define _LL_CAST_ (long long)
 #define _LLP_CAST_ (long long *)
 
@@ -249,7 +272,12 @@ public:
 
         last_activity = uv_now(uv_default_loop());
 
-        int oldFd = fd;
+        #ifdef WIN32
+            SOCKET oldFd = fd;
+        #else
+            int oldFd = fd;
+        #endif
+
         int rc = zookeeper_interest(zhandle, &fd, &interest, &tv);
 
         if (zk_io && uv_is_active((uv_handle_t*) zk_io)) {
@@ -295,7 +323,11 @@ public:
              }
 
              zk_io->data = this;
-             uv_poll_init(uv_default_loop(), zk_io, fd);
+             #ifdef WIN32
+             	uv_poll_init_socket(uv_default_loop(), zk_io, fd);
+             #else
+             	uv_poll_init(uv_default_loop(), zk_io, fd);
+             #endif
         }
 
         LOG_DEBUG(("yield: starting poll for %lp from thread %lp", this));
@@ -305,7 +337,7 @@ public:
     }
 
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
-        LOG_DEBUG(("zk_io_cb fired"));
+        LOG_DEBUG(("zk_io_cb fired, status: %d, revents: %d", status, revents));
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 
         int events;
@@ -352,11 +384,9 @@ public:
     }
 
     inline bool realInit (const char* hostPort, int session_timeout, clientid_t *client_id) {
-        bool need_timer_init = true;
         if (zhandle) {
             // In case this is not the first call to realInit,
             // stop the current timer and skip re-initializing the timer
-            need_timer_init = true;
             uv_timer_stop(&zk_timer);
         }
       
@@ -368,10 +398,8 @@ public:
         }
         Ref();
 
-        if (need_timer_init) {
-            uv_timer_init(uv_default_loop(), &zk_timer);
-            zk_timer.data = this;
-        }
+        uv_timer_init(uv_default_loop(), &zk_timer);
+        zk_timer.data = this;
 
         yield();
         return true;
@@ -1006,8 +1034,12 @@ public:
         LOG_INFO(("ZooKeeper destructor invoked"));
     }
 
-
+#ifdef WIN32
+    ZooKeeper () : zhandle(0) {
+        fd = socket(AF_INET, SOCK_STREAM, 0);
+#else
     ZooKeeper () : zhandle(0), fd(-1) {
+#endif
         ZERO_MEM (myid);
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
@@ -1019,7 +1051,13 @@ private:
     uv_poll_t* zk_io;
 
     uv_timer_t zk_timer;
-    int fd;
+
+    #ifdef WIN32
+        SOCKET fd;
+    #else
+        int fd;
+    #endif
+
     int interest;
     timeval tv;
     int64_t last_activity; // time of last zookeeper event loop activity

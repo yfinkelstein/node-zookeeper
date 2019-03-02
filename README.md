@@ -7,27 +7,41 @@ This module is implemented on top of the ZooKeeper C API; consult the [ZK Refere
 # Example
 
 ```javascript
-var ZooKeeper = require ("zookeeper");
-var zk = new ZooKeeper({
-  connect: "localhost:2181"
- ,timeout: 200000
- ,debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN
- ,host_order_deterministic: false
+const ZooKeeper = require('zookeeper');
+
+function onCreate(client, rc, error, path) {
+    if (rc !== 0) {
+        console.log(`zk node create result: ${rc}, error: '${error}', path=${path}`);
+    } else {
+        console.log(`created zk node ${path}`);
+
+        process.nextTick(() => {
+            client.close();
+        });
+    }
+}
+
+function onConnect(client, err) {
+    if (err) {
+        throw err;
+    }
+
+    console.log(`zk session established, id=${client.client_id}`);
+    client.a_create('/node.js1', 'some value', ZooKeeper.ZOO_SEQUENCE | ZooKeeper.ZOO_EPHEMERAL, onCreate.bind(null, client));
+}
+
+const zk = new ZooKeeper({
+    connect: '127.0.0.1:2181',
+    timeout: 200000,
+    debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
+    host_order_deterministic: false,
 });
-zk.connect(function (err) {
-    if(err) throw err;
-    console.log ("zk session established, id=%s", zk.client_id);
-    zk.a_create ("/node.js1", "some value", ZooKeeper.ZOO_SEQUENCE | ZooKeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
-        if (rc != 0) {
-            console.log ("zk node create result: %d, error: '%s', path=%s", rc, error, path);
-        } else {
-            console.log ("created zk node %s", path);
-            process.nextTick(function () {
-                zk.close ();
-            });
-        }
-    });
-});
+
+try {
+    zk.connect(onConnect.bind(null, zk));
+} catch (e) {
+    console.error(e);
+}
 ```
 
 # API Reference
@@ -169,6 +183,12 @@ For more details please refer to ZooKeeper docs.
 * tests are not standalone, must run a zk server (easiest if you run at localhost:2181, if not you must pass the connect string to the tests)
 * only asynchronous ZK methods are implemented. Hey, this is node.js ... no sync calls are allowed
 
+# Windows support
+Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon. 
+
+Also, run `npm install` in a Powershell window as an __Administrator__.
+
+Windows support has been enabled mainly for supporting development, not for production.
 # Implementation Notes
 
 ### NOTE on Module Status (DDOPSON-2011-11-30):
@@ -268,8 +288,8 @@ DDOPSON-2011-11-30 - are these issues still relevant?  unknown.
 
 # See Also
 
-- [http://hadoop.apache.org/zookeeper/releases.html](http://hadoop.apache.org/zookeeper/releases.html)
-- [http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#ZooKeeper+C+client+API)
+- [http://zookeeper.apache.org/releases.html](http://zookeeper.apache.org/releases.html)
+- [http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API)
 - [http://github.com/kriszyp/node-promise](http://github.com/kriszyp/node-promise)
 - [http://github.com/pgriess/node-webworker](http://github.com/pgriess/node-webworker)
 
