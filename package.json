@@ -34,14 +34,13 @@
     "shelljs": "0.8.x"
   },
   "devDependencies": {
-    "log4js": "4.x",
-    "webworker": "0.x"
+    "tape": "^4.10.1"
   },
   "main": "lib/index",
   "scripts": {
     "build": "node-gyp configure build",
     "install": "node ./scripts/prepublish.js && npm run build",
-    "test": "pushd test; ./test; popd"
+    "test": "tape ./tests/**/*.js"
   },
   "engines": {
     "node": ">=8.9.4"
