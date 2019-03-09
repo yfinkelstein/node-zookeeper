@@ -1,7 +1,7 @@
 const test = require('tape');
-const ZooKeeper = require('../lib/index.js');
+const ZooKeeper = require('../lib/index.js').Promise;
 
-test('ZooKeeper public API', (assert) => {
+test('ZooKeeper Promise public API', (assert) => {
     assert.plan(24);
 
     const fakeConfig = { hello: 'world' };
