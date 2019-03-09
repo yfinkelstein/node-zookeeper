@@ -2,8 +2,6 @@ const test = require('tape');
 const proxyquire = require('proxyquire');
 const { FakeNativeZooKeeper, path } = require('../helpers/fakes.js');
 
-FakeNativeZooKeeper.hello = 'world';
-
 const ZooKeeper = proxyquire('../../lib/zookeeper.js', {
     [path]: { ZooKeeper: FakeNativeZooKeeper }
 });
