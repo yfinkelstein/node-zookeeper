@@ -1,38 +1,55 @@
 const test = require('tape');
 const ZooKeeper = require('../lib/index.js');
 
-test('ZooKeeper public API', (assert) => {
-    assert.plan(24);
+function assertPublicApi(zk, t) {
+    t.plan(24);
 
-    const fakeConfig = { hello: 'world' };
+    t.equal(typeof zk.a_create, 'function');
+    t.equal(typeof zk.a_exists, 'function');
+    t.equal(typeof zk.a_get, 'function');
+    t.equal(typeof zk.a_get_acl, 'function');
+    t.equal(typeof zk.a_get_children, 'function');
+
+    t.equal(typeof zk.a_get_children2, 'function');
+    t.equal(typeof zk.a_set, 'function');
+    t.equal(typeof zk.a_set_acl, 'function');
+    t.equal(typeof zk.a_sync, 'function');
+    t.equal(typeof zk.add_auth, 'function');
+
+    t.equal(typeof zk.aw_exists, 'function');
+    t.equal(typeof zk.aw_get, 'function');
+    t.equal(typeof zk.aw_get_children, 'function');
+    t.equal(typeof zk.aw_get_children2, 'function');
+    t.equal(typeof zk.close, 'function');
+
+    t.equal(typeof zk.config, 'object');
+    t.equal(typeof zk.connect, 'function');
+    t.equal(typeof zk.data_as_buffer, 'boolean');
+    t.equal(zk.encoding, null);
+    t.equal(typeof zk.init, 'function');
+
+    t.equal(zk.logger, undefined);
+    t.equal(typeof zk.mkdirp, 'function');
+    t.equal(typeof zk.setEncoding, 'function');
+    t.equal(typeof zk.setLogger, 'function');
+}
+
+const fakeConfig = { hello: 'world' };
+
+test('ZooKeeper public API', (t) => {
     const zk = new ZooKeeper(fakeConfig);
 
-    assert.equal(typeof zk.a_create, 'function');
-    assert.equal(typeof zk.a_exists, 'function');
-    assert.equal(typeof zk.a_get, 'function');
-    assert.equal(typeof zk.a_get_acl, 'function');
-    assert.equal(typeof zk.a_get_children, 'function');
+    assertPublicApi(zk, t);
+});
 
-    assert.equal(typeof zk.a_get_children2, 'function');
-    assert.equal(typeof zk.a_set, 'function');
-    assert.equal(typeof zk.a_set_acl, 'function');
-    assert.equal(typeof zk.a_sync, 'function');
-    assert.equal(typeof zk.add_auth, 'function');
+test('ZooKeeper Promise public API', (t) => {
+    const zk = new ZooKeeper.Promise(fakeConfig);
 
-    assert.equal(typeof zk.aw_exists, 'function');
-    assert.equal(typeof zk.aw_get, 'function');
-    assert.equal(typeof zk.aw_get_children, 'function');
-    assert.equal(typeof zk.aw_get_children2, 'function');
-    assert.equal(typeof zk.close, 'function');
+    assertPublicApi(zk, t);
+});
 
-    assert.equal(zk.config.hello, 'world');
-    assert.equal(typeof zk.connect, 'function');
-    assert.equal(typeof zk.data_as_buffer, 'boolean');
-    assert.equal(zk.encoding, null);
-    assert.equal(typeof zk.init, 'function');
+test('ZooKeeper Legacy public API', (t) => {
+    const zk = new ZooKeeper.ZooKeeper(fakeConfig);
 
-    assert.equal(zk.logger, undefined);
-    assert.equal(typeof zk.mkdirp, 'function');
-    assert.equal(typeof zk.setEncoding, 'function');
-    assert.equal(typeof zk.setLogger, 'function');
+    assertPublicApi(zk, t);
 });
