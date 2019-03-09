@@ -22,9 +22,9 @@ function assertPublicApi(zk, t) {
     t.equal(typeof zk.aw_get_children2, 'function');
     t.equal(typeof zk.close, 'function');
 
-    t.equal(typeof zk.config, 'object');
+    t.equal(zk.config, undefined);
     t.equal(typeof zk.connect, 'function');
-    t.equal(typeof zk.data_as_buffer, 'boolean');
+    t.equal(zk.data_as_buffer, true);
     t.equal(zk.encoding, null);
     t.equal(typeof zk.init, 'function');
 
@@ -34,22 +34,14 @@ function assertPublicApi(zk, t) {
     t.equal(typeof zk.setLogger, 'function');
 }
 
-const fakeConfig = { hello: 'world' };
-
-test('ZooKeeper public API', (t) => {
-    const zk = new ZooKeeper(fakeConfig);
-
-    assertPublicApi(zk, t);
+test('public API', (t) => {
+    assertPublicApi(new ZooKeeper(), t);
 });
 
-test('ZooKeeper Promise public API', (t) => {
-    const zk = new ZooKeeper.Promise(fakeConfig);
-
-    assertPublicApi(zk, t);
+test('Promise public API', (t) => {
+    assertPublicApi(new ZooKeeper.Promise(), t);
 });
 
-test('ZooKeeper Legacy public API', (t) => {
-    const zk = new ZooKeeper.ZooKeeper(fakeConfig);
-
-    assertPublicApi(zk, t);
+test('Legacy public API', (t) => {
+    assertPublicApi(new ZooKeeper.ZooKeeper(), t);
 });
