@@ -1,15 +1,12 @@
 const test = require('tape');
 const proxyquire = require('proxyquire');
-const path = require('path');
+const { FakeNativeZooKeeper, path } = require('../helpers/fakes.js');
 
-class FakeNativeZooKeeper {}
 FakeNativeZooKeeper.hello = 'world';
 
-const fake = {};
-const key = `${path.join(__dirname, '../../lib/')}/../build/zookeeper.node`;
-fake[key] = { ZooKeeper: FakeNativeZooKeeper };
-
-const ZooKeeper = proxyquire('../../lib/zookeeper.js', fake);
+const ZooKeeper = proxyquire('../../lib/zookeeper.js', {
+    [path]: { ZooKeeper: FakeNativeZooKeeper }
+});
 
 test('native static constants are exported', (t) => {
     t.plan(1);
