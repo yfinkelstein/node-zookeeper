@@ -1,5 +1,5 @@
 const test = require('tape');
-const ZooKeeper = require('../lib/index.js');
+const ZooKeeper = require('../../lib/index.js');
 
 test('Inject custom logger', (t) => {
     t.plan(1);

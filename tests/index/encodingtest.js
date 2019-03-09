@@ -1,5 +1,5 @@
 const test = require('tape');
-const ZooKeeper = require('../lib/index.js');
+const ZooKeeper = require('../../lib/index.js');
 
 test('inject encoding will set data as buffer to false', (t) => {
     t.plan(2);

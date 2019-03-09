@@ -34,6 +34,7 @@
     "shelljs": "0.8.x"
   },
   "devDependencies": {
+    "proxyquire": "2.x",
     "tap-spec": "5.x",
     "tape": "4.x"
   },
