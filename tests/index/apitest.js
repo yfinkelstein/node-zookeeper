@@ -1,8 +1,9 @@
 const test = require('tape');
 const ZooKeeper = require('../../lib/index.js');
+const EventEmitter = require('events').EventEmitter;
 
 function assertPublicApi(zk, t) {
-    t.plan(24);
+    t.plan(25);
 
     t.equal(typeof zk.a_create, 'function');
     t.equal(typeof zk.a_exists, 'function');
@@ -32,6 +33,8 @@ function assertPublicApi(zk, t) {
     t.equal(typeof zk.mkdirp, 'function');
     t.equal(typeof zk.setEncoding, 'function');
     t.equal(typeof zk.setLogger, 'function');
+
+    t.true(zk instanceof EventEmitter);
 }
 
 test('public API', (t) => {
