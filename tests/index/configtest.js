@@ -10,3 +10,14 @@ test('inject config', (t) => {
 
     t.equal(zk.config.connect, expected);
 });
+
+test('inject connection config as a string', (t) => {
+    t.plan(2);
+
+    const expected = '127.0.0.1:2181';
+
+    const zk = new ZooKeeper(expected);
+
+    t.equal(zk.config.connect, expected);
+    t.equal(Object.keys(zk.config).length, 1);
+});
