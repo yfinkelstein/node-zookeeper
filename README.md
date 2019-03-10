@@ -1,10 +1,10 @@
 # Overview
 
-node-zookeeper - A Node.js client for Apache Zookeeper.
+_node-zookeeper - A Node.js client for Apache Zookeeper._
 
-This module is implemented on top of the ZooKeeper C API; consult the [ZK Reference](http://zookeeper.apache.org/doc/r3.4.0/index.html) for further details on behavior.
+This module is implemented on top of the ZooKeeper C API; consult the [ZK Reference](http://zookeeper.apache.org/doc/r3.4.13/index.html) for further details on behavior.
 
-Latest changes are described in the [changelog](./CHANGELOG.md)
+__Latest changes__ are described in the [changelog](./CHANGELOG.md)
 
 ## Installation
 (note the name `zookeeper` in lowercase)
