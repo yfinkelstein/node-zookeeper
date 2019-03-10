@@ -4,6 +4,14 @@ node-zookeeper - A Node.js client for Apache Zookeeper.
 
 This module is implemented on top of the ZooKeeper C API; consult the [ZK Reference](http://zookeeper.apache.org/doc/r3.4.0/index.html) for further details on behavior.
 
+Latest changes are described in the [changelog](./CHANGELOG.md)
+
+## Installation
+(note the name `zookeeper` in lowercase)
+```bash
+npm install zookeeper
+```
+
 # Example
 
 ```javascript
@@ -285,6 +293,9 @@ DDOPSON-2011-11-30 - are these issues still relevant?  unknown.
 - The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
 - Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
 - Otherwise, it just works!
+
+# Contribute to the project
+Check out the issues tab and grab one! Read the [contributing](./CONTRIBUTING.md) document.
 
 # See Also
 
