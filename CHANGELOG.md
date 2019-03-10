@@ -3,7 +3,7 @@
 
 #### v 4.0.0 (2019-03-02)
 * Added Windows support! A long awaited issue finally solved.
-* __BREAKING__: dropped support for Node.js versions oldder than version 8.
+* __BREAKING__: dropped support for Node.js versions older than version 8.
 * `node-zookeeper` now uses __SemVer__ for versioning.
 
 Read details about the release here: [Windows support](https://github.com/yfinkelstein/node-zookeeper/pull/145)
