@@ -45,11 +45,8 @@ function validateFile(fileName) {
 
         // `certutil` returns 2byte separated string (e.g. "a9 89 b5 27 f3 f9 90 d4 71 e6 d4 7e e4 10 e5 7d 8b e7 62 0b")
         const sha1 = output[1].replace(/ /g, "");
-        // fileName validation (?) (double check ..?)
-        const arr = output[0].replace(':', '').split(' ');
-        const name = arr.find(n => n === fileName);
 
-        res = `${sha1}  ${name}`;
+        res = `${sha1}  ${fileName}`;
     } else {
         res = exec(`shasum -a 1 ${fileName}`).trim();
     }
