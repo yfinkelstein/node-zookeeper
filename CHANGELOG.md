@@ -1,3 +1,7 @@
+#### v 4.0.2 (2019-04-13)
+* fixed: Windows 7 support (Pull Request by https://github.com/ndxbn)
+
+
 #### v 4.0.1 (2019-03-10)
 * Added docs: changelog, contributing to the project, fixed typos and missing info in the readme file.
 
