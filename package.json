@@ -38,14 +38,18 @@
         "tap-spec": "5.x",
         "tape": "4.x",
         "log4js": "4.x",
-        "webworker": "0.x"
+        "webworker": "0.x",
+        "eslint": "5.x",
+        "eslint-config-airbnb-base": "13.x",
+        "eslint-plugin-import": "2.x"
     },
     "main": "lib/index",
     "scripts": {
         "build": "node-gyp configure build",
         "install": "node ./scripts/prepublish.js && npm run build",
+        "lint": "eslint .",
         "integrationtest": "pushd test; ./test; popd",
-        "test": "tape ./tests/**/*.js | tap-spec"
+        "test": "npm run lint && tape ./tests/**/*.js | tap-spec"
     },
     "engines": {
         "node": ">=8.9.4"

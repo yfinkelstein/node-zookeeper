@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise,no-console */
 const ZooKeeper = require('./lib/zookeeper');
 
 function onCreate(client, rc, error, path) {

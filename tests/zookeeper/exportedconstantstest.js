@@ -5,7 +5,7 @@ const { FakeNativeZooKeeper, path } = require('../helpers/fakes.js');
 FakeNativeZooKeeper.hello = 'world';
 
 const ZooKeeper = proxyquire('../../lib/zookeeper.js', {
-    [path]: { ZooKeeper: FakeNativeZooKeeper }
+    [path]: { ZooKeeper: FakeNativeZooKeeper },
 });
 
 test('native static constants are exported', (t) => {
