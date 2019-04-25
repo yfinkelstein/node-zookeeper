@@ -1,3 +1,6 @@
+#### v 4.0.3 (2019-04-25)
+* chore: added unit tests, mostly asserting the public API.
+
 #### v 4.0.2 (2019-04-13)
 * fixed: Windows 7 support (Pull Request by https://github.com/ndxbn)
 
