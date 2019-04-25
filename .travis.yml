@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - "10"
-  - "9"
   - "8"
 os:
   - linux
@@ -12,7 +11,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"; fi
 install:
   - npm install
-script: echo "Skipping tests for now"
+script:
+  - npm test
 addons:
   apt:
     sources:
