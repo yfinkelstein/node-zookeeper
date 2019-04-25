@@ -1,53 +1,53 @@
 {
-  "name": "zookeeper",
-  "description": "apache zookeeper client (zookeeper async API >= 3.4.0)",
-  "version": "4.0.3",
-  "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
-  "license": "MIT",
-  "contributors": [
-    "Yuri Finkelstein <yurif2003@yahoo.com>",
-    "Woody Anderson <woody.anderson@gmail.com>",
-    "Mark Cavage <mcavage@gmail.com>",
-    "Dave Dopson <ddopson@gmail.com>",
-    "David Trejo <david.daniel.trejo@gmail.com>",
-    "Pooya Karimian <pkarimian@sencha.com>",
-    "Jakub Lekstan <kuebzky@gmail.com>",
-    "Matt Lavin <matt.lavin@gmail.com>",
-    "Roy Cheng <roy.b.cheng@newegg.com>",
-    "David Vujic (https://github.com/DavidVujic)"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yfinkelstein/node-zookeeper"
-  },
-  "keywords": [
-    "apache",
-    "zookeeper",
-    "client"
-  ],
-  "dependencies": {
-    "async": "2.6.x",
-    "decompress": "4.2.x",
-    "decompress-targz": "4.1.x",
-    "lodash": "4.x",
-    "nan": "2.x",
-    "shelljs": "0.8.x"
-  },
-  "devDependencies": {
-    "proxyquire": "2.x",
-    "tap-spec": "5.x",
-    "tape": "4.x",
-    "log4js": "4.x",
-    "webworker": "0.x"
-  },
-  "main": "lib/index",
-  "scripts": {
-    "build": "node-gyp configure build",
-    "install": "node ./scripts/prepublish.js && npm run build",
-    "integrationtest": "pushd test; ./test; popd",
-    "test": "tape ./tests/**/*.js | tap-spec"
-  },
-  "engines": {
-    "node": ">=8.9.4"
-  }
+    "name": "zookeeper",
+    "description": "apache zookeeper client (zookeeper async API >= 3.4.0)",
+    "version": "4.0.3",
+    "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
+    "license": "MIT",
+    "contributors": [
+        "Yuri Finkelstein <yurif2003@yahoo.com>",
+        "Woody Anderson <woody.anderson@gmail.com>",
+        "Mark Cavage <mcavage@gmail.com>",
+        "Dave Dopson <ddopson@gmail.com>",
+        "David Trejo <david.daniel.trejo@gmail.com>",
+        "Pooya Karimian <pkarimian@sencha.com>",
+        "Jakub Lekstan <kuebzky@gmail.com>",
+        "Matt Lavin <matt.lavin@gmail.com>",
+        "Roy Cheng <roy.b.cheng@newegg.com>",
+        "David Vujic (https://github.com/DavidVujic)"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yfinkelstein/node-zookeeper"
+    },
+    "keywords": [
+        "apache",
+        "zookeeper",
+        "client"
+    ],
+    "dependencies": {
+        "async": "2.6.x",
+        "decompress": "4.2.x",
+        "decompress-targz": "4.1.x",
+        "lodash": "4.x",
+        "nan": "2.x",
+        "shelljs": "0.8.x"
+    },
+    "devDependencies": {
+        "proxyquire": "2.x",
+        "tap-spec": "5.x",
+        "tape": "4.x",
+        "log4js": "4.x",
+        "webworker": "0.x"
+    },
+    "main": "lib/index",
+    "scripts": {
+        "build": "node-gyp configure build",
+        "install": "node ./scripts/prepublish.js && npm run build",
+        "integrationtest": "pushd test; ./test; popd",
+        "test": "tape ./tests/**/*.js | tap-spec"
+    },
+    "engines": {
+        "node": ">=8.9.4"
+    }
 }
