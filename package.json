@@ -36,12 +36,15 @@
   "devDependencies": {
     "proxyquire": "2.x",
     "tap-spec": "5.x",
-    "tape": "4.x"
+    "tape": "4.x",
+    "log4js": "4.x",
+    "webworker": "0.x"
   },
   "main": "lib/index",
   "scripts": {
     "build": "node-gyp configure build",
     "install": "node ./scripts/prepublish.js && npm run build",
+    "integrationtest": "pushd test; ./test; popd",
     "test": "tape ./tests/**/*.js | tap-spec"
   },
   "engines": {
