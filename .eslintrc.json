@@ -1,0 +1,14 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "env": {
+        "node": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "rules": {
+        "indent": ["error", 4]
+    }
+}

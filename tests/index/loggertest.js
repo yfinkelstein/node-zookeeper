@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const test = require('tape');
 const ZooKeeper = require('../../lib/index.js');
 
