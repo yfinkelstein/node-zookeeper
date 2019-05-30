@@ -57,6 +57,7 @@ try {
 ### Methods ###
 
 * init ( options )
+* connect ( options, connect_cb)
 * close ( )
 * a_create ( path, data, flags, path_cb )
 * mkdirp ( path, callback(Error) )
@@ -89,6 +90,7 @@ try {
  * void_cb : function ( rc, error )
  * watch_cb : function ( type, state, path )
  * acl_cb : function (rc, error, acl, stat)
+ * connect_cb: function(err, zookeeper)
 
 ### Input Parameters ###
 
@@ -127,6 +129,7 @@ try {
      * int perms               // permisions
      * string scheme           // authorisation scheme (digest, auth)
      * string auth               // authorisation credentials (username:hashed_password)
+ * zookeeper is the ZooKeeper instance on which connect was called
 
 
 Session state machine is well described in the [Zookeeper docs](http://zookeeper.apache.org/doc/r3.4.14/zookeeperProgrammers.html#ch_zkSessions)
