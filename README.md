@@ -132,8 +132,7 @@ try {
  * zookeeper is the ZooKeeper instance on which connect was called
 
 
-Session state machine is well described in Zookeeper docs, i.e.
-![here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/images/state_dia.jpg "State Diagram")
+Session state machine is well described in the [Zookeeper docs](http://zookeeper.apache.org/doc/r3.4.14/zookeeperProgrammers.html#ch_zkSessions)
 
 ### ACL and authorisation ###
 It's supported now, library comes with 3 default ACL levels defined (comes from ZK):
