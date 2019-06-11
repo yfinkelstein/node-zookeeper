@@ -5,28 +5,28 @@ const { createNode, persistentNode } = require('./createnode.js');
 const noop = () => {};
 
 function createNodes(paths) {
-  const client = createClient();
-  return new Promise((resolve) => {
-    client.on('connect', () => {
-      notifier.emit('connect', `session established, id=${client.client_id}`);
+    const client = createClient();
+    return new Promise((resolve) => {
+        client.on('connect', () => {
+            notifier.emit('connect', `session established, id=${client.client_id}`);
 
-      paths
-        .forEach((path, index) => {
-          createNode(client, path, persistentNode)
-            .then((message) => {
-              notifier.emit('createNode', message);
+            paths
+                .forEach((path, index) => {
+                    createNode(client, path, persistentNode)
+                        .then((message) => {
+                            notifier.emit('createNode', message);
 
-              if (paths.length === (index + 1)) {
-                resolve();
-              }
-            });
+                            if (paths.length === (index + 1)) {
+                                resolve();
+                            }
+                        });
+                });
         });
-    });
 
-    client.connect(noop);
-  });
+        client.connect(noop);
+    });
 }
 
 module.exports = {
-  createNodes,
+    createNodes,
 };
