@@ -75,16 +75,16 @@ namespace zk {
       Nan::ThrowError(text); \
       return; \
     }
-  
-  
+
+
 #define RETURN_THIS(info) info.GetReturnValue().Set(info.This())
 #define RETURN_VALUE(info, value) info.GetReturnValue().Set(value)
-  
+
 #define LOCAL_STRING(str) Nan::New<String>(str).ToLocalChecked()
-  
-#define DECLARE_STRING(ev) static Nan::Persistent<String> ev; 
-#define INITIALIZE_STRING(ev, str) ev.Reset(LOCAL_STRING(str)); 
-  
+
+#define DECLARE_STRING(ev) static Nan::Persistent<String> ev;
+#define INITIALIZE_STRING(ev, str) ev.Reset(LOCAL_STRING(str));
+
 DECLARE_STRING (on_closed);
 DECLARE_STRING (on_connected);
 DECLARE_STRING (on_connecting);
@@ -96,7 +96,7 @@ DECLARE_STRING (on_event_notwatching);
 
 #define DECLARE_SYMBOL(ev)   DECLARE_STRING(ev)
 #define INITIALIZE_SYMBOL(ev) INITIALIZE_STRING(ev, #ev)
-  
+
 DECLARE_SYMBOL (PRIVATE_PROP_ZK);
 DECLARE_SYMBOL (PRIVATE_PROP_HANDBACK);
 
@@ -351,6 +351,12 @@ public:
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
+
+            // Explicitly check for the return code, and close the session.
+            if (rc == ZNOTHING) {
+                zk->realClose(ZOO_EXPIRED_SESSION_STATE);
+                return;
+            }
         }
         zk->yield();
     }
@@ -389,7 +395,7 @@ public:
             // stop the current timer and skip re-initializing the timer
             uv_timer_stop(&zk_timer);
         }
-      
+
         myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
@@ -428,11 +434,11 @@ public:
         v8::Local<v8::Value> v8v_client_password = arg->Get(LOCAL_STRING("client_password"));
         bool id_and_password_defined = (!v8v_client_id->IsUndefined() && !v8v_client_password->IsUndefined());
         bool id_and_password_undefined = (v8v_client_id->IsUndefined() && v8v_client_password->IsUndefined());
-        THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined), 
+        THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined),
             "ZK init: client id and password must either be both specified or unspecified");
         if (id_and_password_defined) {
             Nan::Utf8String password_check(v8v_client_password->ToString());
-            THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT, 
+            THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT,
                           "ZK init: password does not have correct length");
             HexStringToPassword(v8v_client_password, local_client.passwd);
             StringToId(v8v_client_id, &local_client.client_id);
@@ -725,7 +731,7 @@ public:
     }
 
     static void Delete(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());   
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
         Nan::Utf8String _path (info[0]->ToString());
         uint32_t version = info[1]->Uint32Value();
@@ -1004,19 +1010,19 @@ public:
                 int rc = uv_poll_stop(zk_io);
                 LOG_DEBUG(("zookeeper_close(%lp) uv_poll_stop result: %d", this, rc));
 
-                uv_close((uv_handle_t*) zk_io, delete_on_close); 
+                uv_close((uv_handle_t*) zk_io, delete_on_close);
                 zk_io = NULL;
             }
 
             // Close the timer and finally Unref the ZooKeeper instance when it's done
             // Unrefing after is important to avoid memory being freed too early.
-            uv_close((uv_handle_t*) &zk_timer, timer_closed); 
+            uv_close((uv_handle_t*) &zk_timer, timer_closed);
 
             Nan::HandleScope scope;
             DoEmitClose (Nan::New(on_closed), code);
         }
     }
-    
+
     static void timer_closed(uv_handle_t* handle) {
         ZooKeeper *zk = static_cast<ZooKeeper *>(handle->data);
         zk->Unref();
