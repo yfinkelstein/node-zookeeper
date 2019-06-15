@@ -23,6 +23,10 @@ function createNodes(paths) {
                 });
         });
 
+        client.on('close', () => {
+            notifier.emit('close', `session closed, id=${client.client_id}`);
+        });
+
         client.connect(noop);
     });
 }

@@ -16,9 +16,9 @@ Start the example code:
 docker run examples
 ````
 
-In a second terminal window, start the fake ZooKeeper server:
+In a second terminal window, start the test socket server:
 ````bash
-node tests/integration/socketserver.js
+node examples/socketserver.js
 ````
 
 Start and stop the example code a couple of times. Make sure the example code is not stuck in an infinite loop, as described in the [issue](https://github.com/yfinkelstein/node-zookeeper/issues/172).
