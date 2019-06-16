@@ -48,7 +48,7 @@
         "build": "node-gyp configure build",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
-        "integrationtest": "pushd tests_integration; test_integration; popd",
+        "integrationtest": "pushd tests_integration; source ./test; popd",
         "test": "npm run lint && tape ./tests/**/*.js | tap-spec"
     },
     "engines": {
