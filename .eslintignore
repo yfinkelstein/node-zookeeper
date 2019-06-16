@@ -1,4 +1,4 @@
 /scripts/*.js
 /lib/*.js
-/test/*.js
+/tests_integration/*.js
 /deps/**/*.js

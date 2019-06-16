@@ -351,6 +351,12 @@ public:
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
             LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
+
+            // Explicitly check for the return code, and close the session.
+            if (rc == ZNOTHING) {
+                zk->realClose(ZOO_EXPIRED_SESSION_STATE);
+                return;
+            }
         }
         zk->yield();
     }
