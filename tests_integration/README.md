@@ -35,3 +35,5 @@ Start and stop the example code a couple of times. Make sure the example code is
 Steps:
 1. navigate to the `tests_integration` folder
 2. run `source ./test "127.0.0.1:2818"` (the arg is the url to the ZooKeeper server)
+
+alternatively, run `npm run integrationtest` from the root of the project. The script will connect to `localhost:2181` by default.
