@@ -1,4 +1,4 @@
-#### v 4.1.9 (2019-06-18) ####
+#### v 4.1.0 (2019-06-18) ####
 * feat: handle ZNOTHING return code from the ZooKeeper C library
 * fix: README typos
 * chore: added example code in the examples folder - master, workers and tasks
