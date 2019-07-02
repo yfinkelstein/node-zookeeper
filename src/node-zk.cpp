@@ -419,15 +419,14 @@ public:
     }
 
     static void Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-        Isolate* isolate = info.GetIsolate();
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
-        Local<Object> arg = info[0]->ToObject(isolate);
+        Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
 
         int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->Int32Value(Nan::GetCurrentContext()).FromJust();
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
-        bool order = arg->Get(LOCAL_STRING("host_order_deterministic"))->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+        bool order = Nan::To<bool>(arg->Get(LOCAL_STRING("host_order_deterministic"))).FromJust();
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
@@ -643,8 +642,7 @@ public:
         uint32_t flags = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Isolate* isolate = info.GetIsolate();
-            Local<Object> _data = info[1]->ToObject(isolate);
+            Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
             Nan::Utf8String _data (info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
@@ -712,7 +710,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+        bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
@@ -753,7 +751,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+        bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
     }
@@ -778,8 +776,7 @@ public:
         uint32_t version = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Isolate* isolate = info.GetIsolate();
-            Local<Object> _data = info[1]->ToObject(isolate);
+            Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
             Nan::Utf8String _data(info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
@@ -809,7 +806,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+        bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
@@ -846,7 +843,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+        bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }
