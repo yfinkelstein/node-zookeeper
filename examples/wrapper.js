@@ -7,7 +7,7 @@ function createClient(timeoutMs = 5000) {
     const config = {
         connect: host,
         timeout: timeoutMs,
-        debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
+        debug_level: ZooKeeper.ZOO_LOG_LEVEL_DEBUG,
         host_order_deterministic: false,
     };
 

@@ -75,16 +75,16 @@ namespace zk {
       Nan::ThrowError(text); \
       return; \
     }
-  
-  
+
+
 #define RETURN_THIS(info) info.GetReturnValue().Set(info.This())
 #define RETURN_VALUE(info, value) info.GetReturnValue().Set(value)
-  
+
 #define LOCAL_STRING(str) Nan::New<String>(str).ToLocalChecked()
-  
-#define DECLARE_STRING(ev) static Nan::Persistent<String> ev; 
-#define INITIALIZE_STRING(ev, str) ev.Reset(LOCAL_STRING(str)); 
-  
+
+#define DECLARE_STRING(ev) static Nan::Persistent<String> ev;
+#define INITIALIZE_STRING(ev, str) ev.Reset(LOCAL_STRING(str));
+
 DECLARE_STRING (on_closed);
 DECLARE_STRING (on_connected);
 DECLARE_STRING (on_connecting);
@@ -96,7 +96,7 @@ DECLARE_STRING (on_event_notwatching);
 
 #define DECLARE_SYMBOL(ev)   DECLARE_STRING(ev)
 #define INITIALIZE_SYMBOL(ev) INITIALIZE_STRING(ev, #ev)
-  
+
 DECLARE_SYMBOL (PRIVATE_PROP_ZK);
 DECLARE_SYMBOL (PRIVATE_PROP_HANDBACK);
 
@@ -114,7 +114,7 @@ struct completion_data {
 
 class ZooKeeper: public Nan::ObjectWrap {
 public:
-    static void Initialize (v8::Handle<v8::Object> target) {
+    static void Initialize (v8::Local<v8::Object> target) {
         Nan::HandleScope scope;
 
         Local<FunctionTemplate> constructor_template = Nan::New<FunctionTemplate>(New);
@@ -148,24 +148,29 @@ public:
         Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
 
-        Local<Function> constructor = constructor_template->GetFunction();
+        Local<Context> context = Nan::GetCurrentContext();
+        MaybeLocal<Function> constructor_maybe = constructor_template->GetFunction(context);
+        Local<Function> constructor = constructor_maybe.ToLocalChecked();
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
-        Local<Object> acl_open = Nan::New<Object>();
+        MaybeLocal<Object> acl_open_maybe = Nan::New<Object>();
+        v8::Local<Object> acl_open = acl_open_maybe.ToLocalChecked();
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
-        Local<Object> acl_read = Nan::New<Object>();
+        MaybeLocal<Object> acl_read_maybe = Nan::New<Object>();
+        v8::Local<Object> acl_read = acl_read_maybe.ToLocalChecked();
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
-        Local<Object> acl_creator = Nan::New<Object>();
+        MaybeLocal<Object> acl_creator_maybe = Nan::New<Object>();
+        v8::Local<Object> acl_creator = acl_creator_maybe.ToLocalChecked();
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("scheme"), LOCAL_STRING("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
@@ -258,6 +263,7 @@ public:
     }
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+        LOG_DEBUG(("New: creating a new ZooKeeper"));
         ZooKeeper *zk = new ZooKeeper();
 
         zk->Wrap(info.This());
@@ -267,6 +273,7 @@ public:
 
     void yield () {
         if (is_closed) {
+            LOG_DEBUG(("yield: was closed"));
             return;
         }
 
@@ -395,7 +402,7 @@ public:
             // stop the current timer and skip re-initializing the timer
             uv_timer_stop(&zk_timer);
         }
-      
+
         myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
@@ -412,18 +419,19 @@ public:
     }
 
     static void Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+        Isolate* isolate = info.GetIsolate();
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
-        Local<Object> arg = info[0]->ToObject();
+        Local<Object> arg = info[0]->ToObject(isolate);
 
-        int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->Int32Value();
+        int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->Int32Value(Nan::GetCurrentContext()).FromJust();
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
-        bool order = arg->Get(LOCAL_STRING("host_order_deterministic"))->ToBoolean()->BooleanValue();
+        bool order = arg->Get(LOCAL_STRING("host_order_deterministic"))->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
         zoo_deterministic_conn_order(order); // enable deterministic order
 
-        Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString());
-        int32_t session_timeout = arg->Get(LOCAL_STRING("timeout"))->Int32Value();
+        Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        int32_t session_timeout = arg->Get(LOCAL_STRING("timeout"))->Int32Value(Nan::GetCurrentContext()).FromJust();
         if (session_timeout == 0) {
             session_timeout = 20000;
         }
@@ -434,11 +442,11 @@ public:
         v8::Local<v8::Value> v8v_client_password = arg->Get(LOCAL_STRING("client_password"));
         bool id_and_password_defined = (!v8v_client_id->IsUndefined() && !v8v_client_password->IsUndefined());
         bool id_and_password_undefined = (v8v_client_id->IsUndefined() && v8v_client_password->IsUndefined());
-        THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined), 
+        THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined),
             "ZK init: client id and password must either be both specified or unspecified");
         if (id_and_password_defined) {
-            Nan::Utf8String password_check(v8v_client_password->ToString());
-            THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT, 
+            Nan::Utf8String password_check(v8v_client_password->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT,
                           "ZK init: password does not have correct length");
             HexStringToPassword(v8v_client_password, local_client.passwd);
             StringToId(v8v_client_id, &local_client.client_id);
@@ -495,7 +503,7 @@ public:
     }
 
     static void StringToId (v8::Local<v8::Value> s, int64_t *id) {
-        Nan::Utf8String a(s->ToString());
+        Nan::Utf8String a(s->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
         sscanf(*a, "%llx", _LLP_CAST_ id);
     }
 
@@ -511,7 +519,7 @@ public:
     }
 
     static void HexStringToPassword (v8::Local<v8::Value> s, char *p) {
-        Nan::Utf8String a(s->ToString());
+        Nan::Utf8String a(s->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
         char *hex = *a;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
             hexToUchar(hex, (unsigned char *)p+i);
@@ -631,14 +639,15 @@ public:
     static void ACreate(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        uint32_t flags = info[2]->Uint32Value();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        uint32_t flags = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Local<Object> _data = info[1]->ToObject();
+            Isolate* isolate = info.GetIsolate();
+            Local<Object> _data = info[1]->ToObject(isolate);
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
-            Nan::Utf8String _data (info[1]->ToString());
+            Nan::Utf8String _data (info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         }
     }
@@ -661,8 +670,8 @@ public:
 
     static void ADelete(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
-        Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[1]->Uint32Value();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -702,15 +711,15 @@ public:
     static void AExists(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        bool watch = info[1]->ToBoolean()->BooleanValue();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
 
     static void AWExists(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         AW_METHOD_PROLOG(3);
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
         METHOD_EPILOG(zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
     }
 
@@ -731,10 +740,10 @@ public:
     }
 
     static void Delete(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());   
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[1]->Uint32Value();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         int ret = zoo_delete(zk->zhandle, *_path, version);
         RETURN_VALUE(info, Nan::New<Int32>(ret));
@@ -743,8 +752,8 @@ public:
     static void AGet(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        bool watch = info[1]->ToBoolean()->BooleanValue();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
     }
@@ -757,7 +766,7 @@ public:
     static void AWGet(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         METHOD_EPILOG(zoo_awget(zk->zhandle, *_path, &watcher_fn, cbw, &data_completion, cb));
     }
@@ -765,14 +774,15 @@ public:
     static void ASet(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        uint32_t version = info[2]->Uint32Value();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        uint32_t version = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Local<Object> _data = info[1]->ToObject();
+            Isolate* isolate = info.GetIsolate();
+            Local<Object> _data = info[1]->ToObject(isolate);
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
-            Nan::Utf8String _data(info[1]->ToString());
+            Nan::Utf8String _data(info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
         }
     }
@@ -798,8 +808,8 @@ public:
     static void AGetChildren(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        bool watch = info[1]->ToBoolean()->BooleanValue();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
@@ -807,7 +817,7 @@ public:
     static void AWGetChildren(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         METHOD_EPILOG(zoo_awget_children(zk->zhandle, *_path, &watcher_fn, cbw, &strings_completion, cb));
     }
@@ -835,8 +845,8 @@ public:
     static void AGetChildren2(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        bool watch = info[1]->ToBoolean()->BooleanValue();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        bool watch = info[1]->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }
@@ -844,7 +854,7 @@ public:
     static void AWGetChildren2(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         METHOD_EPILOG(zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
     }
@@ -852,7 +862,7 @@ public:
     static void AGetAcl(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(2);
 
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
     }
@@ -860,8 +870,8 @@ public:
     static void ASetAcl(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString());
-        uint32_t _version = info[1]->Uint32Value();
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        uint32_t _version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         Local<Array> arr = Local<Array>::Cast(info[2]);
 
         struct ACL_vector *aclv = zk->createAclVector(arr);
@@ -877,7 +887,7 @@ public:
     static void ASync(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(2);
 
-        Nan::Utf8String _path (info[0]->ToString());
+        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
     }
@@ -885,8 +895,8 @@ public:
     static void AddAuth(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _scheme (info[0]->ToString());
-        Nan::Utf8String _auth (info[1]->ToString());
+        Nan::Utf8String _scheme (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        Nan::Utf8String _auth (info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -915,7 +925,7 @@ public:
         return scope.Escape(arr);
     };
 
-    struct ACL_vector *createAclVector (Handle<Array> arr) {
+    struct ACL_vector *createAclVector (Local<Array> arr) {
         Nan::HandleScope scope;
 
         struct ACL_vector *aclv = (struct ACL_vector *) malloc(sizeof(struct ACL_vector));
@@ -925,9 +935,9 @@ public:
         for (int i = 0, l = aclv->count; i < l; i++) {
             Local<Object> obj = Local<Object>::Cast(arr->Get(i));
 
-            Nan::Utf8String _scheme (obj->Get(LOCAL_STRING("scheme"))->ToString());
-            Nan::Utf8String _auth (obj->Get(LOCAL_STRING("auth"))->ToString());
-            uint32_t _perms = obj->Get(LOCAL_STRING("perms"))->Uint32Value();
+            Nan::Utf8String _scheme (obj->Get(LOCAL_STRING("scheme"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            Nan::Utf8String _auth (obj->Get(LOCAL_STRING("auth"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            uint32_t _perms = obj->Get(LOCAL_STRING("perms"))->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
@@ -1010,19 +1020,19 @@ public:
                 int rc = uv_poll_stop(zk_io);
                 LOG_DEBUG(("zookeeper_close(%lp) uv_poll_stop result: %d", this, rc));
 
-                uv_close((uv_handle_t*) zk_io, delete_on_close); 
+                uv_close((uv_handle_t*) zk_io, delete_on_close);
                 zk_io = NULL;
             }
 
             // Close the timer and finally Unref the ZooKeeper instance when it's done
             // Unrefing after is important to avoid memory being freed too early.
-            uv_close((uv_handle_t*) &zk_timer, timer_closed); 
+            uv_close((uv_handle_t*) &zk_timer, timer_closed);
 
             Nan::HandleScope scope;
             DoEmitClose (Nan::New(on_closed), code);
         }
     }
-    
+
     static void timer_closed(uv_handle_t* handle) {
         ZooKeeper *zk = static_cast<ZooKeeper *>(handle->data);
         zk->Unref();
@@ -1072,7 +1082,7 @@ private:
 
 } // namespace "zk"
 
-extern "C" void init(Handle<Object> target) {
+extern "C" void init(Local<Object> target) {
     INITIALIZE_STRING (zk::on_closed,            "close");
     INITIALIZE_STRING (zk::on_connected,         "connect");
     INITIALIZE_STRING (zk::on_connecting,        "connecting");
