@@ -254,7 +254,7 @@ public:
         NODE_DEFINE_CONSTANT(constructor, ZSESSIONMOVED);
 
 
-        target->Set(LOCAL_STRING("ZooKeeper"), constructor);
+        Nan::Set(target, LOCAL_STRING("ZooKeeper"), constructor);
     }
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -806,7 +806,7 @@ public:
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(Nan::GetCurrentContext(), i, LOCAL_STRING(strings->data[i]));
+                Nan::Set(ar, i, LOCAL_STRING(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -841,7 +841,7 @@ public:
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(Nan::GetCurrentContext(), i, LOCAL_STRING(strings->data[i]));
+                Nan::Set(ar, i, LOCAL_STRING(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -930,7 +930,7 @@ public:
             Nan::DefineOwnProperty(obj, LOCAL_STRING("scheme"), LOCAL_STRING(acl->id.scheme), ReadOnly);
             Nan::DefineOwnProperty(obj, LOCAL_STRING("auth"), LOCAL_STRING(acl->id.id), ReadOnly);
 
-            arr->Set(Nan::GetCurrentContext(), i, obj);
+            Nan::Set(arr, i, obj);
         }
 
         return scope.Escape(arr);
