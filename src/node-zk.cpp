@@ -148,29 +148,24 @@ public:
         Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
 
 
-        Local<Context> context = Nan::GetCurrentContext();
-        MaybeLocal<Function> constructor_maybe = constructor_template->GetFunction(context);
-        Local<Function> constructor = constructor_maybe.ToLocalChecked();
+        Local<Function> constructor = constructor_template->GetFunction(Nan::GetCurrentContext()).ToLocalChecked();
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
-        MaybeLocal<Object> acl_open_maybe = Nan::New<Object>();
-        v8::Local<Object> acl_open = acl_open_maybe.ToLocalChecked();
+        v8::Local<Object> acl_open = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
-        MaybeLocal<Object> acl_read_maybe = Nan::New<Object>();
-        v8::Local<Object> acl_read = acl_read_maybe.ToLocalChecked();
+        v8::Local<Object> acl_read = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
-        MaybeLocal<Object> acl_creator_maybe = Nan::New<Object>();
-        v8::Local<Object> acl_creator = acl_creator_maybe.ToLocalChecked();
+        v8::Local<Object> acl_creator = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("scheme"), LOCAL_STRING("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
@@ -952,13 +947,9 @@ public:
             v8::Local<Value> obj_local = arr->Get(Nan::GetCurrentContext(), i).ToLocalChecked();
             Local<Object> obj = Local<Object>::Cast(obj_local);
 
-            v8::Local<Value> scheme_local = toLocalVal(obj, LOCAL_STRING("scheme"));
-            v8::Local<Value> auth_local = toLocalVal(obj, LOCAL_STRING("auth"));
-            v8::Local<Value> perms_local = toLocalVal(obj, LOCAL_STRING("perm"));
-
-            Nan::Utf8String _scheme (scheme_local->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-            Nan::Utf8String _auth (auth_local->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-            uint32_t _perms = perms_local->Uint32Value(Nan::GetCurrentContext()).FromJust();
+            Nan::Utf8String _scheme (toLocalVal(obj, LOCAL_STRING("scheme"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            Nan::Utf8String _auth (toLocalVal(obj, LOCAL_STRING("auth"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            uint32_t _perms = toLocalVal(obj, LOCAL_STRING("perm"))->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
