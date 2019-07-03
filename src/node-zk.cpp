@@ -418,27 +418,46 @@ public:
         return true;
     }
 
+    static v8::Local<Value> toLocalVal(Local<Object> arg, Local<String> propertyName) {
+        v8::Local<Value> val_local = arg->Get(Nan::GetCurrentContext(), propertyName).ToLocalChecked();
+        return val_local;
+    }
+
+    static int32_t fromJustInt(Local<Object> arg, Local<String> propertyName) {
+        v8::Local<Value> val_local = toLocalVal(arg, propertyName);
+        int32_t val = val_local->Int32Value(Nan::GetCurrentContext()).FromJust();
+
+        return val;
+    }
+
+    static bool fromJustBool(Local<Object> arg, Local<String> propertyName) {
+        v8::Local<Value> val_local = toLocalVal(arg, propertyName);
+        bool val = Nan::To<bool>(val_local).FromJust();
+
+        return val;
+    }
+
     static void Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
         Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
 
-        int32_t debug_level = arg->Get(LOCAL_STRING("debug_level"))->Int32Value(Nan::GetCurrentContext()).FromJust();
+        int32_t debug_level = fromJustInt(arg, LOCAL_STRING("debug_level"));
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
-        bool order = Nan::To<bool>(arg->Get(LOCAL_STRING("host_order_deterministic"))).FromJust();
+        bool order = fromJustBool(arg, LOCAL_STRING("host_order_deterministic"));
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-        int32_t session_timeout = arg->Get(LOCAL_STRING("timeout"))->Int32Value(Nan::GetCurrentContext()).FromJust();
+        int32_t session_timeout = fromJustInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
         }
 
         clientid_t local_client;
         ZERO_MEM (local_client);
-        v8::Local<v8::Value> v8v_client_id = arg->Get(LOCAL_STRING("client_id"));
-        v8::Local<v8::Value> v8v_client_password = arg->Get(LOCAL_STRING("client_password"));
+        v8::Local<v8::Value> v8v_client_id = toLocalVal(arg, LOCAL_STRING("client_id"));
+        v8::Local<v8::Value> v8v_client_password = toLocalVal(arg, LOCAL_STRING("client_password"));
         bool id_and_password_defined = (!v8v_client_id->IsUndefined() && !v8v_client_password->IsUndefined());
         bool id_and_password_undefined = (v8v_client_id->IsUndefined() && v8v_client_password->IsUndefined());
         THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined),
@@ -930,11 +949,16 @@ public:
         aclv->data = (struct ACL *) calloc(aclv->count, sizeof(struct ACL));
 
         for (int i = 0, l = aclv->count; i < l; i++) {
-            Local<Object> obj = Local<Object>::Cast(arr->Get(i));
+            v8::Local<Value> obj_local = arr->Get(Nan::GetCurrentContext(), i).ToLocalChecked();
+            Local<Object> obj = Local<Object>::Cast(obj_local);
 
-            Nan::Utf8String _scheme (obj->Get(LOCAL_STRING("scheme"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-            Nan::Utf8String _auth (obj->Get(LOCAL_STRING("auth"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
-            uint32_t _perms = obj->Get(LOCAL_STRING("perms"))->Uint32Value(Nan::GetCurrentContext()).FromJust();
+            v8::Local<Value> scheme_local = toLocalVal(obj, LOCAL_STRING("scheme"));
+            v8::Local<Value> auth_local = toLocalVal(obj, LOCAL_STRING("auth"));
+            v8::Local<Value> perms_local = toLocalVal(obj, LOCAL_STRING("perm"));
+
+            Nan::Utf8String _scheme (scheme_local->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            Nan::Utf8String _auth (auth_local->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+            uint32_t _perms = perms_local->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
