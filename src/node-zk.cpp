@@ -443,7 +443,7 @@ public:
         bool order = fromJustBool(arg, LOCAL_STRING("host_order_deterministic"));
         zoo_deterministic_conn_order(order); // enable deterministic order
 
-        Nan::Utf8String _hostPort (arg->Get(LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
+        Nan::Utf8String _hostPort (toLocalVal(arg, LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>()));
         int32_t session_timeout = fromJustInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
