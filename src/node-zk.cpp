@@ -151,21 +151,21 @@ public:
         Local<Function> constructor = constructor_template->GetFunction(Nan::GetCurrentContext()).ToLocalChecked();
 
         //extern ZOOAPI struct ACL_vector ZOO_OPEN_ACL_UNSAFE;
-        v8::Local<Object> acl_open = Nan::New<Object>();
+        Local<Object> acl_open = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_open, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_OPEN_ACL_UNSAFE"), acl_open, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_READ_ACL_UNSAFE;
-        v8::Local<Object> acl_read = Nan::New<Object>();
+        Local<Object> acl_read = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_READ), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("scheme"), LOCAL_STRING("world"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_read, LOCAL_STRING("auth"), LOCAL_STRING("anyone"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_READ_ACL_UNSAFE"), acl_read, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         //extern ZOOAPI struct ACL_vector ZOO_CREATOR_ALL_ACL;
-        v8::Local<Object> acl_creator = Nan::New<Object>();
+        Local<Object> acl_creator = Nan::New<Object>();
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("perms"), Nan::New<Integer>(ZOO_PERM_ALL), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("scheme"), LOCAL_STRING("auth"), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
@@ -806,7 +806,7 @@ public:
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(i, LOCAL_STRING(strings->data[i]));
+                ar->Set(Nan::GetCurrentContext(), i, LOCAL_STRING(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -841,7 +841,7 @@ public:
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
             for (uint32_t i = 0; i < (uint32_t)strings->count; ++i) {
-                ar->Set(i, LOCAL_STRING(strings->data[i]));
+                ar->Set(Nan::GetCurrentContext(), i, LOCAL_STRING(strings->data[i]));
             }
             argv[2] = ar;
         } else {
@@ -930,7 +930,7 @@ public:
             Nan::DefineOwnProperty(obj, LOCAL_STRING("scheme"), LOCAL_STRING(acl->id.scheme), ReadOnly);
             Nan::DefineOwnProperty(obj, LOCAL_STRING("auth"), LOCAL_STRING(acl->id.id), ReadOnly);
 
-            arr->Set(i, obj);
+            arr->Set(Nan::GetCurrentContext(), i, obj);
         }
 
         return scope.Escape(arr);
