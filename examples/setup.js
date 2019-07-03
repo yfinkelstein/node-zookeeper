@@ -3,15 +3,6 @@ const notifier = require('./notifier.js');
 const { createNode, persistentNode } = require('./createnode.js');
 
 const noop = () => {};
-let timeoutId;
-
-function shutDown() {
-    clearTimeout(timeoutId);
-    process.exit();
-}
-
-process.on('SIGINT', shutDown);
-process.on('SIGTERM', shutDown);
 
 function createNodes(paths) {
     const client = createClient();
@@ -32,16 +23,8 @@ function createNodes(paths) {
                 });
         });
 
-        client.on('close', (...args) => {
+        client.on('close', () => {
             notifier.emit('close', `session closed, id=${client.client_id}`);
-            console.log('CLOSE ARGS', ...args);
-            console.log('WILL RECONNECT');
-
-            timeoutId = setTimeout(() => {
-                createNodes(paths)
-                    .then(() => console.log('reconnected'))
-                    .catch(e => console.log('failed', e));
-            }, 5000);
         });
 
         client.connect(noop);
