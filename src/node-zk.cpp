@@ -571,7 +571,8 @@ public:
         argv[1] = thisObj;
         argv[2] = data;
 
-        Nan::MakeCallback(thisObj, "emit", 3, argv);
+        Nan::AsyncResource resource("node-zk:DoEmit");
+        resource.runInAsyncScope(thisObj, "emit", 3, argv);
     }
 
 #define CALLBACK_PROLOG(info) \
