@@ -706,8 +706,8 @@ public:
         Nan::DefineOwnProperty(o, LOCAL_STRING("version"), Nan::New<Integer>(stat->version), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("cversion"), Nan::New<Integer>(stat->cversion), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("aversion"), Nan::New<Integer>(stat->aversion), ReadOnly);
-        Nan::DefineOwnProperty(o, LOCAL_STRING("ctime"), NODE_UNIXTIME_V8(stat->ctime/1000.), ReadOnly);
-        Nan::DefineOwnProperty(o, LOCAL_STRING("mtime"), NODE_UNIXTIME_V8(stat->mtime/1000.), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("ctime"), v8::Date::New(Nan::GetCurrentContext(), stat->ctime/1000.).ToLocalChecked(), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("mtime"), v8::Date::New(Nan::GetCurrentContext(), stat->mtime/1000.).ToLocalChecked(), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("createdInThisSession"), Nan::New<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
         return scope.Escape(o);
