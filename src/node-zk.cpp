@@ -588,11 +588,13 @@ public:
         argv[1] = LOCAL_STRING(zerror(rc))
 
 #define CALLBACK_EPILOG() \
-        callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
+        Nan::AsyncResource resource("node-zk:CALLBACK_EPILOG"); \
+        callback->Call(sizeof(argv)/sizeof(argv[0]), argv, &resource); \
         delete callback
 
 #define WATCHER_CALLBACK_EPILOG() \
-        callback->Call(sizeof(argv)/sizeof(argv[0]), argv); \
+        Nan::AsyncResource resource("node-zk:WATCHER_CALLBACK_EPILOG"); \
+        callback->Call(sizeof(argv)/sizeof(argv[0]), argv, &resource); \
 
 #define A_METHOD_PROLOG(nargs) \
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This()); \
