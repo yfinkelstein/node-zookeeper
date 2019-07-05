@@ -432,6 +432,10 @@ public:
         return val;
     }
 
+    static Local<Value> convertUnixTimeToDate(double time) {
+        return v8::Date::New(v8::Isolate::GetCurrent()->GetCurrentContext(), time).ToLocalChecked();
+    }
+
     static void Init(const Nan::FunctionCallbackInfo<Value>& info) {
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
@@ -707,8 +711,8 @@ public:
         Nan::DefineOwnProperty(o, LOCAL_STRING("version"), Nan::New<Integer>(stat->version), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("cversion"), Nan::New<Integer>(stat->cversion), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("aversion"), Nan::New<Integer>(stat->aversion), ReadOnly);
-        Nan::DefineOwnProperty(o, LOCAL_STRING("ctime"), Date::New(Nan::GetCurrentContext(), stat->ctime/1000.).ToLocalChecked(), ReadOnly);
-        Nan::DefineOwnProperty(o, LOCAL_STRING("mtime"), Date::New(Nan::GetCurrentContext(), stat->mtime/1000.).ToLocalChecked(), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("ctime"), convertUnixTimeToDate(stat->ctime), ReadOnly);
+        Nan::DefineOwnProperty(o, LOCAL_STRING("mtime"), convertUnixTimeToDate(stat->mtime), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("ephemeralOwner"), idAsString(stat->ephemeralOwner), ReadOnly);
         Nan::DefineOwnProperty(o, LOCAL_STRING("createdInThisSession"), Nan::New<Boolean>(myid.client_id == stat->ephemeralOwner), ReadOnly);
         return scope.Escape(o);
