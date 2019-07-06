@@ -35,11 +35,15 @@ if (env.isWindows) {
     exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
-    exec('./configure --without-syncapi --disable-shared --with-pic');
-    exec('make');
+    let configureCmd = './configure --without-syncapi --disable-shared --with-pic';
+    let makeCmd = 'make';
+    if (!process.env.ZK_INSTALL_VERBOSE) {
+        configureCmd += ' --enable-silent-rules --quiet';
+        makeCmd += ' --no-print-directory --quiet';
+    }
+    exec(configureCmd);
+    exec(makeCmd);
 }
 
 shell.cd(env.rootFolder);
-
-
 
