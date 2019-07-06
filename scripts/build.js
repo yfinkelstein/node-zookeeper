@@ -36,7 +36,7 @@ if (env.isWindows) {
     exec('cmake --build .');
 } else {
     let configureCmd = './configure --without-syncapi --disable-shared --with-pic';
-    let makeCmd = 'make'
+    let makeCmd = 'make';
     if (!process.env.ZK_INSTALL_VERBOSE) {
         configureCmd += ' --enable-silent-rules --quiet';
         makeCmd += ' --no-print-directory --quiet';
