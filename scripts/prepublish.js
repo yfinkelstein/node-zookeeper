@@ -43,8 +43,9 @@ function validateFile(fileName) {
     if (env.isWindows) {
         const output = exec(`certutil -hashfile ${fileName} SHA1`).split('\r\n');
 
-        // `certutil` returns 2byte separated string (e.g. "a9 89 b5 27 f3 f9 90 d4 71 e6 d4 7e e4 10 e5 7d 8b e7 62 0b")
-        const sha1 = output[1].replace(/ /g, "");
+        // `certutil` returns 2byte separated string
+        // (e.g. "a9 89 b5 27 f3 f9 90 d4 71 e6 d4 7e e4 10 e5 7d 8b e7 62 0b")
+        const sha1 = output[1].replace(/ /g, '');
 
         res = `${sha1}  ${fileName}`;
     } else {
@@ -91,7 +92,6 @@ function applyPatches() {
 if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
-    return;
 }
 
 shell.config.fatal = true;
@@ -107,8 +107,8 @@ download(env.downloadUrl, env.downloadedFileName)
 
         decompress(env.downloadedFileName, './', {
             plugins: [
-                decompressTargz()
-            ]
+                decompressTargz(),
+            ],
         }).then(() => {
             moveFolder();
             applyPatches();
@@ -116,7 +116,6 @@ download(env.downloadUrl, env.downloadedFileName)
             shell.echo(`Error: ${e.message}`);
             shell.exit(1);
         });
-
     })
     .catch((e) => {
         shell.echo(`Unable to download zookeeper library. Error: ${e.message}`);

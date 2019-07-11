@@ -17,13 +17,12 @@ function handleSunOS() {
 
 if (env.isSunOs) {
     handleSunOS();
-    return;
+    shell.exit(0);
 }
 
 if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');
     shell.exit(0);
-    return;
 }
 
 shell.config.fatal = true;
@@ -40,6 +39,3 @@ if (env.isWindows) {
 }
 
 shell.cd(env.rootFolder);
-
-
-

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const test = require('tape');
 const proxyquire = require('proxyquire');
 const { FakeNativeZooKeeper, path } = require('../helpers/fakes.js');
@@ -12,7 +11,7 @@ test('ZooKeeper instance creates an instance of the native object', (t) => {
 
     const zk = new ZooKeeper();
 
-    t.true(zk._native instanceof FakeNativeZooKeeper);
+    t.true(zk.native instanceof FakeNativeZooKeeper);
 });
 
 test('native object is extended with an emit function', (t) => {
@@ -20,7 +19,7 @@ test('native object is extended with an emit function', (t) => {
 
     const zk = new ZooKeeper();
 
-    t.equal(typeof zk._native.emit, 'function');
+    t.equal(typeof zk.native.emit, 'function');
 });
 
 test('native object emit triggers a ZooKeeper emit', (t) => {
@@ -33,7 +32,7 @@ test('native object emit triggers a ZooKeeper emit', (t) => {
         t.end();
     });
 
-    zk._native.emit('helloworld', 1, 2, 3);
+    zk.native.emit('helloworld', 1, 2, 3);
 });
 
 test('native object emits connect and pass an instance of the current ZooKeeper', (t) => {
@@ -46,7 +45,7 @@ test('native object emits connect and pass an instance of the current ZooKeeper'
         t.end();
     });
 
-    zk._native.emit('connect', 1, 2, 3);
+    zk.native.emit('connect', 1, 2, 3);
 });
 
 test('native object emits close and pass an instance of the current ZooKeeper', (t) => {
@@ -59,5 +58,5 @@ test('native object emits close and pass an instance of the current ZooKeeper', 
         t.end();
     });
 
-    zk._native.emit('close', 1, 2, 3);
+    zk.native.emit('close', 1, 2, 3);
 });

@@ -5,10 +5,10 @@ function exec(action) {
 
     if (res.code !== 0) {
         shell.echo('Unable to build zookeeper library');
-        shell.exit(1);
-    } else {
-        return res.stdout;
+        return shell.exit(1);
     }
+
+    return res.stdout;
 }
 
 module.exports = {
