@@ -25,6 +25,7 @@ using namespace node;
 #include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
+#include "converters.h"
 
 #ifdef WIN32
     #pragma comment (lib, "Ws2_32.lib")
@@ -413,29 +414,6 @@ public:
         return true;
     }
 
-    static Local<Value> toLocalVal(Local<Object> arg, Local<String> propertyName) {
-        Local<Value> val_local = arg->Get(Nan::GetCurrentContext(), propertyName).ToLocalChecked();
-        return val_local;
-    }
-
-    static int32_t fromJustInt(Local<Object> arg, Local<String> propertyName) {
-        Local<Value> val_local = toLocalVal(arg, propertyName);
-        int32_t val = val_local->Int32Value(Nan::GetCurrentContext()).FromJust();
-
-        return val;
-    }
-
-    static bool fromJustBool(Local<Object> arg, Local<String> propertyName) {
-        Local<Value> val_local = toLocalVal(arg, propertyName);
-        bool val = Nan::To<bool>(val_local).FromJust();
-
-        return val;
-    }
-
-    static Local<Value> convertUnixTimeToDate(double time) {
-        return v8::Date::New(v8::Isolate::GetCurrent()->GetCurrentContext(), time).ToLocalChecked();
-    }
-
     static void Init(const Nan::FunctionCallbackInfo<Value>& info) {
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
@@ -447,7 +425,7 @@ public:
         bool order = fromJustBool(arg, LOCAL_STRING("host_order_deterministic"));
         zoo_deterministic_conn_order(order); // enable deterministic order
 
-        Nan::Utf8String _hostPort (toLocalVal(arg, LOCAL_STRING("connect"))->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _hostPort (toStr(toLocalVal(arg, LOCAL_STRING("connect"))));
         int32_t session_timeout = fromJustInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
@@ -462,7 +440,7 @@ public:
         THROW_IF_NOT ((id_and_password_defined || id_and_password_undefined),
             "ZK init: client id and password must either be both specified or unspecified");
         if (id_and_password_defined) {
-            Nan::Utf8String password_check(v8v_client_password->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+            Nan::Utf8String password_check(toStr(v8v_client_password));
             THROW_IF_NOT (password_check.length() == 2 * ZOOKEEPER_PASSWORD_BYTE_COUNT,
                           "ZK init: password does not have correct length");
             HexStringToPassword(v8v_client_password, local_client.passwd);
@@ -520,7 +498,7 @@ public:
     }
 
     static void StringToId (Local<Value> s, int64_t *id) {
-        Nan::Utf8String a(s->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String a(toStr(s));
         sscanf(*a, "%llx", _LLP_CAST_ id);
     }
 
@@ -536,7 +514,7 @@ public:
     }
 
     static void HexStringToPassword (Local<Value> s, char *p) {
-        Nan::Utf8String a(s->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String a(toStr(s));
         char *hex = *a;
         for (int i = 0; i < ZOOKEEPER_PASSWORD_BYTE_COUNT; ++i) {
             hexToUchar(hex, (unsigned char *)p+i);
@@ -659,14 +637,14 @@ public:
     static void ACreate(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         uint32_t flags = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
-            Nan::Utf8String _data (info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+            Nan::Utf8String _data (toStr(info[1]));
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         }
     }
@@ -689,7 +667,7 @@ public:
 
     static void ADelete(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
@@ -730,7 +708,7 @@ public:
     static void AExists(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
@@ -738,7 +716,7 @@ public:
 
     static void AWExists(const Nan::FunctionCallbackInfo<Value>& info) {
         AW_METHOD_PROLOG(3);
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         METHOD_EPILOG(zoo_awexists(zk->zhandle, *_path, &watcher_fn, cbw, &stat_completion, cb));
     }
 
@@ -761,7 +739,7 @@ public:
     static void Delete(const Nan::FunctionCallbackInfo<Value>& info) {
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         int ret = zoo_delete(zk->zhandle, *_path, version);
@@ -771,7 +749,7 @@ public:
     static void AGet(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
@@ -785,7 +763,7 @@ public:
     static void AWGet(const Nan::FunctionCallbackInfo<Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
 
         METHOD_EPILOG(zoo_awget(zk->zhandle, *_path, &watcher_fn, cbw, &data_completion, cb));
     }
@@ -793,14 +771,14 @@ public:
     static void ASet(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         uint32_t version = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
-            Nan::Utf8String _data(info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+            Nan::Utf8String _data(toStr(info[1]));
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, *_data, _data.length(), version, &stat_completion, cb));
         }
     }
@@ -826,7 +804,7 @@ public:
     static void AGetChildren(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
@@ -835,7 +813,7 @@ public:
     static void AWGetChildren(const Nan::FunctionCallbackInfo<Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
 
         METHOD_EPILOG(zoo_awget_children(zk->zhandle, *_path, &watcher_fn, cbw, &strings_completion, cb));
     }
@@ -863,7 +841,7 @@ public:
     static void AGetChildren2(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         bool watch = Nan::To<bool>(info[1]).FromJust();
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
@@ -872,7 +850,7 @@ public:
     static void AWGetChildren2(const Nan::FunctionCallbackInfo<Value>& info) {
         AW_METHOD_PROLOG(3);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
 
         METHOD_EPILOG(zoo_awget_children2(zk->zhandle, *_path, &watcher_fn, cbw, &strings_stat_completion, cb));
     }
@@ -880,7 +858,7 @@ public:
     static void AGetAcl(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(2);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
 
         METHOD_EPILOG(zoo_aget_acl(zk->zhandle, *_path, &acl_completion, cb));
     }
@@ -888,7 +866,7 @@ public:
     static void ASetAcl(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(4);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
         uint32_t _version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         Local<Array> arr = Local<Array>::Cast(info[2]);
 
@@ -905,7 +883,7 @@ public:
     static void ASync(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(2);
 
-        Nan::Utf8String _path (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _path (toStr(info[0]));
 
         METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
     }
@@ -913,8 +891,8 @@ public:
     static void AddAuth(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
-        Nan::Utf8String _scheme (info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
-        Nan::Utf8String _auth (info[1]->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+        Nan::Utf8String _scheme (toStr(info[0]));
+        Nan::Utf8String _auth (toStr(info[1]));
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -954,8 +932,8 @@ public:
             Local<Value> obj_local = arr->Get(Nan::GetCurrentContext(), i).ToLocalChecked();
             Local<Object> obj = Local<Object>::Cast(obj_local);
 
-            Nan::Utf8String _scheme (toLocalVal(obj, LOCAL_STRING("scheme"))->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
-            Nan::Utf8String _auth (toLocalVal(obj, LOCAL_STRING("auth"))->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>()));
+            Nan::Utf8String _scheme (toStr(toLocalVal(obj, LOCAL_STRING("scheme"))));
+            Nan::Utf8String _auth (toStr(toLocalVal(obj, LOCAL_STRING("auth"))));
             uint32_t _perms = toLocalVal(obj, LOCAL_STRING("perm"))->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
             struct Id id;
