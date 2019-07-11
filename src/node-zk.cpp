@@ -417,7 +417,7 @@ public:
     static void Init(const Nan::FunctionCallbackInfo<Value>& info) {
         THROW_IF_NOT(info.Length() >= 1, "Must pass ZK init object");
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
-        Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
+        Local<Object> arg = toLocalObj(info[0]);
 
         int32_t debug_level = fromJustInt(arg, LOCAL_STRING("debug_level"));
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
@@ -641,7 +641,7 @@ public:
         uint32_t flags = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
+            Local<Object> _data = toLocalObj(info[1]);
             METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
         } else {    // other
             Nan::Utf8String _data (toStr(info[1]));
@@ -775,7 +775,7 @@ public:
         uint32_t version = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 
         if (Buffer::HasInstance(info[1])) { // buffer
-            Local<Object> _data = Nan::To<Object>(info[1]).ToLocalChecked();
+            Local<Object> _data = toLocalObj(info[1]);
             METHOD_EPILOG(zoo_aset(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), version, &stat_completion, cb));
         } else {    // other
             Nan::Utf8String _data(toStr(info[1]));
