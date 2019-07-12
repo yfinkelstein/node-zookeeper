@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape');
 const converters = require('./build/Release/converters.node');
 
