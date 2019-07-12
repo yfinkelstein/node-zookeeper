@@ -46,11 +46,12 @@
     "main": "lib/index",
     "scripts": {
         "build": "node-gyp configure build",
+        "build-components": "mkdir tests_components/build; cd tests_components; node-gyp configure build; cd ..",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
         "integrationtest": "pushd tests_integration; source ./test; popd",
         "test": "npm run lint && tape ./tests/**/*.js | tap-spec",
-        "cpp-test": "mkdir tests_cpp/build; pushd tests_cpp; node-gyp configure build; popd; tape ./tests_cpp/**/*.js | tap-spec"
+        "test-components": "npm run build-components && tape ./tests_components/**/*.js | tap-spec"
     },
     "engines": {
         "node": ">=8.9.4"
