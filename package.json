@@ -46,7 +46,7 @@
     "main": "lib/index",
     "scripts": {
         "build": "node-gyp configure build",
-        "build-components": "mkdir tests_components/build; cd tests_components; node-gyp configure build; cd ..",
+        "build-components": "node-gyp configure build --directory=tests_components",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
         "integrationtest": "pushd tests_integration; source ./test; popd",
