@@ -419,14 +419,14 @@ public:
         THROW_IF_NOT(info[0]->IsObject(), "Init argument must be an object");
         Local<Object> arg = toLocalObj(info[0]);
 
-        int32_t debug_level = fromJustInt(arg, LOCAL_STRING("debug_level"));
+        int32_t debug_level = toInt(arg, LOCAL_STRING("debug_level"));
         zoo_set_debug_level(static_cast<ZooLogLevel>(debug_level));
 
-        bool order = fromJustBool(arg, LOCAL_STRING("host_order_deterministic"));
+        bool order = toBool(arg, LOCAL_STRING("host_order_deterministic"));
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (toStr(toLocalVal(arg, LOCAL_STRING("connect"))));
-        int32_t session_timeout = fromJustInt(arg, LOCAL_STRING("timeout"));
+        int32_t session_timeout = toInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
         }
@@ -709,7 +709,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = fromJustBool(info[1]);
+        bool watch = toBool(info[1]);
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
@@ -750,7 +750,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = fromJustBool(info[1]);
+        bool watch = toBool(info[1]);
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
     }
@@ -805,7 +805,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = fromJustBool(info[1]);
+        bool watch = toBool(info[1]);
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
@@ -842,7 +842,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = fromJustBool(info[1]);
+        bool watch = toBool(info[1]);
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }

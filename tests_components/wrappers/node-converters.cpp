@@ -9,27 +9,27 @@ NAN_METHOD(toUintTest) {
     info.GetReturnValue().Set(res);
 }
 
-NAN_METHOD(fromJustIntTest) {
+NAN_METHOD(toIntTest) {
     Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
     Local<String> key = Nan::New<String>("val").ToLocalChecked();
 
-    int32_t res = fromJustInt(arg, key);
+    int32_t res = toInt(arg, key);
 
     info.GetReturnValue().Set(res);
 }
 
-NAN_METHOD(fromJustBoolTest) {
+NAN_METHOD(toBoolTest) {
     Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
     Local<String> key = Nan::New<String>("val").ToLocalChecked();
 
-    bool res = fromJustBool(arg, key);
+    bool res = toBool(arg, key);
 
     info.GetReturnValue().Set(res);
 }
 
 NAN_METHOD(convertUnixTimeToDateTest) {
     Local<Int32> arg = Nan::To<Int32>(info[0]).ToLocalChecked();
-    int32_t val = fromJustInt(arg);
+    int32_t val = toInt(arg);
 
     Local<Value> res = convertUnixTimeToDate(val);
 
@@ -45,8 +45,8 @@ NAN_METHOD(toStrTest) {
 NAN_MODULE_INIT(Init) {
     NAN_EXPORT(target, toStrTest);
     NAN_EXPORT(target, convertUnixTimeToDateTest);
-    NAN_EXPORT(target, fromJustBoolTest);
-    NAN_EXPORT(target, fromJustIntTest);
+    NAN_EXPORT(target, toBoolTest);
+    NAN_EXPORT(target, toIntTest);
     NAN_EXPORT(target, toUintTest);
 }
 

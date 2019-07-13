@@ -29,7 +29,7 @@ test('Unix time is converted to date', (t) => {
 test('Object value is converted to bool', (t) => {
     t.plan(2);
     const expected = true;
-    const res = converters.fromJustBoolTest({ val: 'true' });
+    const res = converters.toBoolTest({ val: 'true' });
 
     t.deepEquals(res, expected);
     t.deepEquals(typeof res, typeof true);
@@ -39,8 +39,8 @@ test('Object value is converted to integer', (t) => {
     t.plan(2);
     const expected = 4711;
     const expectedNeg = -1;
-    const res = converters.fromJustIntTest({ val: '4711' });
-    const resNeg = converters.fromJustIntTest({ val: '-1' });
+    const res = converters.toIntTest({ val: '4711' });
+    const resNeg = converters.toIntTest({ val: '-1' });
 
     t.deepEquals(res, expected);
     t.deepEquals(resNeg, expectedNeg);
