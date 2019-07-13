@@ -24,11 +24,14 @@ int32_t fromJustInt(Local<Object> arg, Local<String> propertyName) {
     return fromJustInt(val_local);
 }
 
+bool fromJustBool(Local<Value> val_local) {
+    return Nan::To<bool>(val_local).FromJust();
+}
+
 bool fromJustBool(Local<Object> arg, Local<String> propertyName) {
     Local<Value> val_local = toLocalVal(arg, propertyName);
-    bool val = Nan::To<bool>(val_local).FromJust();
 
-    return val;
+    return fromJustBool(val_local);
 }
 
 Local<Value> convertUnixTimeToDate(double time) {

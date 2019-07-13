@@ -709,7 +709,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = Nan::To<bool>(info[1]).FromJust();
+        bool watch = fromJustBool(info[1]);
 
         METHOD_EPILOG(zoo_aexists(zk->zhandle, *_path, watch, &stat_completion, cb));
     }
@@ -750,7 +750,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = Nan::To<bool>(info[1]).FromJust();
+        bool watch = fromJustBool(info[1]);
 
         METHOD_EPILOG(zoo_aget(zk->zhandle, *_path, watch, &data_completion, cb));
     }
@@ -805,7 +805,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = Nan::To<bool>(info[1]).FromJust();
+        bool watch = fromJustBool(info[1]);
 
         METHOD_EPILOG(zoo_aget_children(zk->zhandle, *_path, watch, &strings_completion, cb));
     }
@@ -842,7 +842,7 @@ public:
         A_METHOD_PROLOG(3);
 
         Nan::Utf8String _path (toStr(info[0]));
-        bool watch = Nan::To<bool>(info[1]).FromJust();
+        bool watch = fromJustBool(info[1]);
 
         METHOD_EPILOG(zoo_aget_children2(zk->zhandle, *_path, watch, &strings_stat_completion, cb));
     }
