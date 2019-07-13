@@ -3,6 +3,12 @@
 #include <v8.h>
 using namespace v8;
 
+NAN_METHOD(toUintTest) {
+    uint32_t res = toUint(info[0]);
+
+    info.GetReturnValue().Set(res);
+}
+
 NAN_METHOD(fromJustIntTest) {
     Local<Object> arg = Nan::To<Object>(info[0]).ToLocalChecked();
     Local<String> key = Nan::New<String>("val").ToLocalChecked();
@@ -41,6 +47,7 @@ NAN_MODULE_INIT(Init) {
     NAN_EXPORT(target, convertUnixTimeToDateTest);
     NAN_EXPORT(target, fromJustBoolTest);
     NAN_EXPORT(target, fromJustIntTest);
+    NAN_EXPORT(target, toUintTest);
 }
 
 NODE_MODULE(unit_tests, Init)

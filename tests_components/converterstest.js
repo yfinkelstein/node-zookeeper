@@ -36,9 +36,20 @@ test('Object value is converted to bool', (t) => {
 });
 
 test('Object value is converted to integer', (t) => {
+    t.plan(2);
+    const expected = 4711;
+    const expectedNeg = -1;
+    const res = converters.fromJustIntTest({ val: '4711' });
+    const resNeg = converters.fromJustIntTest({ val: '-1' });
+
+    t.deepEquals(res, expected);
+    t.deepEquals(resNeg, expectedNeg);
+});
+
+test('Object value is converted to unsigned integer', (t) => {
     t.plan(1);
     const expected = 4711;
-    const res = converters.fromJustIntTest({ val: '4711' });
+    const res = converters.toUintTest('4711');
 
     t.deepEquals(res, expected);
 });

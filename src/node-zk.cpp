@@ -638,7 +638,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (toStr(info[0]));
-        uint32_t flags = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+        uint32_t flags = toUint(info[2]);
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = toLocalObj(info[1]);
@@ -668,7 +668,7 @@ public:
     static void ADelete(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
         Nan::Utf8String _path (toStr(info[0]));
-        uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+        uint32_t version = toUint(info[1]);
 
         struct completion_data *data = (struct completion_data *) malloc(sizeof(struct completion_data));
         data->cb = cb;
@@ -740,7 +740,7 @@ public:
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
         Nan::Utf8String _path (toStr(info[0]));
-        uint32_t version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+        uint32_t version = toUint(info[1]);
 
         int ret = zoo_delete(zk->zhandle, *_path, version);
         RETURN_VALUE(info, Nan::New<Int32>(ret));
@@ -772,7 +772,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (toStr(info[0]));
-        uint32_t version = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+        uint32_t version = toUint(info[2]);
 
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = toLocalObj(info[1]);
@@ -867,7 +867,7 @@ public:
         A_METHOD_PROLOG(4);
 
         Nan::Utf8String _path (toStr(info[0]));
-        uint32_t _version = info[1]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+        uint32_t _version = toUint(info[1]);
         Local<Array> arr = Local<Array>::Cast(info[2]);
 
         struct ACL_vector *aclv = zk->createAclVector(arr);
@@ -934,7 +934,7 @@ public:
 
             Nan::Utf8String _scheme (toStr(toLocalVal(obj, LOCAL_STRING("scheme"))));
             Nan::Utf8String _auth (toStr(toLocalVal(obj, LOCAL_STRING("auth"))));
-            uint32_t _perms = toLocalVal(obj, LOCAL_STRING("perm"))->Uint32Value(Nan::GetCurrentContext()).FromJust();
+            uint32_t _perms = toUint(toLocalVal(obj, LOCAL_STRING("perm")));
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];

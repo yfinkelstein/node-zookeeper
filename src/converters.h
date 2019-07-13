@@ -41,3 +41,7 @@ Local<Value> convertUnixTimeToDate(double time) {
 Local<String> toStr(Local<Value> val) {
     return val->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>());
 }
+
+uint32_t toUint(Local<Value> val) {
+    return val->Uint32Value(Nan::GetCurrentContext()).FromJust();
+}
