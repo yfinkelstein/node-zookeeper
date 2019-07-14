@@ -1,4 +1,4 @@
-#include "../../src/converters.h"
+#include "../../src/converters.hpp"
 #include <nan.h>
 #include <v8.h>
 using namespace v8;

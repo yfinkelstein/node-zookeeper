@@ -25,7 +25,7 @@ using namespace node;
 #include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
-#include "converters.h"
+#include "converters.hpp"
 
 #ifdef WIN32
     #pragma comment (lib, "Ws2_32.lib")
