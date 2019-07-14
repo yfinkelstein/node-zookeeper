@@ -2,6 +2,7 @@
 #include <nan.h>
 #include <v8.h>
 using namespace v8;
+using namespace nodezk;
 
 NAN_METHOD(toUintTest) {
     uint32_t res = toUint(info[0]);

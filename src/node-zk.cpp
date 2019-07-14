@@ -18,14 +18,15 @@
 #include <node_buffer.h>
 #include <node_object_wrap.h>
 #include <v8.h>
-using namespace v8;
-using namespace node;
 #undef THREADED
 #include <zookeeper.h>
 #include "nan.h"
 #include "zk_log.h"
 #include "buffer_compat.h"
 #include "converters.hpp"
+using namespace v8;
+using namespace node;
+using namespace nodezk;
 
 #ifdef WIN32
     #pragma comment (lib, "Ws2_32.lib")
