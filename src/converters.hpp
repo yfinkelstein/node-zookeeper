@@ -39,7 +39,7 @@ namespace nodezk {
         return Date::New(Isolate::GetCurrent()->GetCurrentContext(), time).ToLocalChecked();
     }
 
-    Local<String> toStr(Local<Value> val) {
+    Local<String> toString(Local<Value> val) {
         return val->ToString(Nan::GetCurrentContext()).FromMaybe(Local<String>());
     }
 

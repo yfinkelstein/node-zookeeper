@@ -38,7 +38,7 @@ NAN_METHOD(convertUnixTimeToDateTest) {
 }
 
 NAN_METHOD(toStrTest) {
-    Local<String> res = toStr(info[0]);
+    Local<String> res = toString(info[0]);
 
     info.GetReturnValue().Set(res);
 }
