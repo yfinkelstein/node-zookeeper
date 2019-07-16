@@ -1,4 +1,4 @@
-#### v 4.2.0 (2019-06-18) ####
+#### v 4.2.0 (2019-07-16) ####
 * fix: Node.js 12 support
 * fix: V8 and Nan deprecation warnings
 * chore: reduce build output on Linux/Mac OS X. Pull request [183](https://github.com/yfinkelstein/node-zookeeper/pull/183) by @jbienkowski311
