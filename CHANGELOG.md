@@ -1,3 +1,11 @@
+#### v 4.2.0 (2019-07-16) ####
+* fix: Node.js 12 support
+* fix: V8 and Nan deprecation warnings
+* chore: reduce build output on Linux/Mac OS X. Pull request [183](https://github.com/yfinkelstein/node-zookeeper/pull/183) by @jbienkowski311
+* fix: deprecated getters and setters, pull request [181](https://github.com/yfinkelstein/node-zookeeper/pull/181) by @jbienkowski311 
+* chore: pull request template, added by @jbienkowski311
+* chore: added integration test scripts
+
 #### v 4.1.1 (2019-06-18) ####
 * feat: handle ZNOTHING return code from the ZooKeeper C library
 * fix: README typos

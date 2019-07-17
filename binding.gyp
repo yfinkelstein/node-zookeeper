@@ -15,7 +15,7 @@
                     '/opt/local/include/zookeeper',
                     '<!(node -e "require(\'nan\')")'
                 ],
-	            'ldflags': ['-lzookeeper_st'],
+                'ldflags': ['-lzookeeper_st'],
             }],
             ['OS=="mac"',{
                 'include_dirs': [
