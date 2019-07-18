@@ -34,14 +34,15 @@
         "shelljs": "0.8.x"
     },
     "devDependencies": {
-        "proxyquire": "2.x",
-        "tap-spec": "5.x",
-        "tape": "4.x",
-        "log4js": "4.x",
-        "webworker": "0.x",
         "eslint": "5.x",
         "eslint-config-airbnb-base": "13.x",
-        "eslint-plugin-import": "2.x"
+        "eslint-plugin-import": "2.x",
+        "log4js": "4.x",
+        "proxyquire": "2.x",
+        "sinon": "7.x",
+        "tap-spec": "5.x",
+        "tape": "4.x",
+        "webworker": "0.x"
     },
     "main": "lib/index",
     "scripts": {
