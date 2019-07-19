@@ -69,14 +69,14 @@
             }]
         },
         {
-            "target_name": "after_build",
-            "type": "none",
-            "dependencies": ["zookeeper"],
-            "actions": [{
-                "action_name": "symlink",
-                "inputs": ["<@(PRODUCT_DIR)/zookeeper.node"],
-                "outputs": ["<(module_root_dir)/build/zookeeper.node"],
-                "action": ["node", "scripts/symlink.js", "<@(_inputs)"]
-            }]
-    }],
+            'target_name': 'after_build',
+            'type': 'none',
+            'dependencies': ['zookeeper'],
+            'copies': [
+              {
+                'files': ['<(PRODUCT_DIR)/zookeeper.node'],
+                'destination': '<(module_root_dir)/build'
+              }
+            ]
+          }],
 }
