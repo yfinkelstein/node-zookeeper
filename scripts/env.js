@@ -40,7 +40,7 @@ const variables = {
     downloadedFolderName,
     sourceFolder: `${rootFolder}/deps/zookeeper`,
     downloadedFileName,
-    downloadUrl:`http://archive.apache.org/dist/zookeeper/${downloadedFolderName}/${downloadedFileName}`,
+    downloadUrl: `http://archive.apache.org/dist/zookeeper/${downloadedFolderName}/${downloadedFileName}`,
     isWindows,
     isSunOs,
 };
