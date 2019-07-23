@@ -83,8 +83,10 @@ function applyPatches() {
         shell.sed('-i', '#include "zookeeper.h"', '#include "winport.h"\n#include "zookeeper.h"\n', `${destination}/zk_adaptor.h`);
         shell.sed('-i', '#include "zk_adaptor.h"', '#include "zk_adaptor.h"\n#include "winport.h"\n', `${destination}/zookeeper.c`);
 
-        const cmakeFile = 'CMakeLists.txt';
-        shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/src/c/${cmakeFile}`);
+        if (!process.env.ZK_INSTALL_VERBOSE) {
+            const cmakeFile = 'CMakeLists.txt';
+            shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/src/c/${cmakeFile}`);
+        }
         return;
     }
 
