@@ -208,6 +208,16 @@ To run full output during the module build one has to use `ZK_INSTALL_VERBOSE` f
 
 `ZK_INSTALL_VERBOSE=1 npm install`
 
+##### For Windows (PowerShell): verbose build #####
+```bash
+$env:ZK_INSTALL_VERBOSE=1 
+npm install
+```
+This PowerShell command will remove the environment variable:
+```bash
+Remove-Item Env:\ZK_INSTALL_VERBOSE
+```
+
 # Implementation Notes
 
 ### NOTE on Module Status (DDOPSON-2011-11-30):
