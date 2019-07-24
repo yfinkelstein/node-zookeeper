@@ -198,7 +198,7 @@ For more details please refer to ZooKeeper docs.
 # Windows support
 Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon. 
 
-Also, run `npm install` in a Powershell window as an __Administrator__. For further instructions visit [node-gyp documentation](https://github.com/nodejs/node-gyp/#on-windows).
+Also, run `npm install` in a Powershell window. For further instructions visit [node-gyp documentation](https://github.com/nodejs/node-gyp/#on-windows).
 
 Windows support has been enabled mainly for supporting development, not for production.
 
