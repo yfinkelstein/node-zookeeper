@@ -1,17 +1,15 @@
 const test = require('tape');
-const proxyquire = require('proxyquire');
-const { FakeNativeZooKeeper, path } = require('../helpers/fakes.js');
+const NativeZk = require('./../../build/zookeeper.node').ZooKeeper;
+const ZooKeeper = require('../../lib/zookeeper.js');
 
-FakeNativeZooKeeper.hello = 'world';
-
-const ZooKeeper = proxyquire('../../lib/zookeeper.js', {
-    [path]: { ZooKeeper: FakeNativeZooKeeper },
-});
+const keys = Object.keys(NativeZk);
 
 test('native static constants are exported', (t) => {
-    t.plan(1);
+    t.plan(keys.length);
 
-    t.equal(ZooKeeper.hello, FakeNativeZooKeeper.hello);
+    keys.forEach((key) => {
+        t.equal(ZooKeeper[key], NativeZk[key]);
+    });
 });
 
 test('legacy event constants are exported', (t) => {

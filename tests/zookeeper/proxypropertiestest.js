@@ -5,7 +5,7 @@ const ZooKeeper = require('../../lib/zookeeper.js');
 test('native zookeeper proxy properties are added to the ZooKeeper instance', (t) => {
     t.plan(5);
 
-    const zk = new ZooKeeper();
+    const zk = new ZooKeeper({});
 
     t.equal(zk.state, 0);
     t.equal(zk.timeout, -1);
