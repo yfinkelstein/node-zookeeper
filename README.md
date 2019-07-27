@@ -86,7 +86,7 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 * `stat = await exists(path, watch)`
 * `data = await get(path, watch)`
 * `children = await get_children(path, watch)`
-* `children = get_children2( path, watch)`
+* `{children, stat} = get_children2( path, watch)`
 * `stat = await set(path, data, version)`
 * `val = sync(path)`
 * `delete_ (path, version)`

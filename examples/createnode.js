@@ -9,8 +9,8 @@ const persistentNode = 0;
  */
 async function createNode(client, path, flags, data = '') {
     try {
-        const rc = await client.create(path, data, flags);
-        return `(${path}) result code: ${rc}`;
+        const createdPath = await client.create(path, data, flags);
+        return `(created: ${createdPath})`;
     } catch (error) {
         return `${path} already exists`;
     }
