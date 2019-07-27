@@ -63,11 +63,11 @@ client.on('connect', () => {
 ```javascript
 const path = '/myPath';
 try {
-    const rc = await client.create(path, data, ZooKeeper.ZOO_EPHEMERAL);
-    console.log(`(${path}) result code: ${rc}`);
-    } catch (error) {
-        console.log(`${path} already exists. Error from ZooKeeper: ${error}`);
-    }
+    const createdPath = await client.create(path, data, ZooKeeper.ZOO_EPHEMERAL);
+    console.log(`(created: ${createdPath})`);
+} catch (error) {
+    console.log(`${path} already exists`);
+}
 ```
 
 ## More examples ##
