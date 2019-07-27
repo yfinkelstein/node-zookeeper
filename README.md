@@ -12,19 +12,22 @@ __Latest changes__ are described in the [changelog](./CHANGELOG.md)
 npm install zookeeper
 ```
 
-# Example #
+# Examples #
 
-An async/await enabled client
+Use the `async/await` enabled client:
 ```javascript
 const ZooKeeper = require('zookeeper').Promise;
 ```
+Note: checkout the API for the [async/await enabled client here](#Methods:-async/await-enabled-client)
 
 There is also a callbacks based client:
 ```javascript
 const ZooKeeper = require('zookeeper');
 ```
+Note: checkout the API for the [callback based client here](#Methods:-callbacks-based-client)
 
-Create an instance of the ZooKeeper client:
+#### Example: create a client ####
+Create an instance of the ZooKeeper client using `async/await`:
 ```javascript
 function createClient(timeoutMs = 5000) {
     const config = {
@@ -41,15 +44,10 @@ const client = createClient();
 ```
 The client is ready when connected to a ZooKeeper server:
 ```javascript
-client.connect(config, () => {});
+client.init(config);
+
 await client.on_connected();
 // start using the client
-```
-Or by passing in a callback to the connect function:
-```javascript
-client.connect(config, () => {
-    // start using the client
-});
 ```
 
 There's another option: listening to the connect event:
@@ -57,9 +55,12 @@ There's another option: listening to the connect event:
 client.on('connect', () => {
     // start using the client
 });
+
+client.init(config);
 ```
 
-## Example: create a node ##
+#### Example: create a node ####
+Using the API of the `async/await` enabled client.
 ```javascript
 const path = '/myPath';
 try {
