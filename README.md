@@ -39,7 +39,7 @@ function createClient(timeoutMs = 5000) {
 
 const client = createClient();
 ```
-The client is ready when connected to a ZooKeepr server:
+The client is ready when connected to a ZooKeeper server:
 ```javascript
 client.connect(config, () => {});
 await client.on_connected();
@@ -73,7 +73,7 @@ try {
 ## More examples ##
 Check out the code in the [examples](./examples) folder: master,workers, tasks and listeners scenarios. 
 
-# API Reference
+# API Reference #
 
 ### Methods ###
 
@@ -211,14 +211,14 @@ zk.connect(function (err, client) {
 ```
 For more details please refer to ZooKeeper docs.
 
-# Windows support
+# Windows support #
 Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon. 
 
 Also, run `npm install` in a Powershell window. For further instructions visit [node-gyp documentation](https://github.com/nodejs/node-gyp/#on-windows).
 
 Windows support has been enabled mainly for supporting development, not for production.
 
-# Development
+# Development #
 
 To run full output during the module build one has to use `ZK_INSTALL_VERBOSE` flag.
 
@@ -234,34 +234,34 @@ This PowerShell command will remove the environment variable:
 Remove-Item Env:\ZK_INSTALL_VERBOSE
 ```
 
-# Implementation Notes
+# Implementation Notes #
 * Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
 * The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZK internal and is not installed into /usr/local/include
 * Multiple simultaneous ZK connections are supported and tested
 * All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
 * All ZK API methods including watchers are supported.
 
-# Known Bugs & Issues
+# Known Bugs & Issues #
 - The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
 - Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
 
-# Contribute to the project
+# Contribute to the project #
 Check out the issues tab and grab one! Read the [contributing](./CONTRIBUTING.md) document.
 
-# See Also
+# See Also #
 
 - [http://zookeeper.apache.org/releases.html](http://zookeeper.apache.org/releases.html)
 - [http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API)
 
-# Acknowledgments
+# Acknowledgments #
 
 - **[node-webworker](http://github.com/pgriess/node-webworker "node-webworker") by pgriess** is used to spawn multiple ZK workers in one of the tests.
 
-# LICENSE
+# LICENSE #
 
 See [LICENSE-MIT.txt](./LICENSE-MIT.txt) file in the top level folder.
 
-# ORIGINAL AUTHOR
+# ORIGINAL AUTHOR #
 
 Yuri Finkelstein (yurif2003 at yahoo dot com)
 
