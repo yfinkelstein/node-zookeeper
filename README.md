@@ -1,4 +1,4 @@
-# Overview
+# Overview #
 
 _node-zookeeper - A Node.js client for Apache Zookeeper._
 
@@ -6,51 +6,72 @@ This module is implemented on top of the ZooKeeper C API; consult the [ZK Refere
 
 __Latest changes__ are described in the [changelog](./CHANGELOG.md)
 
-## Installation
+## Installation ##
 (note the name `zookeeper` in lowercase)
 ```bash
 npm install zookeeper
 ```
 
-# Example
+# Example #
 
+An async/await enabled client
+```javascript
+const ZooKeeper = require('zookeeper').Promise;
+```
+
+There is also a callbacks based client:
 ```javascript
 const ZooKeeper = require('zookeeper');
-
-function onCreate(client, rc, error, path) {
-    if (rc !== 0) {
-        console.log(`zk node create result: ${rc}, error: '${error}', path=${path}`);
-    } else {
-        console.log(`created zk node ${path}`);
-
-        process.nextTick(() => {
-            client.close();
-        });
-    }
-}
-
-function onConnect(client, err) {
-    if (err) {
-        throw err;
-    }
-
-    console.log(`zk session established, id=${client.client_id}`);
-    client.a_create('/node.js1', 'some value', ZooKeeper.ZOO_SEQUENCE | ZooKeeper.ZOO_EPHEMERAL, onCreate.bind(null, client));
-}
-
-const zk = new ZooKeeper({
-    connect: '127.0.0.1:2181',
-    timeout: 200000,
-    debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
-    host_order_deterministic: false,
-});
-
-try {
-    zk.connect(onConnect.bind(null, zk));
-} catch (e) {
-    console.error(e);
-}
 ```
+
+Create an instance of the ZooKeeper client:
+```javascript
+function createClient(timeoutMs = 5000) {
+    const config = {
+        connect: host,
+        timeout: timeoutMs,
+        debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
+        host_order_deterministic: false,
+    };
+
+    return new ZooKeeper(config);
+}
+
+const client = createClient();
+```
+The client is ready when connected to a ZooKeepr server:
+```javascript
+client.connect(config, () => {});
+await client.on_connected();
+// start using the client
+```
+Or by passing in a callback to the connect function:
+```javascript
+client.connect(config, () => {
+    // start using the client
+});
+```
+
+There's another option: listening to the connect event:
+```javascript
+client.on('connect', () => {
+    // start using the client
+});
+```
+
+## Example: create a node ##
+```javascript
+const path = '/myPath';
+try {
+    const rc = await client.create(path, data, ZooKeeper.ZOO_EPHEMERAL);
+    console.log(`(${path}) result code: ${rc}`);
+    } catch (error) {
+        console.log(`${path} already exists. Error from ZooKeeper: ${error}`);
+    }
+```
+
+## More examples ##
+Check out the code in the [examples](./examples) folder: master,workers, tasks and listeners scenarios. 
 
 # API Reference
 
@@ -137,7 +158,7 @@ try {
 Session state machine is well described in the [Zookeeper docs](http://zookeeper.apache.org/doc/r3.4.14/zookeeperProgrammers.html#ch_zkSessions)
 
 ### ACL and authorisation ###
-It's supported now, library comes with 3 default ACL levels defined (comes from ZK):
+The library comes with 3 default ACL levels defined (comes from ZK):
 * ZooKeeper.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
 * ZooKeeper.ZOO_READ_ACL_UNSAFE - anyone can read
 * ZooKeeper.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
@@ -190,11 +211,6 @@ zk.connect(function (err, client) {
 ```
 For more details please refer to ZooKeeper docs.
 
-# Limitations
-* passing acl to a_create is not possible
-* tests are not standalone, must run a zk server (easiest if you run at localhost:2181, if not you must pass the connect string to the tests)
-* only asynchronous ZK methods are implemented. Hey, this is node.js ... no sync calls are allowed
-
 # Windows support
 Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon. 
 
@@ -219,101 +235,15 @@ Remove-Item Env:\ZK_INSTALL_VERBOSE
 ```
 
 # Implementation Notes
-
-### NOTE on Module Status (DDOPSON-2011-11-30):
-* I ported this module to Node v0.6.0.  I did my best to retain compatibility with Node v0.4.x.  File bugs if you find any.
-* I have also worked to normalized the API style to be more conformant with Node conventions.  Again, I did my best to keep backwards compatibility with the old version.  File bugs if you find any.
-* The test coverage is pretty spotty.  It would be really great if someone converted the tests to Vows and / or using a mock instead of depending on a live ZK server.  I can't test and don't really trust the "promise" stuff in this module, but the core module itself works and makes my tests pass on downstream dependencies.
-
-Fixes:
-* Node v0.6.0 compatibility - There is no native EventEmitter class anymore.  Need a JS shim.
-* Node v0.6.0 compatibility - MODULE_INIT macro just plain doesn't work.  not sure why, but an init function works just fine.
-* Node v0.6.0 compatibility - 'sys' ==> 'util'
-* Node v0.6.0 compatibility - There was an issue with the EV_A macro in yield();  was able to comment it out without harming behavior
-* events should be strings like 'connect' instead of ZK.on_connected.  follow convention here.
-* no sense in "require('zookeeper').ZooKeeper" instead of simply "require('zookeeper')"
-
-TODO:
-* convert error codes to the names of the constants (eg, ZOO_CONNECT_FAIL instead of -110).
-* method names should map to convention. The "a_method" pattern is quite redundant in node.
-* Init should be called "connect", and should take a callback.  Forcing clients to use the events is awkward and error prone
-* Why do the watchers take two callbacks?
-
-
-### v0.2.x ==> v0.4.x Transition
-Data coming out of ZooKeepr (in callbacks) will now default to being Buffer objects. The main ZK handle now has a boolean attribute called 'data_as_buffer', which defaults to true. If you are storing strings only, as was only allowed in the initial implementation, or you wish to have data in callbacks arrive as strings, you add 'data_as_buffer:false' to the init options, or add 'zk.data_as_buffer = false;' before using the handle. The behavior defaults to Buffer objects because this aligns more closely with ZooKeeper itself which uses byte arrays. They are interchangable on input, if the input is a Buffer it will be used directly, otherwise the toString() of the input is used (this will work with utf8 data as well) regardless of mode.
-
-With the new Buffer changes in the 0.3+ and 0.4+ branches, these will be internal 'SlowBuffer' objects, and you should use Buffer.isBuffer if you are checking the type, as 'instanceof Buffer' will return false.
-
-### yfinkelstein's original implementation notes
-
 * Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
 * The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZK internal and is not installed into /usr/local/include
 * Multiple simultaneous ZK connections are supported and tested
 * All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
 * All ZK API methods including watchers are supported.
-* lib/zk_promise.js is an optional module that makes use of the very cool **node-promise** library;
- see tests/zk_test_shootout_promise.js for illustration of how it can simplify coding. Isn't the following looking nicer?
-
-```javascript
-zk_r.on_connected().
-then (
-    function (zkk){
-        console.log ("reader on_connected: zk=%j", zkk);
-        return zkk.create ("/node.js2", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL);
-    }
-).then (
-    function (path) {
-        zk_r.context.path = path;
-        console.log ("node created path=%s", path);
-        return zk_r.w_get (path,
-            function (type, state, path_w) { // this is a watcher
-                console.log ("watcher for path %s triggered", path_w);
-                deferred_watcher_triggered.resolve (path_w);
-            }
-        );
-    }
-).then (
-    function (stat_and_value) { // this is the response from w_get above
-        console.log ("get node: stat=%j, value=%s", stat_and_value[0], stat_and_value[1]);
-        deferred_watcher_ready.resolve (zk_r.context.path);
-        return deferred_watcher_triggered;
-    }
-).then (
-    function () {
-        console.log ("zk_reader is finished");
-        process.nextTick( function () {
-            zk_r.close ();
-        });
-    }
-);
-```
-
-* Also compare test/zk_test_watcher.js with test/zk_test_watcher_promise.js
-* tests/zk_master.js and tests/zk_worker.js illustrate launching multiple ZK client workers using webworker library. You have to install it first with **"npm install webworker"**
-
-# Building the module by hand
------
-
-```javascript
-node-gyp configure build
-```
-
-- note: for more details on the zk c-client build process, see [here](http://hadoop.apache.org/zookeeper/docs/r3.3.1/zookeeperProgrammers.html#C+Binding "Build C client")
-- note: node_compat.h (ala node-png) handles Buffer changes from .2 to .3+, so you should be able to build against older node versions.
-- note: if you wish to build with a specific version of zookeeper C lib, use --zookeeper VERSION (will download/build it) or --zookeeper PATH (if you have downloaded it and possibly made changes etc.)
-- note: if you wish to link against an existing zookeeper lib: use --zoookeeper '', and put your lib/headers it in /usr/local/ (or edit the wscript appropriately)
-- note: if you are building on osx and you get a compile error regarding "mmacosx-version-min", you may need to edit the wscript and remove it  (anyone with the answer please explain/fix if possible).
-- note: on SmartOS, you must have installed zookeeper-client-3.4.3 via pkgsrc; ZooKeeper does not build "out of the box" on SunOS variants.
-- note: if you are building on a platform for which the options are not working, please add a specific elif for that platform and create a pull request.
 
 # Known Bugs & Issues
-
-DDOPSON-2011-11-30 - are these issues still relevant?  unknown.
-
 - The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
 - Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
-- Otherwise, it just works!
 
 # Contribute to the project
 Check out the issues tab and grab one! Read the [contributing](./CONTRIBUTING.md) document.
@@ -322,13 +252,9 @@ Check out the issues tab and grab one! Read the [contributing](./CONTRIBUTING.md
 
 - [http://zookeeper.apache.org/releases.html](http://zookeeper.apache.org/releases.html)
 - [http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API](http://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ZooKeeper+C+client+API)
-- [http://github.com/kriszyp/node-promise](http://github.com/kriszyp/node-promise)
-- [http://github.com/pgriess/node-webworker](http://github.com/pgriess/node-webworker)
 
 # Acknowledgments
 
-- **[node-promise](http://github.com/kriszyp/node-promise "node-promise") by kriszyp** is a fantastic tool imho. I wish it was distributed as a module so that I could easily 'require' it rather then
- resort to distribution by copy.
 - **[node-webworker](http://github.com/pgriess/node-webworker "node-webworker") by pgriess** is used to spawn multiple ZK workers in one of the tests.
 
 # LICENSE
