@@ -87,9 +87,9 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 * `stat = await exists(path, watch)`
 * `data = await get(path, watch)`
 * `children = await get_children(path, watch)`
-* `{children, stat} = get_children2( path, watch)`
+* `{children, stat} = await get_children2( path, watch)`
 * `stat = await set(path, data, version)`
-* `val = sync(path)`
+* `val = await sync(path)`
 * `delete_ (path, version)`
     * (note the trailing `_`)
 * `set_acl(path, version, acl)`
@@ -100,7 +100,7 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 
 * `stat = await w_exists(path, watch_cb)`
 * `data = await w_get(path, watch_cb)`
-* `children = w_get_children(path, watch_cb)`
+* `children = await w_get_children(path, watch_cb)`
 * `{children, stat} = await w_get_children2 (path, watch_cb)`
 
 ### Methods: callbacks based client ###
