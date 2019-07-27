@@ -2,7 +2,7 @@ const { createNodes } = require('./setup.js');
 const { electLeader } = require('./electleader.js');
 const { createWorker } = require('./createworker.js');
 const { listen } = require('./addlistener.js');
-// const { addTask } = require('./addtask.js');
+const { addTask } = require('./addtask.js');
 
 const logger = require('./logger.js');
 const notifier = require('./notifier.js');
@@ -18,33 +18,22 @@ notifier.on('onChildren', (children) => {
     });
 });
 
-function setupMaster() {
-    return new Promise((resolve) => {
-        notifier.on('leader', resolve);
-
-        electLeader('/master');
-    });
-}
-
-function setupWorker() {
-    return new Promise((resolve) => {
-        notifier.on('createWorker', resolve);
-
-        createWorker();
-    });
-}
-
 async function init() {
     await createNodes(['/workers', '/assign', '/tasks', '/status']);
 
-    const master = await setupMaster();
-    await listen(master, '/workers');
-    await listen(master, '/assign');
+    notifier.on('leader', async (master) => {
+        await listen(master, '/workers');
+        await listen(master, '/assign');
 
-    const worker = await setupWorker();
-    listen(worker, '/tasks');
+        notifier.on('createWorker', async (worker) => {
+            await listen(worker, '/tasks');
+        });
 
-    // await addTask('hello world');
+        await createWorker();
+        await addTask('hello world');
+    });
+
+    await electLeader('/master');
 }
 
 init().catch(logger.error);

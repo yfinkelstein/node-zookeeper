@@ -4,24 +4,25 @@ const logger = require('./logger.js');
 
 const noop = () => {};
 
-function emit(client, path, rc) {
-    logger.log(`(${path}) result code: ${rc} client id: ${client.client_id}`);
+function emit(client, path) {
+    logger.log(`(${path}) client id: ${client.client_id}`);
     notifier.emit('createWorker', client);
 }
 
-function createWorker() {
+async function createWorker() {
     const client = createClient();
+    client.connect({}, noop);
 
-    client.on('connect', () => {
-        notifier.emit('connect', `createWorker: session established, id=${client.client_id}`);
+    client.on_connected();
+    notifier.emit('connect', `createWorker: session established, id=${client.client_id}`);
 
+    try {
         // eslint-disable-next-line no-bitwise
-        client.a_create('/workers/worker-', '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE, (rc, error, path) => {
-            emit(client, path, rc);
-        });
-    });
-
-    client.connect(noop);
+        const path = await client.create('/workers/worker-', '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE);
+        emit(client, path);
+    } catch (error) {
+        logger.error(error);
+    }
 }
 
 module.exports = {

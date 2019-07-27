@@ -4,30 +4,26 @@ const { createNode, persistentNode } = require('./createnode.js');
 
 const noop = () => {};
 
-function createNodes(paths) {
+async function createNodes(paths) {
     const client = createClient();
-    return new Promise((resolve) => {
-        client.on('connect', () => {
-            notifier.emit('connect', `session established, id=${client.client_id}`);
 
-            paths
-                .forEach((path, index) => {
-                    createNode(client, path, persistentNode)
-                        .then((message) => {
-                            notifier.emit('createNode', message);
+    client.on('close', () => {
+        notifier.emit('close', `session closed, id=${client.client_id}`);
+    });
 
-                            if (paths.length === (index + 1)) {
-                                resolve();
-                            }
-                        });
-                });
-        });
+    client.connect({}, noop);
 
-        client.on('close', () => {
-            notifier.emit('close', `session closed, id=${client.client_id}`);
-        });
+    await client.on_connected();
+    notifier.emit('connect', `session established, id=${client.client_id}`);
 
-        client.connect(noop);
+    const promises = [];
+    paths.forEach((path) => {
+        promises.push(createNode(client, path, persistentNode));
+    });
+
+    const messages = await Promise.all(promises);
+    messages.forEach((message) => {
+        notifier.emit('createNode', message);
     });
 }
 
