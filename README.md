@@ -18,13 +18,13 @@ Use the `async/await` enabled client:
 ```javascript
 const ZooKeeper = require('zookeeper').Promise;
 ```
-Note: checkout the API for the [async/await enabled client here](#Methods:-async/await-enabled-client)
+Note: checkout the API for the [async/await enabled client here](#methods-asyncawait-enabled-client)
 
 There is also a callbacks based client:
 ```javascript
 const ZooKeeper = require('zookeeper');
 ```
-Note: checkout the API for the [callback based client here](#Methods:-callbacks-based-client)
+Note: checkout the API for the [callback based client here](#methods-callbacks-based-client)
 
 #### Example: create a client ####
 Create an instance of the ZooKeeper client using `async/await`:
