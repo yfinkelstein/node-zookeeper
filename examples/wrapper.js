@@ -1,5 +1,4 @@
-const ZooKeeper = require('../lib/zookeeper.js');
-const ZooKeeperPromise = require('../lib/zk_promise.js');
+const ZooKeeper = require('../lib/index.js').Promise;
 
 const host = process.argv[2] || '127.0.0.1:2181';
 
@@ -15,7 +14,7 @@ function createClient(timeoutMs = 5000) {
         host_order_deterministic: false,
     };
 
-    return new ZooKeeperPromise(config);
+    return new ZooKeeper(config);
 }
 
 module.exports = {
