@@ -75,44 +75,71 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 
 # API Reference #
 
-### Methods ###
+### Methods: async/await enabled client ###
 
-* init ( options )
-* connect ( options, connect_cb)
-* close ( )
-* a_create ( path, data, flags, path_cb )
-* mkdirp ( path, callback(Error) )
-* a_exists ( path, watch, stat_cb )
-* a_get ( path, watch, data_cb )
-* a_get_children ( path, watch, child_cb )
-* a_get_children2 ( path, watch, child2_cb )
-* a_set ( path, data, version, stat_cb )
-* a_sync ( path, value_cb )
-* a_delete`_` ( path, version, void_cb )
-    * (trailing `_` is added to avoid conflict with reserved word `_delete_` since zk_promise.js strips off prefix `a_` from all operations)
-* a_set_acl ( path, version, acl, void_cb )
-* a_get_acl ( path, acl_cb )
-* add_auth ( scheme, auth )
+* `init(options)`
+* `connect(options, connect_cb)`
+* `await on_connected()`
+* `close()`
+* `path = await create(path, data, flags)`
+* `mkdirp(path, callback(Error))`
+* `stat = await exists(path, watch)`
+* `data = await get(path, watch)`
+* `children = await get_children(path, watch)`
+* `children = get_children2( path, watch)`
+* `stat = await set(path, data, version)`
+* `val = sync(path)`
+* `delete_ (path, version)`
+    * (note the trailing `_`)
+* `set_acl(path, version, acl)`
+* `acl = await get_acl(path)`
+* `add_auth(scheme, auth)`
+
+*The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
+
+* `stat = await w_exists(path, watch_cb)`
+* `data = await w_get(path, watch_cb)`
+* `children = w_get_children(path, watch_cb)`
+* `{children, stat} = await w_get_children2 (path, watch_cb)`
+
+### Methods: callbacks based client ###
+
+* `init(options)`
+* `connect(options, connect_cb)`
+* `close()`
+* `a_create(path, data, flags, path_cb)`
+* `mkdirp(path, callback(Error))`
+* `a_exists(path, watch, stat_cb)`
+* `a_get(path, watch, data_cb)`
+* `a_get_children(path, watch, child_cb)`
+* `a_get_children2(path, watch, child2_cb)`
+* `a_set(path, data, version, stat_cb)`
+* `a_sync(path, value_cb)`
+* `a_delete_ (path, version, void_cb)`
+    * (note the trailing `_`)
+* `a_set_acl(path, version, acl, void_cb)`
+* `a_get_acl(path, acl_cb)`
+* `add_auth(scheme, auth)`
 
 
 *The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
 
-* aw_exists ( path, watch_cb, stat_cb )
-* aw_get ( path, watch_cb, data_cb )
-* aw_get_children ( path, watch_cb, child_cb )
-* aw_get_children2 ( path, watch_cb, child2_cb )
+* `aw_exists(path, watch_cb, stat_cb)`
+* `aw_get(path, watch_cb, data_cb)`
+* `aw_get_children(path, watch_cb, child_cb)`
+* `aw_get_children2(path, watch_cb, child2_cb)`
 
 ### Callback Signatures ###
 
- * path_cb : function ( rc, error, path )
- * stat_cb : function ( rc, error, stat )
- * data_cb : function ( rc, error, stat, data )
- * child_cb : function ( rc, error, children )
- * child2_cb : function ( rc, error, children, stat )
- * value_cb : function ( rc, error, value )
- * void_cb : function ( rc, error )
- * watch_cb : function ( type, state, path )
- * acl_cb : function (rc, error, acl, stat)
+ * path_cb : function(rc, error, path)
+ * stat_cb : function(rc, error, stat)
+ * data_cb : function(rc, error, stat, data)
+ * child_cb : function(rc, error, children)
+ * child2_cb : function(rc, error, children, stat)
+ * value_cb : function(rc, error, value)
+ * void_cb : function(rc, error)
+ * watch_cb : function(type, state, path)
+ * acl_cb : function(rc, error, acl, stat)
  * connect_cb: function(err, zookeeper)
 
 ### Input Parameters ###
