@@ -1,4 +1,4 @@
-# Overview #
+# Overview
 
 _node-zookeeper - A Node.js client for Apache Zookeeper._
 
