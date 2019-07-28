@@ -44,14 +44,6 @@ const client = createClient();
 ```
 The client is ready when connected to a ZooKeeper server:
 ```javascript
-client.init(config);
-
-await client.on_connected();
-// start using the client
-```
-
-There's another option: listening to the connect event:
-```javascript
 client.on('connect', () => {
     // start using the client
 });
