@@ -47,12 +47,13 @@ async function runForLeader(client, path) {
 
 async function electLeader(path) {
     const client = createClient();
-    client.connect({}, () => {});
 
-    await client.on_connected();
+    client.on('connect', () => {
+        notifier.emit('connect', `electLeader: session established, id=${client.client_id}`);
+        runForLeader(client, path);
+    });
 
-    notifier.emit('connect', `electLeader: session established, id=${client.client_id}`);
-    await runForLeader(client, path);
+    client.init({});
 }
 
 module.exports = {
