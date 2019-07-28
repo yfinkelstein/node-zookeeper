@@ -72,7 +72,6 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 
 * `init(options)`
 * `connect(options, connect_cb)`
-* `await on_connected()`
 * `close()`
 * `path = await create(path, data, flags)`
 * `mkdirp(path, callback(Error))`
