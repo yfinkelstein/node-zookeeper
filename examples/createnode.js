@@ -1,15 +1,19 @@
 const persistentNode = 0;
 
-function createNode(client, path, flags, data = '') {
-    return new Promise((resolve) => {
-        client.a_create(path, data, flags, (rc) => {
-            if (rc === -110) {
-                resolve(`${path} already exists`);
-            } else {
-                resolve(`(${path}) result code: ${rc}`);
-            }
-        });
-    });
+/**
+ * @param client {ZooKeeperPromise}
+ * @param path {string}
+ * @param flags {number}
+ * @param data {string|Buffer}
+ * @returns {Promise}
+ */
+async function createNode(client, path, flags, data = '') {
+    try {
+        const createdPath = await client.create(path, data, flags);
+        return `(created: ${createdPath})`;
+    } catch (error) {
+        return `${path} already exists`;
+    }
 }
 
 module.exports = {

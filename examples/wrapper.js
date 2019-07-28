@@ -1,8 +1,11 @@
-const ZooKeeper = require('../lib/zookeeper.js');
+const ZooKeeper = require('../lib/index.js').Promise;
 
 const host = process.argv[2] || '127.0.0.1:2181';
 
-/** @returns {ZooKeeper} */
+/**
+ * @param timeoutMs {number}
+ * @returns {ZooKeeperPromise}
+ */
 function createClient(timeoutMs = 5000) {
     const config = {
         connect: host,

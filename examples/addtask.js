@@ -2,22 +2,21 @@ const { createClient, ZooKeeper } = require('./wrapper.js');
 const notifier = require('./notifier.js');
 const { createNode, persistentNode } = require('./createnode.js');
 
-const noop = () => {};
+async function createTask(client, data) {
+    // eslint-disable-next-line no-bitwise
+    const message = await createNode(client, '/tasks/task-', persistentNode | ZooKeeper.ZOO_SEQUENCE, data);
+    notifier.emit('addTask', message);
+}
 
-function addTask(data) {
+async function addTask(data) {
     const client = createClient();
 
     client.on('connect', () => {
         notifier.emit('connect', `addTask: session established, id=${client.client_id}`);
 
-        // eslint-disable-next-line no-bitwise
-        createNode(client, '/tasks/task-', persistentNode | ZooKeeper.ZOO_SEQUENCE, data)
-            .then((message) => {
-                notifier.emit('addTask', message);
-            });
+        createTask(client, data);
     });
-
-    client.connect(noop);
+    client.init({});
 }
 
 module.exports = {

@@ -2,33 +2,32 @@ const { createClient } = require('./wrapper.js');
 const notifier = require('./notifier.js');
 const { createNode, persistentNode } = require('./createnode.js');
 
-const noop = () => {};
-
-function createNodes(paths) {
-    const client = createClient();
-    return new Promise((resolve) => {
-        client.on('connect', () => {
-            notifier.emit('connect', `session established, id=${client.client_id}`);
-
-            paths
-                .forEach((path, index) => {
-                    createNode(client, path, persistentNode)
-                        .then((message) => {
-                            notifier.emit('createNode', message);
-
-                            if (paths.length === (index + 1)) {
-                                resolve();
-                            }
-                        });
-                });
-        });
-
-        client.on('close', () => {
-            notifier.emit('close', `session closed, id=${client.client_id}`);
-        });
-
-        client.connect(noop);
+async function createAllNodes(client, paths) {
+    const promises = [];
+    paths.forEach((path) => {
+        promises.push(createNode(client, path, persistentNode));
     });
+
+    const messages = await Promise.all(promises);
+    messages.forEach((message) => {
+        notifier.emit('createNode', message);
+    });
+}
+
+async function createNodes(paths) {
+    const client = createClient();
+
+    client.on('close', () => {
+        notifier.emit('close', `session closed, id=${client.client_id}`);
+    });
+
+    client.on('connect', () => {
+        notifier.emit('connect', `session established, id=${client.client_id}`);
+
+        createAllNodes(client, paths);
+    });
+
+    client.init({});
 }
 
 module.exports = {
