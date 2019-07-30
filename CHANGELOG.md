@@ -1,3 +1,11 @@
+#### v 4.3.0 (2019-07-30) ####
+* Refactor all JavaScript code to ECMAScript 2017 and native Promises: pull request [185](https://github.com/yfinkelstein/node-zookeeper/pull/185) by @jbienkowski311
+* Copy instead of symlink in build process (Windows users can install without admin access): pull request [190](https://github.com/yfinkelstein/node-zookeeper/pull/190)
+* Quicker build process in Windows, without massive output or warnings: pull request [191](https://github.com/yfinkelstein/node-zookeeper/pull/191) 
+* Code documentation for public API: pull request [192](https://github.com/yfinkelstein/node-zookeeper/pull/192)
+* README revision, simplified and promoting async/await enabled client: pull request [193](https://github.com/yfinkelstein/node-zookeeper/pull/193)
+* jsDoc type definitions in code documentation: pull request [196](https://github.com/yfinkelstein/node-zookeeper/pull/196)
+
 #### v 4.2.0 (2019-07-16) ####
 * fix: Node.js 12 support
 * fix: V8 and Nan deprecation warnings
