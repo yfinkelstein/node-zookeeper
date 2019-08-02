@@ -19,22 +19,22 @@
             }],
             ['OS=="mac"',{
                 'include_dirs': [
-                    '<(module_root_dir)/deps/zookeeper/src/c/include',
-                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<(module_root_dir)/deps/zookeeper/include',
+                    '<(module_root_dir)/deps/zookeeper/generated',
                     '<!(node -e "require(\'nan\')")'
                 ],
-                'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
+                'libraries': ['<(module_root_dir)/deps/zookeeper/.libs/libzookeeper_st.a'],
                 'xcode_settings': {
                     'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
                     'MACOSX_DEPLOYMENT_TARGET': '<!(sw_vers -productVersion)'
                 }
             }],['OS=="linux"',{
                 'include_dirs': [
-                    '<(module_root_dir)/deps/zookeeper/src/c/include',
-                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<(module_root_dir)/deps/zookeeper/include',
+                    '<(module_root_dir)/deps/zookeeper/generated',
                     '<!(node -e "require(\'nan\')")'
                 ],
-                'libraries': ['<(module_root_dir)/deps/zookeeper/src/c/.libs/libzookeeper_st.a'],
+                'libraries': ['<(module_root_dir)/deps/zookeeper/.libs/libzookeeper_st.a'],
             }],['OS=="win"',{
                 'defines': ['WIN32', 'USE_STATIC_LIB'],
                 'msvs_settings': {
@@ -43,13 +43,13 @@
                     }
                 },
                 'include_dirs': [
-                    '<(module_root_dir)/deps/zookeeper/src/c/include',
-                    '<(module_root_dir)/deps/zookeeper/src/c/generated',
+                    '<(module_root_dir)/deps/zookeeper/include',
+                    '<(module_root_dir)/deps/zookeeper/generated',
                     '<!(node -e "require(\'nan\')")'
                 ],
                 'libraries': [
-                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/zookeeper.lib',
-                    '<(module_root_dir)/deps/zookeeper/src/c/Debug/hashtable.lib',
+                    '<(module_root_dir)/deps/zookeeper/Debug/zookeeper.lib',
+                    '<(module_root_dir)/deps/zookeeper/Debug/hashtable.lib',
                     'msvcrt.lib',
                     'msvcmrt.lib',
                     'Ws2_32.lib',

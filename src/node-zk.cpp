@@ -136,7 +136,7 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "aw_get_children2",  AWGetChildren2);
         Nan::SetPrototypeMethod(constructor_template,  "a_set",  ASet);
         Nan::SetPrototypeMethod(constructor_template,  "a_delete_",  ADelete);
-        Nan::SetPrototypeMethod(constructor_template,  "s_delete_",  Delete);
+        // Nan::SetPrototypeMethod(constructor_template,  "s_delete_",  Delete);
         Nan::SetPrototypeMethod(constructor_template,  "a_get_acl",  AGetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "a_set_acl",  ASetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "add_auth",  AddAuth);
@@ -737,7 +737,7 @@ public:
         CALLBACK_EPILOG();
     }
 
-    static void Delete(const Nan::FunctionCallbackInfo<Value>& info) {
+    /*static void Delete(const Nan::FunctionCallbackInfo<Value>& info) {
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
         Nan::Utf8String _path (toString(info[0]));
@@ -745,7 +745,7 @@ public:
 
         int ret = zoo_delete(zk->zhandle, *_path, version);
         RETURN_VALUE(info, Nan::New<Int32>(ret));
-    }
+    }*/
 
     static void AGet(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);

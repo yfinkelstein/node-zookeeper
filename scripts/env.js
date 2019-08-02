@@ -23,24 +23,24 @@ const isSunOs = process.platform.toLowerCase().includes('sunos');
 const rootFolder = setRoot({ isWindows });
 
 // Don't forget to also update the sha1sum variable when upgrading the Zookeeper version
-const zookeeperVersion = '3.4.13';
-const downloadedFolderName = `zookeeper-${zookeeperVersion}`;
+const zookeeperVersion = '3.5.5';
+const downloadedFolderName = `apache-zookeeper-${zookeeperVersion}`;
 const suffix = '.tar.gz';
 const downloadedFileName = `${downloadedFolderName}${suffix}`;
 
 // Update the checksum when upgrading the Zookeeper version
-const sha1sum = `a989b527f3f990d471e6d47ee410e57d8be7620b  ${downloadedFileName}`;
+const sha512sum = `4e22df899a83ca3cc15f6d94daadb1a8631fb4108e67b4f56d1f4fcf95f10f89c8ff1fb8a7c84799a3856d8803a8db1e1f2f3fe1b7dc0d6cedf485ef90fd212d  ${downloadedFileName}`;
 
 const variables = {
     rootFolder,
     workFolder: `${rootFolder}/deps`,
     buildFolder: `${rootFolder}/build/zk`,
     zookeeperVersion,
-    sha1sum,
+    sha512sum,
     downloadedFolderName,
     sourceFolder: `${rootFolder}/deps/zookeeper`,
     downloadedFileName,
-    downloadUrl: `http://archive.apache.org/dist/zookeeper/${downloadedFolderName}/${downloadedFileName}`,
+    downloadUrl: `http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeperVersion}/${downloadedFileName}`,
     isWindows,
     isSunOs,
 };
