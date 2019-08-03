@@ -66,13 +66,14 @@ function clearPath() {
 }
 
 function moveFolder() {
+    const sourceCodeFolder = `${env.downloadedFolderName}/zookeeper-client/zookeeper-client-c`;
     if (env.isWindows) {
-        shell.cp('-r', env.downloadedFolderName, env.sourceFolder);
+        shell.cp('-r', sourceCodeFolder, env.sourceFolder);
         shell.rm('-rf', env.downloadedFolderName);
         return;
     }
 
-    shell.mv(`${env.downloadedFolderName}/zookeeper-client/zookeeper-client-c`, env.sourceFolder);
+    shell.mv(sourceCodeFolder, env.sourceFolder);
 }
 
 function applyPatches() {
