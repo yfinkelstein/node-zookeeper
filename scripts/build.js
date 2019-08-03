@@ -41,7 +41,6 @@ if (env.isWindows) {
         makeCmd += ' --no-print-directory --quiet';
     }
 
-    exec('autoreconf -if');
     exec(configureCmd);
     exec(makeCmd);
 }

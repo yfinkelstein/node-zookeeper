@@ -89,6 +89,7 @@ function applyPatches() {
         }
     } else {
         exec(`patch -p0 < ${env.rootFolder}/patches/ZOOKEEPER-3078.patch`);
+        shell.cp('-R', `${env.rootFolder}/patches/autoreconf/*`, `${env.sourceFolder}`);
     }
 }
 
