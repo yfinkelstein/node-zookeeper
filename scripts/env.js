@@ -43,6 +43,7 @@ const variables = {
     downloadUrl: `http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeperVersion}/${downloadedFileName}`,
     isWindows,
     isSunOs,
+    isVerbose: !!process.env.ZK_INSTALL_VERBOSE,
 };
 
 variables.isAlreadyBuilt = checkIfAlreadyBuilt(variables);
