@@ -86,7 +86,7 @@ function applyPatches() {
 
         if (!env.isVerbose) {
             const cmakeFile = 'CMakeLists.txt';
-            shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/src/${cmakeFile}`);
+            shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
         }
     } else {
         exec(`patch -p0 < ${env.rootFolder}/patches/ZOOKEEPER-3078.patch`);
