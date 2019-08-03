@@ -100,7 +100,10 @@ if (env.isAlreadyBuilt) {
 }
 
 shell.config.fatal = true;
-shell.config.verbose = true;
+
+if (process.env.ZK_INSTALL_VERBOSE) {
+    shell.config.verbose = true;
+}
 
 shell.cd(env.workFolder);
 
