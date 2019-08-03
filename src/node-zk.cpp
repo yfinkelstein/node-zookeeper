@@ -737,16 +737,6 @@ public:
         CALLBACK_EPILOG();
     }
 
-    /*static void Delete(const Nan::FunctionCallbackInfo<Value>& info) {
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
-        assert(zk);
-        Nan::Utf8String _path (toString(info[0]));
-        uint32_t version = toUint(info[1]);
-
-        int ret = zoo_delete(zk->zhandle, *_path, version);
-        RETURN_VALUE(info, Nan::New<Int32>(ret));
-    }*/
-
     static void AGet(const Nan::FunctionCallbackInfo<Value>& info) {
         A_METHOD_PROLOG(3);
 
