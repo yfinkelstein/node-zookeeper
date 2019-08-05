@@ -86,11 +86,19 @@ function applyPatches() {
 
         if (!env.isVerbose) {
             const cmakeFile = 'CMakeLists.txt';
-            shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
+            shell.cp(`${env.patchesFolder}/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
         }
     } else {
-        exec(`patch -p0 < ${env.rootFolder}/patches/ZOOKEEPER-3078.patch`);
-        shell.cp('-R', `${env.rootFolder}/patches/autoreconf/*`, `${env.sourceFolder}`);
+        exec(`patch -p0 < ${env.patchesFolder}/ZOOKEEPER-3078.patch`);
+
+        decompress(`${env.patchesFolder}/autoreconf.tar.gz`, `${env.patchesFolder}`, {
+            plugins: [
+                decompressTargz(),
+            ],
+        }).then(() => {
+            shell.cp('-R', `${env.patchesFolder}/autoreconf/*`, `${env.sourceFolder}`);
+            shell.rm('-rf', `${env.patchesFolder}/autoreconf`);
+        });
     }
 }
 

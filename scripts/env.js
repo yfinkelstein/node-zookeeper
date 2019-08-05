@@ -39,6 +39,7 @@ const variables = {
     sha512sum,
     downloadedFolderName,
     sourceFolder: `${rootFolder}/deps/zookeeper`,
+    patchesFolder: `${rootFolder}/patches`,
     downloadedFileName,
     downloadUrl: `http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeperVersion}/${downloadedFileName}`,
     isWindows,
