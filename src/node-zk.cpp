@@ -136,7 +136,6 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "aw_get_children2",  AWGetChildren2);
         Nan::SetPrototypeMethod(constructor_template,  "a_set",  ASet);
         Nan::SetPrototypeMethod(constructor_template,  "a_delete_",  ADelete);
-        // Nan::SetPrototypeMethod(constructor_template,  "s_delete_",  Delete);
         Nan::SetPrototypeMethod(constructor_template,  "a_get_acl",  AGetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "a_set_acl",  ASetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "add_auth",  AddAuth);
