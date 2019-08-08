@@ -11,6 +11,16 @@ function exec(action) {
     return res.stdout;
 }
 
+function retry(func, ...args) {
+    try {
+        return func(...args);
+    } catch (e) {
+        shell.echo(e.message);
+        return func(...args);
+    }
+}
+
 module.exports = {
     exec,
+    retry,
 };

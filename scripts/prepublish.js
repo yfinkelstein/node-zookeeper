@@ -4,7 +4,7 @@ const shell = require('shelljs');
 const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 const env = require('./env.js');
-const { exec } = require('./helper.js');
+const { exec, retry } = require('./helper.js');
 
 function writeFile(url, destination, resolve, reject) {
     const file = fs.createWriteStream(destination);
@@ -120,7 +120,7 @@ if (env.isVerbose) {
 
 shell.cd(env.workFolder);
 
-download(env.downloadUrl, env.downloadedFileName)
+retry(download, env.downloadUrl, env.downloadedFileName)
     .then(() => {
         validateFile(env.downloadedFileName);
 
