@@ -136,7 +136,6 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "aw_get_children2",  AWGetChildren2);
         Nan::SetPrototypeMethod(constructor_template,  "a_set",  ASet);
         Nan::SetPrototypeMethod(constructor_template,  "a_delete_",  ADelete);
-        Nan::SetPrototypeMethod(constructor_template,  "s_delete_",  Delete);
         Nan::SetPrototypeMethod(constructor_template,  "a_get_acl",  AGetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "a_set_acl",  ASetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "add_auth",  AddAuth);
@@ -260,7 +259,7 @@ public:
     }
 
     static void New(const Nan::FunctionCallbackInfo<Value>& info) {
-        LOG_DEBUG(("New: creating a new ZooKeeper"));
+        LOG_DEBUG(NULL, "New: creating a new ZooKeeper");
         ZooKeeper *zk = new ZooKeeper();
 
         zk->Wrap(info.This());
@@ -270,7 +269,7 @@ public:
 
     void yield () {
         if (is_closed) {
-            LOG_DEBUG(("yield: was closed"));
+            LOG_DEBUG(NULL, "yield: was closed");
             return;
         }
 
@@ -289,7 +288,7 @@ public:
         }
 
         if (rc) {
-            LOG_ERROR(("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc)));
+            LOG_ERROR(NULL, "yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc));
             return;
         }
 
@@ -304,11 +303,11 @@ public:
         int64_t delay = tv.tv_sec * 1000 + tv.tv_usec / 1000.;
 
         int events = (interest & ZOOKEEPER_READ ? UV_READABLE : 0) | (interest & ZOOKEEPER_WRITE ? UV_WRITABLE : 0);
-        LOG_DEBUG(("Interest in (fd=%i, read=%s, write=%s, timeout=%d)",
+        LOG_DEBUG(NULL, "Interest in (fd=%i, read=%s, write=%s, timeout=%d)",
                    fd,
                    events & UV_READABLE ? "true" : "false",
                    events & UV_WRITABLE ? "true" : "false",
-                   delay));
+                   delay);
 
         // If the file descriptor to watch has changed, then
         // a new uv_poll_t handle needs to be created to watch it.
@@ -319,10 +318,10 @@ public:
                 zk_io = NULL;
             }
 
-            LOG_DEBUG(("yield: creating a new poll handle for %lp", this));
+            LOG_DEBUG(NULL, "yield: creating a new poll handle for %lp", this);
             zk_io = (uv_poll_t*)malloc(sizeof(uv_poll_t));
             if (!zk_io) {
-                LOG_ERROR(("Failed to malloc memory for uv_poll_t"));
+                LOG_ERROR(NULL, "Failed to malloc memory for uv_poll_t");
                 return;
              }
 
@@ -334,14 +333,14 @@ public:
              #endif
         }
 
-        LOG_DEBUG(("yield: starting poll for %lp from thread %lp", this));
+        LOG_DEBUG(NULL, "yield: starting poll for %lp from thread %lp", this);
         uv_poll_start(zk_io, events, &zk_io_cb);
 
         uv_timer_start(&zk_timer, &zk_timer_cb, delay, delay);
     }
 
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
-        LOG_DEBUG(("zk_io_cb fired, status: %d, revents: %d", status, revents));
+        LOG_DEBUG(NULL, "zk_io_cb fired, status: %d, revents: %d", status, revents);
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 
         int events;
@@ -354,7 +353,7 @@ public:
 
         int rc = zookeeper_process (zk->zhandle, events);
         if (rc != ZOK) {
-            LOG_ERROR(("yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc)));
+            LOG_ERROR(NULL, "yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc));
 
             // Explicitly check for the return code, and close the session.
             if (rc == ZNOTHING) {
@@ -371,7 +370,7 @@ public:
 #else
     static void zk_timer_cb (uv_timer_t *w, int status) {
 #endif
-        LOG_DEBUG(("zk_timer_cb fired"));
+        LOG_DEBUG(NULL, "zk_timer_cb fired");
 
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
         int64_t now = uv_now(uv_default_loop());
@@ -379,7 +378,7 @@ public:
 
         // if last_activity + tv.tv_sec is older than now, we did time out
         if (timeout < now) {
-            LOG_DEBUG(("ping timer went off"));
+            LOG_DEBUG(NULL, "ping timer went off");
             // timeout occurred, take action
             zk->yield ();
         } else {
@@ -389,7 +388,7 @@ public:
             int64_t delay = timeout - now + 1;
             uv_timer_start(w, &zk_timer_cb, delay, delay);
 
-            LOG_DEBUG(("delaying ping timer by %lu", delay));
+            LOG_DEBUG(NULL, "delaying ping timer by %lu", delay);
         }
     }
 
@@ -403,7 +402,7 @@ public:
         myid = *client_id;
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         if (!zhandle) {
-            LOG_ERROR(("zookeeper_init returned 0!"));
+            LOG_ERROR(NULL, "zookeeper_init returned 0!");
             return false;
         }
         Ref();
@@ -460,7 +459,7 @@ public:
 
     static void main_watcher (zhandle_t *zzh, int type, int state, const char *path, void* context) {
         Nan::HandleScope scope;
-        LOG_DEBUG(("main watcher event: type=%d, state=%d, path=%s", type, state, (path ? path: "null")));
+        LOG_DEBUG(NULL, "main watcher event: type=%d, state=%d, path=%s", type, state, (path ? path: "null"));
         ZooKeeper *zk = static_cast<ZooKeeper *>(context);
 
         if (type == ZOO_SESSION_EVENT) {
@@ -470,10 +469,10 @@ public:
             } else if (state == ZOO_CONNECTING_STATE) {
                 zk->DoEmitPath (Nan::New(on_connecting), path);
             } else if (state == ZOO_AUTH_FAILED_STATE) {
-                LOG_ERROR(("Authentication failure. Shutting down...\n"));
+                LOG_ERROR(NULL, "Authentication failure. Shutting down...\n");
                 zk->realClose(ZOO_AUTH_FAILED_STATE);
             } else if (state == ZOO_EXPIRED_SESSION_STATE) {
-                LOG_ERROR(("Session expired. Shutting down...\n"));
+                LOG_ERROR(NULL, "Session expired. Shutting down...\n");
                 zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             }
         } else if (type == ZOO_CREATED_EVENT) {
@@ -487,7 +486,7 @@ public:
         } else if (type == ZOO_NOTWATCHING_EVENT) {
             zk->DoEmitPath(Nan::New(on_event_notwatching), path);
         } else {
-            LOG_WARN(("Unknonwn watcher event type %s",type));
+            LOG_WARN(NULL, "Unknonwn watcher event type %s",type);
         }
     }
 
@@ -529,10 +528,10 @@ public:
 
         if (path != 0) {
             str = LOCAL_STRING(path);
-            LOG_DEBUG(("calling Emit(%s, path='%s')", *Nan::Utf8String(event_name), path));
+            LOG_DEBUG(NULL, "calling Emit(%s, path='%s')", *Nan::Utf8String(event_name), path);
         } else {
             str = Nan::Undefined();
-            LOG_DEBUG(("calling Emit(%s, path=null)", *Nan::Utf8String(event_name)));
+            LOG_DEBUG(NULL, "calling Emit(%s, path=null)", *Nan::Utf8String(event_name));
         }
 
         this->DoEmit(event_name, str);
@@ -628,7 +627,7 @@ public:
             value = "null";
         }
 
-        LOG_DEBUG(("rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, cb));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s, path=%s, data=%lp", rc, zerror(rc), value, cb);
 
         CALLBACK_PROLOG(3);
         argv[2] = LOCAL_STRING(value);
@@ -660,7 +659,7 @@ public:
         }
 
         CALLBACK_PROLOG(2);
-        LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s", rc, zerror(rc));
         CALLBACK_EPILOG();
 
         free(d);
@@ -700,7 +699,7 @@ public:
     static void stat_completion (int rc, const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(3);
 
-        LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s", rc, zerror(rc));
         argv[2] = rc == ZOK ? zkk->createStatObject (stat) : Nan::Null().As<Object>();
 
         CALLBACK_EPILOG();
@@ -724,7 +723,7 @@ public:
     static void data_completion (int rc, const char *value, int value_len, const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(4);
 
-        LOG_DEBUG(("rc=%d, rc_string=%s, value=%.*s", rc, zerror(rc), value_len, value));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s, value=%.*s", rc, zerror(rc), value_len, value);
 
         argv[2] = stat != 0 ? zkk->createStatObject (stat) : Nan::Null().As<Object>();
 
@@ -735,16 +734,6 @@ public:
         }
 
         CALLBACK_EPILOG();
-    }
-
-    static void Delete(const Nan::FunctionCallbackInfo<Value>& info) {
-        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
-        assert(zk);
-        Nan::Utf8String _path (toString(info[0]));
-        uint32_t version = toUint(info[1]);
-
-        int ret = zoo_delete(zk->zhandle, *_path, version);
-        RETURN_VALUE(info, Nan::New<Int32>(ret));
     }
 
     static void AGet(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -787,7 +776,7 @@ public:
     static void strings_completion (int rc, const struct String_vector *strings, const void *cb) {
         CALLBACK_PROLOG(3);
 
-        LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s", rc, zerror(rc));
 
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
@@ -822,7 +811,7 @@ public:
     static void strings_stat_completion (int rc, const struct String_vector *strings, const struct Stat *stat, const void *cb) {
         CALLBACK_PROLOG(4);
 
-        LOG_DEBUG(("rc=%d, rc_string=%s", rc, zerror(rc)));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s", rc, zerror(rc));
 
         if (strings != NULL) {
             Local<Array> ar = Nan::New<Array>((uint32_t)strings->count);
@@ -952,7 +941,7 @@ public:
     }
 
     static void acl_completion (int rc, struct ACL_vector *acl, struct Stat *stat, const void *cb) {
-        LOG_DEBUG(("rc=%d, rc_string=%s, acl_vector=%lp", rc, zerror(rc), acl));
+        LOG_DEBUG(NULL, "rc=%d, rc_string=%s, acl_vector=%lp", rc, zerror(rc), acl);
         CALLBACK_PROLOG(4);
 
         argv[2] = acl != NULL ? zkk->createAclObject(acl) : Nan::Null().As<Object>();
@@ -1008,15 +997,15 @@ public:
         }
 
         if (zhandle) {
-            LOG_DEBUG(("call zookeeper_close(%lp)", zhandle));
+            LOG_DEBUG(NULL, "call zookeeper_close(%lp)", zhandle);
             zookeeper_close(zhandle);
             zhandle = 0;
 
-            LOG_DEBUG(("zookeeper_close() returned"));
+            LOG_DEBUG(NULL, "zookeeper_close() returned");
 
             if (zk_io) {
                 int rc = uv_poll_stop(zk_io);
-                LOG_DEBUG(("zookeeper_close(%lp) uv_poll_stop result: %d", this, rc));
+                LOG_DEBUG(NULL, "zookeeper_close(%lp) uv_poll_stop result: %d", this, rc);
 
                 uv_close((uv_handle_t*) zk_io, delete_on_close);
                 zk_io = NULL;
@@ -1045,7 +1034,7 @@ public:
 
     virtual ~ZooKeeper() {
         //realClose ();
-        LOG_INFO(("ZooKeeper destructor invoked"));
+        LOG_INFO(NULL, "ZooKeeper destructor invoked");
     }
 
 #ifdef WIN32

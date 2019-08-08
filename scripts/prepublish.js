@@ -41,19 +41,19 @@ function validateFile(fileName) {
     let res;
 
     if (env.isWindows) {
-        const output = exec(`certutil -hashfile ${fileName} SHA1`).split('\r\n');
+        const output = exec(`certutil -hashfile ${fileName} SHA512`).split('\r\n');
 
         // `certutil` returns 2byte separated string
         // (e.g. "a9 89 b5 27 f3 f9 90 d4 71 e6 d4 7e e4 10 e5 7d 8b e7 62 0b")
-        const sha1 = output[1].replace(/ /g, '');
+        const sha512 = output[1].replace(/ /g, '');
 
-        res = `${sha1}  ${fileName}`;
+        res = `${sha512}  ${fileName}`;
     } else {
-        res = exec(`shasum -a 1 ${fileName}`).trim();
+        res = exec(`shasum -a 512 ${fileName}`).trim();
     }
 
-    if (res !== env.sha1sum) {
-        throw new Error(`Wrong sha1 for ${fileName}! Expected "${env.sha1sum}", got "${res}".`);
+    if (res !== env.sha512sum) {
+        throw new Error(`Wrong sha512 for ${fileName}! Expected "${env.sha512sum}", got "${res}".`);
     }
 }
 
@@ -66,31 +66,40 @@ function clearPath() {
 }
 
 function moveFolder() {
+    const sourceCodeFolder = `${env.downloadedFolderName}/zookeeper-client/zookeeper-client-c`;
     if (env.isWindows) {
-        shell.cp('-r', env.downloadedFolderName, env.sourceFolder);
+        shell.cp('-r', sourceCodeFolder, env.sourceFolder);
         shell.rm('-rf', env.downloadedFolderName);
         return;
     }
 
-    shell.mv(env.downloadedFolderName, env.sourceFolder);
+    shell.mv(sourceCodeFolder, env.sourceFolder);
 }
 
 function applyPatches() {
     if (env.isWindows) {
-        const destination = `${env.sourceFolder}/src/c/src`;
+        const destination = `${env.sourceFolder}/src`;
 
         shell.sed('-i', '#include "zookeeper_log.h"', '#include "zookeeper_log.h"\n#include "winport.h"\n', `${destination}/zk_log.c`);
         shell.sed('-i', '#include "zookeeper.h"', '#include "winport.h"\n#include "zookeeper.h"\n', `${destination}/zk_adaptor.h`);
         shell.sed('-i', '#include "zk_adaptor.h"', '#include "zk_adaptor.h"\n#include "winport.h"\n', `${destination}/zookeeper.c`);
 
-        if (!process.env.ZK_INSTALL_VERBOSE) {
+        if (!env.isVerbose) {
             const cmakeFile = 'CMakeLists.txt';
-            shell.cp(`${env.rootFolder}/patches/${cmakeFile}`, `${env.sourceFolder}/src/c/${cmakeFile}`);
+            shell.cp(`${env.patchesFolder}/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
         }
-        return;
-    }
+    } else {
+        exec(`patch -p0 < ${env.patchesFolder}/ZOOKEEPER-3078.patch`);
 
-    exec(`patch -p0 < ${env.rootFolder}/patches/ZOOKEEPER-642.patch`);
+        decompress(`${env.patchesFolder}/autoreconf.tar.gz`, `${env.patchesFolder}`, {
+            plugins: [
+                decompressTargz(),
+            ],
+        }).then(() => {
+            shell.cp('-R', `${env.patchesFolder}/autoreconf/*`, `${env.sourceFolder}`);
+            shell.rm('-rf', `${env.patchesFolder}/autoreconf`);
+        });
+    }
 }
 
 if (env.isAlreadyBuilt) {
@@ -99,7 +108,10 @@ if (env.isAlreadyBuilt) {
 }
 
 shell.config.fatal = true;
-shell.config.verbose = true;
+
+if (env.isVerbose) {
+    shell.config.verbose = true;
+}
 
 shell.cd(env.workFolder);
 

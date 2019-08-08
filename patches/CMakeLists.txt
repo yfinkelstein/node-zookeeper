@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(zookeeper VERSION 3.4.13)
+project(zookeeper VERSION 3.5.5)
 set(email user@zookeeper.apache.org)
 set(description "zookeeper C client")
 
 # general options
-include_directories(include tests generated ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 add_compile_options(/W0)
 add_definitions(-DUSE_STATIC_LIB)
 
@@ -38,12 +37,13 @@ foreach(f generated/zookeeper.jute.h generated/zookeeper.jute.c)
 endforeach()
 
 # configure
-configure_file(cmake_config.h.in ${CMAKE_SOURCE_DIR}/include/config.h)
+configure_file(cmake_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
 
 # hashtable library
 set(hashtable_sources src/hashtable/hashtable_itr.c src/hashtable/hashtable.c)
 add_library(hashtable STATIC ${hashtable_sources})
-target_link_libraries(hashtable PUBLIC $<$<PLATFORM_ID:Linux>:m>)
+target_include_directories(hashtable PUBLIC include)
+target_link_libraries(hashtable PUBLIC $<$<OR:$<PLATFORM_ID:Linux>,$<PLATFORM_ID:FreeBSD>>:m>)
 
 # zookeeper library
 set(zookeeper_sources
@@ -51,13 +51,15 @@ set(zookeeper_sources
   src/recordio.c
   generated/zookeeper.jute.c
   src/zk_log.c
-  src/zk_hashtable.c)
+  src/zk_hashtable.c
+  src/addrvec.c)
 
 list(APPEND zookeeper_sources src/st_adaptor.c)
 
 list(APPEND zookeeper_sources src/winport.c)
 
 add_library(zookeeper STATIC ${zookeeper_sources})
+target_include_directories(zookeeper PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include generated)
 target_link_libraries(zookeeper PUBLIC
   hashtable
   $<$<PLATFORM_ID:Linux>:rt> # clock_gettime

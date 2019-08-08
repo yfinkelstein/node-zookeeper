@@ -28,18 +28,19 @@ if (env.isAlreadyBuilt) {
 shell.config.fatal = true;
 shell.config.verbose = true;
 
-shell.cd(`${env.sourceFolder}/src/c`);
+shell.cd(`${env.sourceFolder}`);
 
 if (env.isWindows) {
     exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
     exec('cmake --build .');
 } else {
-    let configureCmd = './configure --without-syncapi --disable-shared --with-pic';
+    let configureCmd = './configure --without-syncapi --disable-shared --with-pic --without-cppunit';
     let makeCmd = 'make';
     if (!process.env.ZK_INSTALL_VERBOSE) {
         configureCmd += ' --enable-silent-rules --quiet';
         makeCmd += ' --no-print-directory --quiet';
     }
+
     exec(configureCmd);
     exec(makeCmd);
 }
