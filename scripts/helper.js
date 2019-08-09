@@ -16,6 +16,7 @@ function retry(func, ...args) {
         return func(...args);
     } catch (e) {
         shell.echo(e.message);
+        shell.echo(`Retrying ${func.name}`);
         return func(...args);
     }
 }
