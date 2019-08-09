@@ -20,7 +20,7 @@ async function retry(func, ...args) {
         shell.echo(e.message);
         shell.echo(`Retrying ${func.name}`);
 
-        res = func(...args);
+        res = await func(...args);
     }
 
     return res;
