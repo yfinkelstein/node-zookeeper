@@ -11,14 +11,19 @@ function exec(action) {
     return res.stdout;
 }
 
-function retry(func, ...args) {
+async function retry(func, ...args) {
+    let res;
+
     try {
-        return func(...args);
+        res = await func(...args);
     } catch (e) {
         shell.echo(e.message);
         shell.echo(`Retrying ${func.name}`);
-        return func(...args);
+
+        res = func(...args);
     }
+
+    return res;
 }
 
 module.exports = {

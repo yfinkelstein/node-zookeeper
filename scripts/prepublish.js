@@ -14,17 +14,12 @@ function writeFile(url, destination, resolve, reject) {
     });
 
     req.on('error', (e) => {
-        try {
-            file.unlink(destination);
-        } catch (err) {
-            shell.echo(err.message);
-        }
-
+        shell.rm(destination);
         reject(e);
     });
 
     file.on('error', () => {
-        file.unlink(destination);
+        shell.rm(destination);
         reject(new Error('File error'));
     });
 
