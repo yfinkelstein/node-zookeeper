@@ -1,4 +1,4 @@
-const { createClient, ZooKeeper } = require('./wrapper.js');
+const { constants, createClient } = require('./wrapper.js');
 const notifier = require('./notifier.js');
 const logger = require('./logger.js');
 
@@ -10,7 +10,7 @@ function emit(client, path) {
 async function createWorkerPath(client, path) {
     try {
         // eslint-disable-next-line no-bitwise
-        const createdPath = await client.create(path, '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE);
+        const createdPath = await client.create(path, '', constants.ZOO_EPHEMERAL | constants.ZOO_SEQUENCE);
         emit(client, createdPath);
     } catch (error) {
         logger.error(error);

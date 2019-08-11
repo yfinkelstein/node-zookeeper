@@ -1,4 +1,4 @@
-const { createClient, ZooKeeper } = require('./wrapper.js');
+const { constants, createClient } = require('./wrapper.js');
 const notifier = require('./notifier.js');
 const logger = require('./logger.js');
 
@@ -38,7 +38,7 @@ async function runForLeader(client, path) {
     const clientId = client.client_id;
 
     try {
-        await client.create(path, `${clientId}`, ZooKeeper.ZOO_EPHEMERAL);
+        await client.create(path, `${clientId}`, constants.ZOO_EPHEMERAL);
         emit(client, path);
     } catch (error) {
         await checkMaster(client, path, runForLeader);
