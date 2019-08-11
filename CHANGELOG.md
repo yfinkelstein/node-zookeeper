@@ -1,3 +1,8 @@
+#### v 4.4.0 (2019-08-11) ####
+* fix: typos in the code documentation for async `get_children`.
+* fix: retry download the ZooKeeper C Client if failed during `npm install`.
+* feature: use v3.5.5 of the ZooKeeper C Client.
+
 #### v 4.3.0 (2019-07-30) ####
 * Refactor all JavaScript code to ECMAScript 2017 and native Promises: pull request [185](https://github.com/yfinkelstein/node-zookeeper/pull/185) by @jbienkowski311
 * Copy instead of symlink in build process (Windows users can install without admin access): pull request [190](https://github.com/yfinkelstein/node-zookeeper/pull/190)
