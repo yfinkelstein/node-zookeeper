@@ -1,10 +1,10 @@
-const { constants, ZooKeeper } = require('../lib/index');
+const { constants, Promise: ZooKeeper } = require('../lib/index');
 
 const host = process.argv[2] || '127.0.0.1:2181';
 
 /**
  * @param timeoutMs {number}
- * @returns {ZooKeeperPromise}
+ * @returns {ZooKeeper}
  */
 function createClient(timeoutMs = 5000) {
     const config = {
