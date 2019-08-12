@@ -1,4 +1,4 @@
-var ZK = require ('../lib/zookeeper');
+var { constants, ZooKeeper: ZK } = require ('../lib/index');
 var assert = require('assert');
 var log4js = require('log4js');
 var async = require('async');
@@ -23,10 +23,10 @@ function startZK(options, callback) {
     throw new TypeError('callback (Function) required');
 
   var log = options.log4js.getLogger('mkdirp-test');
-  var zkLogLevel = ZK.ZOO_LOG_LEVEL_WARNING;
+  var zkLogLevel = constants.ZOO_LOG_LEVEL_WARNING;
 
   if(log.isTraceEnabled())
-    zkLogLevel = ZK.ZOO_LOG_LEVEL_DEBUG;
+    zkLogLevel = constants.ZOO_LOG_LEVEL_DEBUG;
 
   var zk = new ZK({
     connect: options.zookeeper,

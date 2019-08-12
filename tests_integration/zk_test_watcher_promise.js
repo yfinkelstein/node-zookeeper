@@ -1,6 +1,4 @@
-const ZK = require("../lib/zk_promise");
-const assert = require('assert');
-const util = require('util');
+const { constants, Promise: ZK } = require("../lib/index");
 const connect = (process.argv[2] || 'localhost:2181');
 
 const defer = () => {
@@ -17,7 +15,7 @@ const deferred_watcher_ready = defer();
 
 const zk_config = {
   connect: connect,
-  debug_level: ZK.ZOO_LOG_LEVEL_WARN,
+  debug_level: constants.ZOO_LOG_LEVEL_WARN,
   timeout: 20000,
   host_order_deterministic: false
 };
@@ -30,7 +28,7 @@ let context = {};
 zk_r.on_connected()
   .then(function (zkk) {
     console.log("reader on_connected: zk=%j", zkk);
-    return zkk.create("/node.js2", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL);
+    return zkk.create("/node.js2", "some value", constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL);
   })
   .then((pathOrErrNo) => {
     let path;

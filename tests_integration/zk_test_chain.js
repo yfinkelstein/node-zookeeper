@@ -1,6 +1,5 @@
 var assert = require ('assert');
-var util = require('util');
-var ZK = require ("../lib/zookeeper");
+var { constants, ZooKeeper: ZK } = require ("../lib/index");
 
 if (process.argv.length < 2)
     throw new Error ("must supply number of  sessions (optionally)");
@@ -10,7 +9,7 @@ var connect = (process.argv[3] || 'localhost:2181');
 var sessionsFinished = 0;
 //-------------------------------------------------------------------- operations begin ---------------------------------------
 function createNode (context, step) {
-    context.zk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE/* | ZK.ZOO_EPHEMERAL*/, function (rc, error, path) {
+    context.zk.a_create ("/node.js1", "some value", constants.ZOO_SEQUENCE/* | constants.ZOO_EPHEMERAL*/, function (rc, error, path) {
         console.log ("node create result: %d, path=%s, error:'%s'", rc, path, error);
         if (rc != 0) {
             throw error;
@@ -22,7 +21,7 @@ function createNode (context, step) {
 
 function createChildren (context, step) {
     for (var i = 0; i < 3; i ++) {
-        context.zk.a_create (context.created_path+"/"+i, "some value", ZK.ZOO_EPHEMERAL, function (rc, error, path) {
+        context.zk.a_create (context.created_path+"/"+i, "some value", constants.ZOO_EPHEMERAL, function (rc, error, path) {
             var cindex = path.charAt(path.length -1) - '0';
             console.log ("add child %d result: %d, path=%s, error:'%s'", cindex, rc, path, error);
             if (rc != 0) {
@@ -134,17 +133,17 @@ function completedStep (context, step) {
 }
 
 function zkTest (session) {
-    var zk = new ZK ();
+    var zk = new ZK();
     console.log ("session #%d before init: state=%j", session, zk);
-    assert.equal (ZK.ZOO_LOG_LEVEL_WARN, 2);
-    zk.init ({connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
+    assert.equal (constants.ZOO_LOG_LEVEL_WARN, 2);
+    zk.init ({connect:connect, timeout:20000, debug_level:constants.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
     console.log ("session #%d after init: zk=%j", session, zk);
-    zk.on (ZK.on_connected, function (zkk, clientid) {
+    zk.on (constants.on_connected, function (zkk, clientid) {
         console.log ("zk session %d on_connected: clientid=%s", session, clientid);
         console.log ("session %d details: %j", session, zkk);
         startChain ({zk:zkk, session:session});
     });
-    zk.on (ZK.on_closed, function (zkk, clientid) {
+    zk.on (constants.on_closed, function (zkk, clientid) {
         console.log ("session %d closed, clientid=%s, zkk=%j", session, clientid, zkk);
     });
 };

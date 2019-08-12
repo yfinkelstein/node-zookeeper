@@ -1,4 +1,4 @@
-var ZK = require('../lib/zookeeper'),
+var { constants, ZooKeeper: ZK } = require('../lib/index'),
     Buffer = require('buffer').Buffer,
     exec = require('child_process').exec,
     util = require('util');
@@ -10,7 +10,7 @@ var err = false;
 zk.connect({
     connect: connect,
     timeout: 5000,
-    debug_level: ZK.ZOO_LOG_LEVEL_WARN,
+    debug_level: constants.ZOO_LOG_LEVEL_WARN,
     host_order_deterministic: false,
     data_as_buffer: false
 }, function (err) {
@@ -21,7 +21,7 @@ zk.connect({
 
     function phase2() {
         zk.data_as_buffer = true;
-        zk.a_create('/node.js1', b, ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path) {
+        zk.a_create('/node.js1', b, constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL, function (rc, error, path) {
             // console.log(util.inspect(zk));
             if (rc != 0 && rc != -110) {
                 console.log("zk node create result: %d, error: '%s', path=%s", rc, error, path);
@@ -46,7 +46,7 @@ zk.connect({
         });
     }
 
-    zk.a_create('/node.js1', b, ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc, error, path) {
+    zk.a_create('/node.js1', b, constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL, function (rc, error, path) {
         console.log(util.inspect(zk));
         if (rc != 0 && rc != -110) { // -110 means "already created"
             console.log("zk node create result: %d, error: '%s', path=%s", rc, error, path);

@@ -2,7 +2,7 @@
 var assert = require('assert');
 var util = require('util');
 
-var ZK = require ("../lib/zookeeper");
+var { constants, ZooKeeper: ZK } = require ("../lib/index");
 
 onmessage = function(msg) {
     postMessage({ echo : msg });
@@ -21,13 +21,13 @@ onmessage = function(msg) {
         }
     };
     
-    var zk = new ZK;
-    //zk.init ({connect:"localhost:2181,localhost:2182,localhost:2183", timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
-    zk.init ({connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
-    zk.on (ZK.on_connected, function (zk) {
+    var zk = new ZK();
+    //zk.init ({connect:"localhost:2181,localhost:2182,localhost:2183", timeout:20000, debug_level:constants.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
+    zk.init ({connect:connect, timeout:20000, debug_level:constants.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false});
+    zk.on (constants.on_connected, function (zk) {
         util.debug ("[from worker #" + my_worker_index + "]session connected");
         for (var i = 0; i < N; i ++) {
-            zk.a_create ("/node.js1", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, oncreate);
+            zk.a_create ("/node.js1", "some value", constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL, oncreate);
         }
     });
 
