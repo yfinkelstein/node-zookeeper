@@ -1,4 +1,4 @@
-var ZK = require("../lib/zookeeper"),
+var { constants, ZooKeeper: ZK } = require("../lib/index"),
     Buffer = require('buffer').Buffer,
     exec = require('child_process').exec;
 
@@ -15,22 +15,22 @@ function done(v) {
     }
 }
 
-zk.init({ connect: connect, timeout: 5000, debug_level: ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic: false, data_as_buffer: false });
-zk.on(ZK.on_connected, function (zkk) {
+zk.init({ connect: connect, timeout: 5000, debug_level: constants.ZOO_LOG_LEVEL_WARN, host_order_deterministic: false, data_as_buffer: false });
+zk.on(constants.on_connected, function (zkk) {
     console.log('zk session established, id=%s', zkk.client_id);
     var b = Buffer.from('\u00bd + \u00bc = \u00be');
 
     (function testExisting() {
         ++tests;
         zk.data_as_buffer = true;
-        zkk.a_create('/zk_test_a_get_children.js1', b, ZK.ZOO_SEQUENCE, function (rc, error, path) {
+        zkk.a_create('/zk_test_a_get_children.js1', b, constants.ZOO_SEQUENCE, function (rc, error, path) {
             // console.log(util.inspect(zkk));
             if (rc != 0) {
                 console.log("ERROR zk node1 create result: %d, error: '%s', path=%s", rc, error, path);
                 zkk.a_delete_(path, 0, function (rcd, errord) { done(rc); });
                 return;
             }
-            zkk.a_create(path + '/child', b, ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, function (rc2, error2, path2) {
+            zkk.a_create(path + '/child', b, constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL, function (rc2, error2, path2) {
                 if (rc2 != 0) {
                     console.log("ERROR zk node1c create result: %d, error: '%s', path=%s", rc2, error2, path2);
                     zkk.a_delete_(path, 0, function (rcd, errord) { done(r2); });
@@ -56,7 +56,7 @@ zk.on(ZK.on_connected, function (zkk) {
     (function testEmpty() {
         ++tests;
         zk.data_as_buffer = true;
-        zkk.a_create('/zk_test_a_get_children.js2', b, ZK.ZOO_SEQUENCE, function (rc, error, path) {
+        zkk.a_create('/zk_test_a_get_children.js2', b, constants.ZOO_SEQUENCE, function (rc, error, path) {
             if (rc != 0) {
                 console.log("ERROR zk node2 create result: %d, error: '%s', path=%s", rc, error, path);
                 zkk.a_delete_(path, 0, function (rcd, errord) { done(rc); });

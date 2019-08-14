@@ -1,7 +1,4 @@
-var assert = require ('assert');
-var util = require('util');
-
-var ZK = require ("../lib/zookeeper");
+var { constants, ZooKeeper: ZK } = require ("../lib/index");
 
 if (process.argv.length < 2)
     throw new Error ("must supply number of  sessions (optionally)");
@@ -12,7 +9,7 @@ var sessionsFinished = 0;
 //-------------------------------------------------------------------- operations begin ---------------------------------------
 
 function createNode (context, step) {
-    context.zk.a_create ("/node.js2", "some value", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL, 
+    context.zk.a_create ("/node.js2", "some value", constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL, 
         function (rc, error, path) {
             console.log ("node create result: %d, path=%s, error:'%s'", rc, path, error);
             if (rc != 0) {
@@ -35,7 +32,7 @@ function watchNode (context, step) {
             context.zk.emit (EVENT_WATCHER_READY, context.created_path);
         }
     );
-    context.zk.on (ZK.on_event_changed, 
+    context.zk.on (constants.on_event_changed, 
         function (zkk, path) {
             console.log ("watcher changed event: path=%s", path);
             completedStep (context, step);
@@ -75,11 +72,11 @@ function completedStep (context, step) {
      context.callChain[step+1](context, step+1);
 }
 
-var zk_config = {connect:connect, timeout:20000, debug_level:ZK.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false};
+var zk_config = {connect:connect, timeout:20000, debug_level:constants.ZOO_LOG_LEVEL_WARN, host_order_deterministic:false};
 
 var zk_r = new ZK ();
 zk_r.init (zk_config);
-zk_r.on (ZK.on_connected, 
+zk_r.on (constants.on_connected, 
     function (zkk) {
         console.log ("reader on_connected: zk=%j", zkk);
         startChain ({zk:zkk, session:0, callChain:reader_chain});
@@ -90,7 +87,7 @@ var zk_w = new ZK();
 zk_r.on (EVENT_WATCHER_READY, 
     function (watched_path) {
         zk_w.init (zk_config);
-        zk_w.on (ZK.on_connected, 
+        zk_w.on (constants.on_connected, 
             function (zkk) {
                 console.log ("writer on_connected: zk=%j", zkk);
                 startChain ({zk:zkk, session:1, callChain:writer_chain, created_path:watched_path});

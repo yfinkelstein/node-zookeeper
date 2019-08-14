@@ -32,12 +32,12 @@ game #2:
 */
 
 var promise = require("../lib/promise");
-var ZK = require("../lib/zk_promise");
+var { constants, Promise: ZK } = require("../lib/index");
 
 var NGames = parseInt (process.argv[2] || 1);
 var connect  = (process.argv[3] || 'localhost:2181');
 
-var zk_config = {connect:connect, debug_level:ZK.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
+var zk_config = {connect:connect, debug_level:constants.ZOO_LOG_LEVEL_WARN, timeout:20000, host_order_deterministic:false};
 
 function Game (game_number, base_path) {
     var start_promise = promise.defer();
@@ -60,7 +60,7 @@ function Game (game_number, base_path) {
             then ( // create my own gate node 
                 function (zkk){
                     console.log ("player %s on_connected: zk=%j", context.name, zkk);
-                    return zkk.create (base_path + context.name, "target", 0/*ZK.ZOO_SEQUENCE*/);
+                    return zkk.create (base_path + context.name, "target", 0/*constants.ZOO_SEQUENCE*/);
                 }
             ).then ( // store the actual gate node path in the context and fire "I'm ready"
                 function (actual_gate_path) {
@@ -88,7 +88,7 @@ function Game (game_number, base_path) {
         var Shoot = function () {
             console.log ("====>player %s says: I made %d shots, he made %s shots", context.name, context.my_shots, context.his_shots);
             console.log ("player %s is about to attack", context.name);
-            zk.create (context.other_gate + "/attack", "kick", ZK.ZOO_SEQUENCE | ZK.ZOO_EPHEMERAL).then (
+            zk.create (context.other_gate + "/attack", "kick", constants.ZOO_SEQUENCE | constants.ZOO_EPHEMERAL).then (
                 function (created_node) {
                     console.log ("player %s attacked with %s", context.name, created_node);
                     context.my_shots ++;
