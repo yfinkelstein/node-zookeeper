@@ -4,7 +4,7 @@ const host = process.argv[2] || '127.0.0.1:2181';
 
 /**
  * @param timeoutMs {number}
- * @returns {ZooKeeper}
+ * @returns {ZooKeeperPromise}
  */
 function createClient(timeoutMs = 5000) {
     const config = {
