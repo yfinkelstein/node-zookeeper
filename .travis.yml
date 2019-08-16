@@ -8,7 +8,7 @@ os:
   - osx
   - windows
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-9; f
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-9; fi
 install:
   - npm install
 script:
