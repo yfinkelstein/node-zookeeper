@@ -1,0 +1,18 @@
+FROM gcc
+
+RUN gcc --version
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
+
+WORKDIR /app
+
+COPY . /app
+
+RUN rm -rf build
+RUN rm -rf node_modules
+RUN rm -f package-lock.json
+
+RUN npm install --unsafe-perm
+
+CMD ["node", "examples/index", "host.docker.internal:2181"]
