@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: zookeeper:3.5
+
+  examples:
+    build:
+      context: .
+      dockerfile: Dockerfile.examples
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+
+  gcc:
+    build:
+      context: .
+      dockerfile: Dockerfile.gcc
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+  
+  integration-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.integrationtests
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper

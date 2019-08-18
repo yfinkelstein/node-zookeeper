@@ -10,4 +10,4 @@ RUN rm -f package-lock.json
 
 RUN npm install --unsafe-perm
 
-CMD ["node", "examples/index", "host.docker.internal:2181"]
+CMD ["node", "examples/index", "zookeeper:2181"]
