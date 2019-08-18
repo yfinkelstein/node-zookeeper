@@ -31,13 +31,20 @@ shell.config.verbose = true;
 shell.cd(`${env.sourceFolder}`);
 
 if (env.isWindows) {
-    exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .`);
-    exec('cmake --build .');
+    let flags = '-DWANT_SYNCAPI=OFF ';
+    let output = '';
+
+    if (!env.isVerbose) {
+        flags = '';
+        output = ' > NUL';
+    }
+    exec(`cmake ${flags}-DCMAKE_GENERATOR_PLATFORM=${process.arch} .${output}`);
+    exec(`cmake --build .${output}`);
 } else {
     const flags = '-w';
     let configureCmd = `./configure CFLAGS='${flags}' --without-syncapi --disable-shared --with-pic --without-cppunit`;
     let makeCmd = 'make';
-    if (!process.env.ZK_INSTALL_VERBOSE) {
+    if (!env.isVerbose) {
         configureCmd += ' --enable-silent-rules --quiet';
         makeCmd += ' --no-print-directory --quiet';
     }
