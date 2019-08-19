@@ -1,4 +1,4 @@
-var { constants, ZooKeeper: ZK } = require ("../lib/index");
+var { constants, ZooKeeper: ZK } = require ("../../lib/index");
 
 if (process.argv.length < 3)
     throw new Error ("must supply number of nodes to create and number of sessions (optionally)");

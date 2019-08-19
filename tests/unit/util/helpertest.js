@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const test = require('tape');
-const { deprecationLog } = require('../../lib/helper');
+const { deprecationLog } = require('../../../lib/helper');
 
 class Test {
     static method() {

@@ -31,8 +31,8 @@ game #2:
  Also note how the looping is implemented. Recursion in node.js does not cause stack growth. It's not a tail recursion either...
 */
 
-var promise = require("../lib/promise");
-var { constants, Promise: ZK } = require("../lib/index");
+var promise = require("../../lib/promise");
+var { constants, Promise: ZK } = require("../../lib/index");
 
 var NGames = parseInt (process.argv[2] || 1);
 var connect  = (process.argv[3] || 'localhost:2181');

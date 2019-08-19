@@ -1,5 +1,5 @@
 var assert = require ('assert');
-var { constants, ZooKeeper: ZK } = require ("../lib/index");
+var { constants, ZooKeeper: ZK } = require ("../../lib/index");
 
 if (process.argv.length < 2)
     throw new Error ("must supply number of  sessions (optionally)");

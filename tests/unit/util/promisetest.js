@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const test = require('tape');
 
-const ZkPromise = require('../../lib/promise');
+const ZkPromise = require('../../../lib/promise');
 
 test('ZkPromise get', (t) => {
     t.plan(1);

@@ -1,6 +1,6 @@
 const test = require('tape');
-const NativeZk = require('./../../build/zookeeper.node').ZooKeeper;
-const ZooKeeper = require('../../lib/zookeeper.js');
+const NativeZk = require('../../../build/zookeeper.node').ZooKeeper;
+const ZooKeeper = require('../../../lib/zookeeper');
 
 
 test('ZooKeeper instance creates an instance of the native object', (t) => {

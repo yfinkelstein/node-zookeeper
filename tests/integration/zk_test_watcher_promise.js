@@ -1,4 +1,4 @@
-const { constants, Promise: ZK } = require("../lib/index");
+const { constants, Promise: ZK } = require("../../lib/index");
 const connect = (process.argv[2] || 'localhost:2181');
 
 const defer = () => {

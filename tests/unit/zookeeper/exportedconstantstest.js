@@ -1,7 +1,7 @@
 const test = require('tape');
-const NativeZk = require('./../../build/zookeeper.node').ZooKeeper;
-const constants = require('../../lib/constants.js');
-const ZooKeeper = require('../../lib/zookeeper.js');
+const NativeZk = require('../../../build/zookeeper.node').ZooKeeper;
+const constants = require('../../../lib/constants');
+const ZooKeeper = require('../../../lib/zookeeper');
 
 const keys = Object.keys(NativeZk);
 

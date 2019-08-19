@@ -1,4 +1,4 @@
-var { constants, ZooKeeper: ZK} = require ("../lib/index"),
+var { constants, ZooKeeper: ZK} = require ("../../lib/index"),
     exec = require('child_process').exec;
 
 var zk = new ZK();

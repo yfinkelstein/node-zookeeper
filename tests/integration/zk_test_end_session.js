@@ -1,5 +1,5 @@
 // test session expiration as described in zk FAQ
-var { constants, ZooKeeper: ZK } = require('../lib/index');
+var { constants, ZooKeeper: ZK } = require('../../lib/index');
 var assert = require('assert');
 var connect  = (process.argv[2] || 'localhost:2181');
 var timeout = 5000;

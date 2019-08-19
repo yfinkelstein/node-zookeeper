@@ -1,4 +1,4 @@
-var { constants, ZooKeeper: ZK } = require ('../lib/index');
+var { constants, ZooKeeper: ZK } = require ('../../lib/index');
 var assert = require('assert');
 var log4js = require('log4js');
 var async = require('async');

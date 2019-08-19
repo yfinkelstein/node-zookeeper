@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events');
 const test = require('tape');
-const ZooKeeper = require('../../lib/index.js');
+const ZooKeeper = require('../../../lib/index.js');
 
 function assertPublicApi(zk, t) {
     t.plan(25);

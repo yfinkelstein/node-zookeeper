@@ -2,7 +2,7 @@ const shelljs = require('shelljs');
 const path = require('path');
 
 let n = 1;
-const dir = 'tests_integration';
+const dir = 'tests/integration';
 const zookeeperHost = process.argv[2] || 'localhost:2181';
 
 function runtest (testcase, ...args) {
@@ -11,6 +11,7 @@ function runtest (testcase, ...args) {
     console.log('\x1b[33m%s\x1b[0m', `Running test #${n}: '${testcase}'`);
     args.push(zookeeperHost);
     shelljs.exec(`node ${path.join(dir, testcase)} ${args.join(' ')}`);
+    n++;
 }
 
 runtest('zk_test_a_get_children.js');
