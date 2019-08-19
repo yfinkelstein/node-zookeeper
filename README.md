@@ -265,6 +265,7 @@ Check out the issues tab and grab one! Read the [contributing](./CONTRIBUTING.md
 
 ## Acknowledgments
 
+* [Apache ZooKeeper &trade;](http://zookeeper.apache.org/) source code is included in this repository. An open source volunteer project under the Apache Software Foundation.
 * **[node-webworker](http://github.com/pgriess/node-webworker "node-webworker") by pgriess** is used to spawn multiple ZK workers in one of the tests.
 
 ## LICENSE
