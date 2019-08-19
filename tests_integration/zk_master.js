@@ -1,7 +1,7 @@
 var path = require('path');
 var net = require('net');
 
-var Worker = require("webworker").Worker;
+var Worker = require('webworker').Worker;
 
 // N-nodes N-sessions connect
 if (process.argv.length < 3)

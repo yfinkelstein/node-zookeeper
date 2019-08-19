@@ -1,13 +1,11 @@
 version: '3'
 
 services:
-  zookeeper:
-    image: zookeeper:3.5
-
   examples:
     build:
       context: .
-      dockerfile: Dockerfile.examples
+      dockerfile: Dockerfile.node
+    command: node examples/index zookeeper:2181
     depends_on:
       - zookeeper
     links:
@@ -25,8 +23,12 @@ services:
   integration-tests:
     build:
       context: .
-      dockerfile: Dockerfile.integrationtests
+      dockerfile: Dockerfile.node
+    command: npm run test-integration -- zookeeper:2181
     depends_on:
       - zookeeper
     links:
       - zookeeper
+
+  zookeeper:
+    image: zookeeper:3.5

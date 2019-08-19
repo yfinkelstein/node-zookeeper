@@ -9,10 +9,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN rm -rf build
-RUN rm -rf node_modules
-RUN rm -f package-lock.json
-
 RUN npm install --unsafe-perm
 
-CMD ["node", "examples/index", "zookeeper:2181"]
+CMD ["npm", "run", "test-integration", "--", "zookeeper:2181"]
