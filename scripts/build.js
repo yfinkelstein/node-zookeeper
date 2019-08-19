@@ -26,7 +26,9 @@ if (env.isAlreadyBuilt) {
 }
 
 shell.config.fatal = true;
-shell.config.verbose = true;
+if (env.isVerbose) {
+    shell.config.verbose = true;
+}
 
 shell.cd(`${env.sourceFolder}`);
 
