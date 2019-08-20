@@ -1,2 +1,2 @@
-/tests_integration/*.js
+/tests/integration/*.js
 /deps/**/*.js
