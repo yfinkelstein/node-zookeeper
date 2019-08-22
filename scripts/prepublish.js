@@ -28,7 +28,7 @@ function writeFile(url, destination, resolve, reject) {
 
 function download(url, destination) {
     if (fs.existsSync(destination)) {
-        shell.echo(`${destination} already exists. Skipping download.`);
+        shell.echo(`${destination} exists.`);
 
         return Promise.resolve();
     }

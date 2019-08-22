@@ -4,6 +4,6 @@ npm-debug.log
 .idea
 *.tgz
 deps/zookeeper*
-deps/apache-*
+deps/apache-zookeeper-*/
 .DS_Store
 package-lock.json
