@@ -350,16 +350,15 @@ public:
 
         if (rc == ZOK) {
             zk->noResponseCounter = 0;
+        } else if (rc == ZNOTHING) {
+            zk->noResponseCounter++;
+            LOG_WARN(NULL, "yield:zookeeper_process has returned no response %d times\n", zk->noResponseCounter);
         } else {
-            if (rc == ZNOTHING) {
-                zk->noResponseCounter++;
-                LOG_ERROR(NULL, "yield:zookeeper_process has returned ZNOTHING %d times\n", zk->noResponseCounter);
-            }
-
-            LOG_ERROR(NULL, "yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc));
+            LOG_ERROR(NULL, "yield:zookeeper_process returned an error: %d - %s\n", rc, zerror(rc));
         }
 
         if (zk->noResponseCounter > 10) {
+            LOG_ERROR(NULL, "yield:zookeeper_process returned no response too many times: %d\n", zk->noResponseCounter);
             zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             return;
         }
