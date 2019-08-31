@@ -349,17 +349,17 @@ public:
         int rc = zookeeper_process (zk->zhandle, events);
 
         if (rc == ZOK) {
-            noResponseCounter = 0;
+            zk->noResponseCounter = 0;
         } else {
             if (rc == ZNOTHING) {
-                noResponseCounter++;
-                LOG_ERROR(NULL, "yield:zookeeper_process has returned ZNOTHING %d times\n", noResponseCounter);
+                zk->noResponseCounter++;
+                LOG_ERROR(NULL, "yield:zookeeper_process has returned ZNOTHING %d times\n", zk->noResponseCounter);
             }
 
             LOG_ERROR(NULL, "yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc));
         }
 
-        if (noResponseCounter > 10) {
+        if (zk->noResponseCounter > 10) {
             zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             return;
         }
