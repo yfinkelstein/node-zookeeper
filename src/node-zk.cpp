@@ -347,15 +347,23 @@ public:
         }
 
         int rc = zookeeper_process (zk->zhandle, events);
-        if (rc != ZOK) {
-            LOG_ERROR(NULL, "yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc));
 
-            // Explicitly check for the return code, and close the session.
+        if (rc == ZOK) {
+            noResponseCounter = 0;
+        } else {
             if (rc == ZNOTHING) {
-                zk->realClose(ZOO_EXPIRED_SESSION_STATE);
-                return;
+                noResponseCounter++;
+                LOG_ERROR(NULL, "yield:zookeeper_process has returned ZNOTHING %d times\n", noResponseCounter);
             }
+
+            LOG_ERROR(NULL, "yield:zookeeper_process returned error: %d - %s\n", rc, zerror(rc));
         }
+
+        if (noResponseCounter > 10) {
+            zk->realClose(ZOO_EXPIRED_SESSION_STATE);
+            return;
+        }
+
         zk->yield();
     }
 
@@ -1060,6 +1068,7 @@ private:
     timeval tv;
     int64_t last_activity; // time of last zookeeper event loop activity
     bool is_closed;
+    int noResponseCounter;
 };
 
 } // namespace "zk"
