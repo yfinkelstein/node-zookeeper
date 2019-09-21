@@ -1,3 +1,7 @@
+#### v 4.4.2 (2019-09-21)
+* fix: too many close events emitted from the client caused by ZNOTHING socket responses. Pull request [221](https://github.com/yfinkelstein/node-zookeeper/issues/221)
+* fix: remove duplicate parameter definitions
+
 #### v 4.4.1 (2019-08-22)
 * fix: include ZooKeeper source code, instead of downloading on install, pull request [219](https://github.com/yfinkelstein/node-zookeeper/pull/219)
 * feat: Integration tests in Docker, pull request [218](https://github.com/yfinkelstein/node-zookeeper/pull/218) by @jbienkowski
