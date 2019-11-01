@@ -89,7 +89,7 @@ function applyPatches() {
             shell.cp(`${env.patchesFolder}/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
         }
     } else {
-        exec(`patch -p0 < ${env.patchesFolder}/ZOOKEEPER-3078.patch`);
+        // exec(`patch -p0 < ${env.patchesFolder}/ZOOKEEPER-3078.patch`);
 
         decompress(`${env.patchesFolder}/autoreconf.tar.gz`, `${env.patchesFolder}`, {
             plugins: [
