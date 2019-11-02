@@ -22,9 +22,6 @@ const isWindows = process.platform.toLowerCase().includes('win32');
 const isSunOs = process.platform.toLowerCase().includes('sunos');
 const rootFolder = setRoot({ isWindows });
 
-// Don't forget to also update the sha1sum variable when upgrading the Zookeeper version
-
-
 let zookeeperVersion;
 let downloadedFolderName;
 let sha512sum;
