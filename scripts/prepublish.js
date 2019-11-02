@@ -41,7 +41,7 @@ function validateFile(fileName) {
     let res;
 
     if (env.isWindows) {
-        const output = exec(`certutil -hashfile ${fileName} SHA512`).split('\r\n');
+        const output = exec(`certutil -hashfile ${fileName} SHA1`).split('\r\n');
 
         // `certutil` returns 2byte separated string
         // (e.g. "a9 89 b5 27 f3 f9 90 d4 71 e6 d4 7e e4 10 e5 7d 8b e7 62 0b")
@@ -53,7 +53,7 @@ function validateFile(fileName) {
     }
 
     if (res !== env.sha512sum) {
-        throw new Error(`Wrong sha512 for ${fileName}! Expected "${env.sha512sum}", got "${res}".`);
+        throw new Error(`Wrong sha for ${fileName}! Expected "${env.sha512sum}", got "${res}".`);
     }
 }
 
