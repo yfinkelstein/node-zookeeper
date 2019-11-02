@@ -51,8 +51,7 @@ set(zookeeper_sources
   src/recordio.c
   generated/zookeeper.jute.c
   src/zk_log.c
-  src/zk_hashtable.c
-  src/addrvec.c)
+  src/zk_hashtable.c)
 
 list(APPEND zookeeper_sources src/st_adaptor.c)
 
