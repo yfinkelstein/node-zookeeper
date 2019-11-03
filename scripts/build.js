@@ -33,15 +33,8 @@ if (env.isVerbose) {
 shell.cd(`${env.sourceFolder}`);
 
 if (env.isWindows) {
-    let flags = '-DWANT_SYNCAPI=OFF ';
-    let output = '';
-
-    if (!env.isVerbose) {
-        flags = '';
-        output = ' > NUL';
-    }
-
-    exec(`cmake ${flags}-DCMAKE_GENERATOR_PLATFORM=${process.arch} .${output}`);
+    const output = env.isVerbose ? '' : ' > NUL';
+    exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .${output}`);
     exec(`cmake --build .${output}`);
 } else {
     const flags = '-w';
