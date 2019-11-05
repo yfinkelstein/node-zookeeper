@@ -1,5 +1,9 @@
+#### v 4.5.0 (2019-11-05)
+* feat: Zookeeper 3.5.6. Pull request [226](https://github.com/yfinkelstein/node-zookeeper/pull/226)
+* fix: Rollback for Windows client (3.4.14). This is the motivation for bumping the Minor version. Pull request [226](https://github.com/yfinkelstein/node-zookeeper/pull/226)
+
 #### v 4.4.2 (2019-09-21)
-* fix: too many close events emitted from the client caused by ZNOTHING socket responses. Pull request [221](https://github.com/yfinkelstein/node-zookeeper/issues/221)
+* fix: too many close events emitted from the client caused by ZNOTHING socket responses. Pull request [221](https://github.com/yfinkelstein/node-zookeeper/pull/221)
 * fix: remove duplicate parameter definitions
 
 #### v 4.4.1 (2019-08-22)
