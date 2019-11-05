@@ -22,14 +22,23 @@ const isWindows = process.platform.toLowerCase().includes('win32');
 const isSunOs = process.platform.toLowerCase().includes('sunos');
 const rootFolder = setRoot({ isWindows });
 
-// Don't forget to also update the sha1sum variable when upgrading the Zookeeper version
-const zookeeperVersion = '3.5.5';
-const downloadedFolderName = `apache-zookeeper-${zookeeperVersion}`;
+let zookeeperVersion;
+let downloadedFolderName;
+let sha512sum;
 const suffix = '.tar.gz';
-const downloadedFileName = `${downloadedFolderName}${suffix}`;
+let downloadedFileName;
 
-// Update the checksum when upgrading the Zookeeper version
-const sha512sum = `4e22df899a83ca3cc15f6d94daadb1a8631fb4108e67b4f56d1f4fcf95f10f89c8ff1fb8a7c84799a3856d8803a8db1e1f2f3fe1b7dc0d6cedf485ef90fd212d  ${downloadedFileName}`;
+if (isWindows) {
+    zookeeperVersion = '3.4.14';
+    downloadedFolderName = `zookeeper-${zookeeperVersion}`;
+    downloadedFileName = `${downloadedFolderName}${suffix}`;
+    sha512sum = `b2e03d95f8cf18b97a46e2f53871cef5a5da9d5d80b97009375aed7fb35368c440ca944c7e8b64efabbc065f6fb98bb86239f7c1491f0490efc71876d5a7f424  ${downloadedFileName}`;
+} else {
+    zookeeperVersion = '3.5.6';
+    downloadedFolderName = `apache-zookeeper-${zookeeperVersion}`;
+    downloadedFileName = `${downloadedFolderName}${suffix}`;
+    sha512sum = `7f45817cbbc42aec5a7817fa2ae99656128e666dc58ace23d86bcfc5ca0dc49e418d1a7d1f082ad80ccb916f9f1b490167d16f836886af1a56fbcf720ad3b9d0  ${downloadedFileName}`;
+}
 
 const variables = {
     rootFolder,

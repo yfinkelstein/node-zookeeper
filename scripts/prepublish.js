@@ -53,7 +53,7 @@ function validateFile(fileName) {
     }
 
     if (res !== env.sha512sum) {
-        throw new Error(`Wrong sha512 for ${fileName}! Expected "${env.sha512sum}", got "${res}".`);
+        throw new Error(`Wrong sha for ${fileName}! Expected "${env.sha512sum}", got "${res}".`);
     }
 }
 
@@ -89,8 +89,6 @@ function applyPatches() {
             shell.cp(`${env.patchesFolder}/${cmakeFile}`, `${env.sourceFolder}/${cmakeFile}`);
         }
     } else {
-        exec(`patch -p0 < ${env.patchesFolder}/ZOOKEEPER-3078.patch`);
-
         decompress(`${env.patchesFolder}/autoreconf.tar.gz`, `${env.patchesFolder}`, {
             plugins: [
                 decompressTargz(),
