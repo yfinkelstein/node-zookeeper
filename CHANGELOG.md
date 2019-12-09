@@ -1,3 +1,6 @@
+#### v 4.5.1 (2019-12-09)
+* fix: add_auth expecting three arguments, add the missing `voidCb` parameter. Pull request [230](https://github.com/yfinkelstein/node-zookeeper/pull/230) by @wareczek
+
 #### v 4.5.0 (2019-11-05)
 * feat: Zookeeper 3.5.6. Pull request [226](https://github.com/yfinkelstein/node-zookeeper/pull/226)
 * fix: Rollback for Windows client (3.4.14). This is the motivation for bumping the Minor version. Pull request [226](https://github.com/yfinkelstein/node-zookeeper/pull/226)
