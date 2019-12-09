@@ -132,7 +132,7 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
   * (note the trailing `_`)
 * `a_set_acl(path, version, acl, void_cb)`
 * `a_get_acl(path, acl_cb)`
-* `add_auth(scheme, auth)`
+* `add_auth(scheme, auth, void_cb)`
 
 *The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
 

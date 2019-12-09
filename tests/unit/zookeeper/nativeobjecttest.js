@@ -57,3 +57,13 @@ test('native object emits close and pass an instance of the current ZooKeeper', 
 
     zk.native.emit('close', 1, 2, 3);
 });
+
+test('native zookeeper add_auth', (t) => {
+    t.plan(3);
+
+    const zk = new ZooKeeper({});
+
+    t.throws(() => zk.native.add_auth('digest'), 'expected 3 arguments');
+    t.throws(() => zk.native.add_auth('digest', 'user:'), 'expected 3 arguments');
+    t.doesNotThrow(() => zk.native.add_auth('digest', 'user:', () => {}), 'expected 3 arguments');
+});

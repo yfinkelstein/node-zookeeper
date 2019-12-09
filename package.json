@@ -51,9 +51,10 @@
         "build-components": "node-gyp configure build --directory=tests/components",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
-        "test": "npm run lint && tape ./tests/unit/**/*.js | tap-spec",
+        "test": "npm run lint && npm run test-unit",
         "test-components": "npm run build-components && tape ./tests/components/**/*.js | tap-spec",
-        "test-integration": "node ./tests/integration/index"
+        "test-integration": "node ./tests/integration/index",
+        "test-unit": "tape ./tests/unit/**/*.js | tap-spec"
     },
     "engines": {
         "node": ">=8.9.4"
