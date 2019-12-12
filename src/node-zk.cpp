@@ -95,6 +95,7 @@ DECLARE_STRING (on_event_deleted);
 DECLARE_STRING (on_event_changed);
 DECLARE_STRING (on_event_child);
 DECLARE_STRING (on_event_notwatching);
+DECLARE_STRING (on_event_empty_response);
 
 #define DECLARE_SYMBOL(ev)   DECLARE_STRING(ev)
 #define INITIALIZE_SYMBOL(ev) INITIALIZE_STRING(ev, #ev)
@@ -353,14 +354,11 @@ public:
         } else if (rc == ZNOTHING) {
             zk->noResponseCounter++;
             LOG_WARN("yield:zookeeper_process has returned no response %d times\n", zk->noResponseCounter);
+
+            Nan::HandleScope scope;
+            zk->DoEmitEmptyResponse(Nan::New(on_event_empty_response), zk->noResponseCounter);
         } else {
             LOG_ERROR("yield:zookeeper_process returned an error: %d - %s\n", rc, zerror(rc));
-        }
-
-        if (zk->noResponseCounter > 10) {
-            LOG_ERROR("yield:zookeeper_process returned no response too many times: %d\n", zk->noResponseCounter);
-            zk->realClose(ZOO_EXPIRED_SESSION_STATE);
-            return;
         }
 
         zk->yield();
@@ -544,6 +542,13 @@ public:
         Local<Value> v8code = Nan::New<Number>(code);
 
         this->DoEmit(event_name, v8code);
+    }
+
+    void DoEmitEmptyResponse (Local<String> event_name, int counts) {
+        Nan::HandleScope scope;
+        Local<Value> v8counts = Nan::New<Number>(counts);
+
+        this->DoEmit(event_name, v8counts);
     }
 
     void DoEmit (Local<String> event_name, Local<Value> data) {
@@ -1073,14 +1078,15 @@ private:
 } // namespace "zk"
 
 extern "C" void init(Local<Object> target) {
-    INITIALIZE_STRING (zk::on_closed,            "close");
-    INITIALIZE_STRING (zk::on_connected,         "connect");
-    INITIALIZE_STRING (zk::on_connecting,        "connecting");
-    INITIALIZE_STRING (zk::on_event_created,     "created");
-    INITIALIZE_STRING (zk::on_event_deleted,     "deleted");
-    INITIALIZE_STRING (zk::on_event_changed,     "changed");
-    INITIALIZE_STRING (zk::on_event_child,       "child");
-    INITIALIZE_STRING (zk::on_event_notwatching, "notwatching");
+    INITIALIZE_STRING (zk::on_closed,                "close");
+    INITIALIZE_STRING (zk::on_connected,             "connect");
+    INITIALIZE_STRING (zk::on_connecting,            "connecting");
+    INITIALIZE_STRING (zk::on_event_created,         "created");
+    INITIALIZE_STRING (zk::on_event_deleted,         "deleted");
+    INITIALIZE_STRING (zk::on_event_changed,         "changed");
+    INITIALIZE_STRING (zk::on_event_child,           "child");
+    INITIALIZE_STRING (zk::on_event_notwatching,     "notwatching");
+    INITIALIZE_STRING (zk::on_event_empty_response,  "empty-response");
 
     INITIALIZE_SYMBOL (zk::PRIVATE_PROP_ZK);
     INITIALIZE_SYMBOL (zk::PRIVATE_PROP_HANDBACK);

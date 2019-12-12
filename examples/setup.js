@@ -27,6 +27,10 @@ async function createNodes(paths) {
         createAllNodes(client, paths);
     });
 
+    client.on('empty-response', (zk, counts) => {
+        if (counts <= 10) return;
+        client.close();
+    });
     client.init({});
 }
 
