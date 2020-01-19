@@ -50,7 +50,7 @@ function validateFile(fileName) {
         res = `${sha512}  ${fileName}`;
     } else {
         
-        res = exec(`command -v shasum >/dev/null 2>&1 && shasum -a 512 ${fileName} || command -v sha512sum >/dev/null 2>&1 && sha512sum -a 512 ${fileName} || command -v sha1sum >/dev/null 2>&1 && sha1sum -a 512 ${fileName}`).trim();
+        res = exec(`command -v shasum >/dev/null 2>&1 && shasum -a 512 ${fileName} || sha512sum -a 512 ${fileName}`).trim();
     }
 
     if (res !== env.sha512sum) {
