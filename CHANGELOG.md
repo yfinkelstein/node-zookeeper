@@ -1,3 +1,6 @@
+#### v 4.5.3 (2020-09-20)
+* fix: Update depencencies causing warnings on install. Pull request [242](https://github.com/yfinkelstein/node-zookeeper/pull/242) by @davidvujic
+
 #### v 4.5.2 (2020-01-22)
 * fix: try an alternative shasum command when missing on Linux systems. Pull request [234](https://github.com/yfinkelstein/node-zookeeper/pull/234) by @hwzhangd
 
