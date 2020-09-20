@@ -27,7 +27,7 @@
         "client"
     ],
     "dependencies": {
-        "async": "2.6.x",
+        "async": "3.2.x",
         "decompress": "4.2.x",
         "decompress-targz": "4.1.x",
         "lodash": "4.x",
@@ -35,14 +35,14 @@
         "shelljs": "0.8.x"
     },
     "devDependencies": {
-        "eslint": "5.x",
-        "eslint-config-airbnb-base": "13.x",
+        "eslint": "7.x",
+        "eslint-config-airbnb-base": "14.x",
         "eslint-plugin-import": "2.x",
-        "log4js": "4.x",
+        "log4js": "6.x",
         "proxyquire": "2.x",
-        "sinon": "7.x",
+        "sinon": "9.x",
         "tap-spec": "5.x",
-        "tape": "4.x",
+        "tape": "5.x",
         "webworker": "0.x"
     },
     "main": "lib/index",
