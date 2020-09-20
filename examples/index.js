@@ -7,10 +7,10 @@ const { addTask } = require('./addtask.js');
 const logger = require('./logger.js');
 const notifier = require('./notifier.js');
 
-notifier.on('connect', message => logger.log('connect', message));
-notifier.on('createNode', message => logger.log('createNode', message));
-notifier.on('addTask', message => logger.log('addTask', message));
-notifier.on('close', message => logger.log('close', message));
+notifier.on('connect', (message) => logger.log('connect', message));
+notifier.on('createNode', (message) => logger.log('createNode', message));
+notifier.on('addTask', (message) => logger.log('addTask', message));
+notifier.on('close', (message) => logger.log('close', message));
 
 notifier.on('onChildren', (children) => {
     children.forEach((child) => {
