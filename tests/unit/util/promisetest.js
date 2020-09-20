@@ -42,7 +42,7 @@ test('ZkPromise call', (t) => {
 test('ZkPromise addCallback', (t) => {
     t.plan(3);
 
-    const callback = sinon.stub().callsFake(value => value * 2);
+    const callback = sinon.stub().callsFake((value) => value * 2);
     const promise = ZkPromise.resolve(10);
 
     promise.addCallback(callback).then((actual) => {
@@ -55,7 +55,7 @@ test('ZkPromise addCallback', (t) => {
 test('ZkPromise addErrback', (t) => {
     t.plan(3);
 
-    const callback = sinon.stub().callsFake(value => value * 2);
+    const callback = sinon.stub().callsFake((value) => value * 2);
     const promise = ZkPromise.reject(10);
 
     promise.addErrback(callback).then((actual) => {
@@ -68,12 +68,12 @@ test('ZkPromise addErrback', (t) => {
 test('ZkPromise addBoth', (t) => {
     t.plan(7);
 
-    const callback = sinon.stub().callsFake(value => value * 2);
+    const callback = sinon.stub().callsFake((value) => value * 2);
     const errback = sinon.stub().callsFake(() => {
         throw new Error('errback!');
     });
     // eslint-disable-next-line max-len
-    const promise = succeeds => new ZkPromise((resolve, reject) => (succeeds ? resolve(10) : reject(10)));
+    const promise = (succeeds) => new ZkPromise((resolve, reject) => (succeeds ? resolve(10) : reject(10)));
 
     promise(true).addBoth(callback)
         .then((actual) => {
@@ -93,12 +93,12 @@ test('ZkPromise addBoth', (t) => {
 test('ZkPromise addCallbacks', (t) => {
     t.plan(9);
 
-    const callback = sinon.stub().callsFake(value => value * 2);
+    const callback = sinon.stub().callsFake((value) => value * 2);
     const errback = sinon.stub().callsFake(() => {
         throw new Error('errback!');
     });
     // eslint-disable-next-line max-len
-    const promise = succeeds => new ZkPromise((resolve, reject) => (succeeds ? resolve(10) : reject(10)));
+    const promise = (succeeds) => new ZkPromise((resolve, reject) => (succeeds ? resolve(10) : reject(10)));
 
     promise(true).addCallbacks(callback, errback)
         .then((actual) => {
