@@ -1,7 +1,10 @@
+#### v 4.5.3 (2020-09-20)
+* fix: Update depencencies causing warnings on install. Pull request [242](https://github.com/yfinkelstein/node-zookeeper/pull/242) by @davidvujic
+
 #### v 4.5.2 (2020-01-22)
 * fix: try an alternative shasum command when missing on Linux systems. Pull request [234](https://github.com/yfinkelstein/node-zookeeper/pull/234) by @hwzhangd
 
-#### v 4.5.1 (2019-12-09)
+#### V 4.5.1 (2019-12-09)
 * fix: add_auth expecting three arguments, add the missing `voidCb` parameter. Pull request [230](https://github.com/yfinkelstein/node-zookeeper/pull/230) by @wareczek
 
 #### v 4.5.0 (2019-11-05)
