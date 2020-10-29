@@ -183,7 +183,8 @@ declare module "zookeeper" {
     export = ZooKeeper;
     const ZooKeeper_base: any;
     /**
-     * @extends EventEmitter
+     * @class
+     * @extends {EventEmitter}
      */
     class ZooKeeper extends ZooKeeper_base {
         [x: string]: any;
@@ -480,7 +481,8 @@ declare module "zk_promise" {
     const ZooKeeperPromise_base: typeof import("zookeeper");
     /**
      * A promisified version of the ZooKeeper class
-     * @extends ZooKeeper
+     * @class
+     * @extends {ZooKeeper}
      */
     class ZooKeeperPromise extends ZooKeeperPromise_base {
         constructor(config: any);
