@@ -1,3 +1,8 @@
+#### v 4.6.0 (2020-10-31)
+* feat: The default API from the library is the async/await enabled client (containing both callbacks and promisified methods)
+* fix: add TypeScript declarations.
+Pull request [246](https://github.com/yfinkelstein/node-zookeeper/pull/246) by @davidvujic
+
 #### v 4.5.3 (2020-09-20)
 * fix: Update depencencies causing warnings on install. Pull request [242](https://github.com/yfinkelstein/node-zookeeper/pull/242) by @davidvujic
 
