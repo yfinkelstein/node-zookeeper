@@ -18,21 +18,19 @@ npm install zookeeper
 
 ## Examples
 
-Use the `async/await` enabled client:
-
-```javascript
-const ZooKeeper = require('zookeeper').Promise;
-```
-
-Note: checkout the API for the [async/await enabled client here](#methods-asyncawait-enabled-client)
-
-There is also a callbacks based client:
-
 ```javascript
 const ZooKeeper = require('zookeeper');
 ```
 
-Note: checkout the API for the [callback based client here](#methods-callbacks-based-client)
+The ZooKeeper client support both callbacks and `async/await`.
+
+### Documentation
+The source code is documented with `JSDoc` code comments and `TypeScript` type declarations. 
+
+Also, have a look at the API documentation here: 
+* [async/await enabled methods](#methods-asyncawait-enabled-client-methods)
+* [callback enabled methods](#methods-callbacks-based-client-methods)
+
 
 ### Example: create a client
 
@@ -83,7 +81,7 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
 
 ## API Reference
 
-### Methods: async/await enabled client
+### Methods: async/await enabled client methods
 
 * `init(options)`
 * `connect(options, connect_cb)`
@@ -115,7 +113,7 @@ Check out the code in the [examples](./examples) folder: master,workers, tasks a
         * children is an array of strings
         * stat is an object
 
-### Methods: callbacks based client
+### Methods: callbacks based client methods
 
 * `init(options)`
 * `connect(options, connect_cb)`
@@ -216,7 +214,7 @@ For more details please refer to ZooKeeper docs.
 
 ## Windows support
 
-Install `CMake` to build a ZooKeeper client on Windows. `Python 2.7.x` is currently required by the tool `node-gyp` to build the ZooKeeper client as a native Node.js Addon.
+Install `CMake` to build a ZooKeeper client on Windows. Install Python.
 
 Also, run `npm install` in a Powershell window. For further instructions visit [node-gyp documentation](https://github.com/nodejs/node-gyp/#on-windows).
 
