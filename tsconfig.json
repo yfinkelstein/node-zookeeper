@@ -1,0 +1,14 @@
+{
+    "include": [
+        "lib/index.js",
+        "lib/typedefs.js"
+    ],
+    "compilerOptions": {
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "allowJs": true,
+        "checkJs": true,
+        "module": "commonjs",
+        "target": "ES2018"
+    }
+}
