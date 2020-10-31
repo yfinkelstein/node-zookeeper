@@ -125,22 +125,22 @@ declare module "zookeeper" {
         static get ZOOKEEPER_READ(): number;
         static get Promise(): typeof import("zookeeper_promise");
         static get constants(): typeof import("zookeeper_constants");
-        /** @param config {object|string} */
+        /** @param {object|string} config */
         constructor(config: object | string);
         config: any;
         native: any;
         encoding: string;
-        /** @param logger {object|boolean} */
+        /** @param {object|boolean} logger */
         setLogger(logger: object | boolean): void;
         logger: any;
-        /** @param args {...*} */
+        /** @param {...*} args */
         log(...args: any[]): void;
         /**
-         * @param config {object|string}
+         * @param {object|string} config
          * @returns {ZooKeeper}
          */
         init(config: object | string): ZooKeeper;
-        /** @param data_as_buffer {boolean} */
+        /** @param {boolean} data_as_buffer */
         set data_as_buffer(arg: boolean);
         /**
          * @deprecated Use setEncoding()
@@ -148,8 +148,8 @@ declare module "zookeeper" {
          */
         get data_as_buffer(): boolean;
         /**
-         * @param options {object|function}
-         * @param cb {connectCb}
+         * @param {object|function} options
+         * @param {connectCb} cb
          */
         connect(options: object | Function, cb: connectCb): void;
         errorHandler: any;
@@ -157,132 +157,132 @@ declare module "zookeeper" {
         /** @returns {*} */
         close(): any;
         /**
-         * @param path {string}
-         * @param data {string|Buffer}
-         * @param flags {number} an int32 value
-         * @param pathCb {pathCb}
+         * @param {string} path
+         * @param {string|Buffer} data
+         * @param {number} flags - an int32 value
+         * @param {pathCb} pathCb
          * @returns {*}
          */
         a_create(path: string, data: string | Buffer, flags: number, pathCb: pathCb): any;
         /**
-         * @param path {string}
-         * @param watch {boolean}
-         * @param statCb {statCb}
+         * @param {string} path
+         * @param {boolean} watch
+         * @param {statCb} statCb
          * @returns {*}
          */
         a_exists(path: string, watch: boolean, statCb: statCb): any;
         /**
-         * @param path {string}
-         * @param watchCb {watchCb}
-         * @param statCb {statCb}
+         * @param {string} path
+         * @param {watchCb} watchCb
+         * @param {statCb} statCb
          * @returns {*}
          */
         aw_exists(path: string, watchCb: watchCb, statCb: statCb): any;
         /**
-         * @param path {string}
-         * @param watch {boolean}
-         * @param dataCb {dataCb}
+         * @param {string} path
+         * @param {boolean} watch
+         * @param {dataCb} dataCb
          * @returns {*}
          */
         a_get(path: string, watch: boolean, dataCb: dataCb): any;
         /**
-         * @param path {string}
-         * @param watchCb {watchCb}
-         * @param dataCb {dataCb}
+         * @param {string} path
+         * @param {watchCb} watchCb
+         * @param {dataCb} dataCb
          * @returns {*}
          */
         aw_get(path: string, watchCb: watchCb, dataCb: dataCb): any;
         /**
-         * @param path {string}
-         * @param watch {boolean}
-         * @param childCb {childCb}
+         * @param {string} path
+         * @param {boolean} watch
+         * @param {childCb} childCb
          * @returns {*}
          */
         a_get_children(path: string, watch: boolean, childCb: childCb): any;
         /**
-         * @param path {string}
-         * @param watchCb {watchCb}
-         * @param childCb {childCb}
+         * @param {string} path
+         * @param {watchCb} watchCb
+         * @param {childCb} childCb
          * @returns {*}
          */
         aw_get_children(path: string, watchCb: watchCb, childCb: childCb): any;
         /**
-         * @param path {string}
-         * @param watch {boolean}
-         * @param childCb {child2Cb}
+         * @param {string} path
+         * @param {boolean} watch
+         * @param {child2Cb} childCb
          * @returns {*}
          */
         a_get_children2(path: string, watch: boolean, childCb: child2Cb): any;
         /**
-         * @param path {string}
-         * @param watchCb {watchCb}
-         * @param childCb {child2Cb}
+         * @param {string} path
+         * @param {watchCb} watchCb
+         * @param {child2Cb} childCb
          * @returns {*}
          */
         aw_get_children2(path: string, watchCb: watchCb, childCb: child2Cb): any;
         /**
-         * @param path {string}
-         * @param data {string|Buffer}
-         * @param version {number} an int32 value
-         * @param statCb {statCb}
+         * @param {string} path
+         * @param {string|Buffer} data
+         * @param {number} version - an int32 value
+         * @param {statCb} statCb
          * @returns {*}
          */
         a_set(path: string, data: string | Buffer, version: number, statCb: statCb): any;
         /**
-         * @param path {string}
-         * @param version {number} an int32 value
-         * @param voidCb {voidCb}
+         * @param {string} path
+         * @param {number} version - an int32 value
+         * @param {voidCb} voidCb
          * @returns {*}
          */
         a_delete_(path: string, version: number, voidCb: voidCb): any;
         /**
-         * @param path {string}
-         * @param aclCb {aclCb}
+         * @param {string} path
+         * @param {aclCb} aclCb
          * @returns {*}
          */
         a_get_acl(path: string, aclCb: aclCb): any;
         /**
-         * @param path {string}
-         * @param version {number} an int32 value
-         * @param acl {acl}
-         * @param voidCb {voidCb}
+         * @param {string} path
+         * @param {number} version - an int32 value
+         * @param {acl} acl
+         * @param {voidCb} voidCb
          * @returns {*}
          */
         a_set_acl(path: string, version: number, acl: acl, voidCb: voidCb): any;
         /**
-         * @param scheme {string}
-         * @param auth {string}
-         * @param voidCb {voidCb}
+         * @param {string} scheme
+         * @param {string} auth
+         * @param {voidCb} voidCb
          * @returns {*}
          */
         add_auth(scheme: string, auth: string, voidCb: voidCb): any;
         /**
-         * @param path {string}
-         * @param cb {mkdirCb}
+         * @param {string} path
+         * @param {mkdirCb} cb
          */
         mkdirp(path: string, cb: mkdirCb): void;
         /**
-         * @param path {string}
-         * @param cb {function}
+         * @param {string} path
+         * @param {function} cb
          * @returns {*}
          */
         a_sync(path: string, cb: Function): any;
-        /** @param value {number} */
+        /** @param {number} value */
         set state(arg: number);
         get state(): number;
-        /** @param value {number} */
+        /** @param {number} value */
         set timeout(arg: number);
         get timeout(): number;
-        /** @param value {number} */
+        /** @param {number} value */
         set client_id(arg: number);
         get client_id(): number;
-        /** @param value {string} */
+        /** @param {string} value */
         set client_password(arg: string);
         get client_password(): string;
-        /** @param value {number} */
+        /** @param {number} value */
         set is_unrecoverable(arg: number);
         get is_unrecoverable(): number;
-        /** @param value {string} */
+        /** @param {string} value */
         setEncoding(value: string): void;
     }
     namespace ZooKeeper {
@@ -421,112 +421,113 @@ declare module "zookeeper_promise" {
      * @extends {ZooKeeper}
      */
     class ZooKeeperPromise extends ZooKeeperPromise_base {
-        constructor(config: any);
+        /** @param {object|string} config */
+        constructor(config: object | string);
         /**
          * @deprecated
          * returns {ZkPromise}
          */
         on_connected(): import("zookeeper_deprecated_promise");
         /**
-         * @param path {string}
-         * @param data {(string|Buffer)}
-         * @param flags {number}
+         * @param {string} path
+         * @param {(string|Buffer)} data
+         * @param {number} flags
          * @fulfill {string}
          * @returns {Promise.<string>}
          */
         create(path: string, data: (string | Buffer), flags: number): Promise<string>;
         /**
-         * @param path {string}
-         * @param watch {function}
+         * @param {string} path
+         * @param {function} watch
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
         exists(path: string, watch: Function): Promise<stat>;
         /**
-         * @param path {string}
-         * @param watchCb {function}
+         * @param {string} path
+         * @param {function} watchCb
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
         w_exists(path: string, watchCb: Function): Promise<stat>;
         /**
-         * @param path {string}
-         * @param watch {boolean}
+         * @param {string} path
+         * @param {boolean} watch
          * @fulfill {string|Buffer}
          * @returns {Promise.<string|Buffer>}
          */
         get(path: string, watch: boolean): Promise<string | Buffer>;
         /**
-         * @param path {string}
-         * @param watchCb {function}
+         * @param {string} path
+         * @param {function} watchCb
          * @fulfill {string|Buffer}
          * @returns {Promise.<string|Buffer>}
          */
         w_get(path: string, watchCb: Function): Promise<string | Buffer>;
         /**
-         * @param path {string}
-         * @param watch {boolean}
+         * @param {string} path
+         * @param {boolean} watch
          * @fulfill {Array.<string>}
          * @returns {Promise.<Array.<string>>}
          */
         get_children(path: string, watch: boolean): Promise<Array<string>>;
         /**
-         * @param path {string}
-         * @param watchCb {function}
+         * @param {string} path
+         * @param {function} watchCb
          * @fulfill {Array.<string>}
          * @returns {Promise.<Array.<string>>}
          */
         w_get_children(path: string, watchCb: Function): Promise<Array<string>>;
         /**
-         * @param path {string}
-         * @param watch {boolean}
+         * @param {string} path
+         * @param {boolean} watch
          * @fulfill {Array} [children, stat] - children: an array of strings, stat: object
          * @returns {Promise.<Array>} [children, stat] - children: an array of strings, stat: object
          */
         get_children2(path: string, watch: boolean): Promise<any[]>;
         /**
-         * @param path {string}
-         * @param watchCb {function}
+         * @param {string} path
+         * @param {function} watchCb
          * @fulfill {Array} [children, stat] - children: an array of strings, stat: object
          * @returns {Promise.<Array>} [children, stat] - children: an array of strings, stat: object
          */
         w_get_children2(path: string, watchCb: Function): Promise<any[]>;
         /**
-         * @param path {string}
-         * @param data {(string|Buffer)}
-         * @param version {number} an int32 value
+         * @param {string} path
+         * @param {(string|Buffer)} data
+         * @param {number} version - an int32 value
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
         set(path: string, data: (string | Buffer), version: number): Promise<stat>;
         /**
-         * @param path {string}
-         * @param version {number} an int32 value
+         * @param {string} path
+         * @param {number} version - an int32 value
          * @returns {Promise}
          */
         delete_(path: string, version: number): Promise<any>;
         /**
-         * @param path {string}
+         * @param {string} path
          * @fulfill {acl}
          * @returns {Promise.<acl>}
          */
         get_acl(path: string): Promise<acl>;
         /**
-         * @param path {string}
-         * @param version {number} an int32 value
-         * @param acl {acl}
+         * @param {string} path
+         * @param {number} version - an int32 value
+         * @param {acl} acl
          * @returns {Promise}
          */
         set_acl(path: string, version: number, acl: acl): Promise<any>;
         /**
-         * @param path {string}
+         * @param {string} path
          * @returns {Promise}
          */
         sync(path: string): Promise<any>;
         /**
          * @private
-         * @param fn {function}
-         * @param args {Array}
+         * @param {function} fn
+         * @param {Array} args
          * @returns {ZkPromise}
          */
         private promisify;

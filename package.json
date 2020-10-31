@@ -47,7 +47,7 @@
         "typescript": "^4.0.5",
         "webworker": "0.x"
     },
-    "main": "lib/index",
+    "main": "./lib/index.js",
     "scripts": {
         "build": "node-gyp configure build",
         "build-components": "node-gyp configure build --directory=tests/components",
@@ -62,5 +62,5 @@
     "engines": {
         "node": ">=8.9.4"
     },
-    "types": "lib/typedeclarations.d.ts"
+    "types": "./lib/typedeclarations.d.ts"
 }
