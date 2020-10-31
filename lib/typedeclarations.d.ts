@@ -163,7 +163,7 @@ declare module "zookeeper" {
          * @param pathCb {pathCb}
          * @returns {*}
          */
-        a_create(path: string, data: string | any, flags: number, pathCb: pathCb): any;
+        a_create(path: string, data: string | Buffer, flags: number, pathCb: pathCb): any;
         /**
          * @param path {string}
          * @param watch {boolean}
@@ -180,11 +180,11 @@ declare module "zookeeper" {
         aw_exists(path: string, watchCb: watchCb, statCb: statCb): any;
         /**
          * @param path {string}
-         * @param watch {bool}
+         * @param watch {boolean}
          * @param dataCb {dataCb}
          * @returns {*}
          */
-        a_get(path: string, watch: any, dataCb: dataCb): any;
+        a_get(path: string, watch: boolean, dataCb: dataCb): any;
         /**
          * @param path {string}
          * @param watchCb {watchCb}
@@ -227,7 +227,7 @@ declare module "zookeeper" {
          * @param statCb {statCb}
          * @returns {*}
          */
-        a_set(path: string, data: string | any, version: number, statCb: statCb): any;
+        a_set(path: string, data: string | Buffer, version: number, statCb: statCb): any;
         /**
          * @param path {string}
          * @param version {number} an int32 value
@@ -434,7 +434,7 @@ declare module "zookeeper_promise" {
          * @fulfill {string}
          * @returns {Promise.<string>}
          */
-        create(path: string, data: (string | any), flags: number): Promise<string>;
+        create(path: string, data: (string | Buffer), flags: number): Promise<string>;
         /**
          * @param path {string}
          * @param watch {function}
@@ -455,14 +455,14 @@ declare module "zookeeper_promise" {
          * @fulfill {string|Buffer}
          * @returns {Promise.<string|Buffer>}
          */
-        get(path: string, watch: boolean): Promise<string | any>;
+        get(path: string, watch: boolean): Promise<string | Buffer>;
         /**
          * @param path {string}
          * @param watchCb {function}
          * @fulfill {string|Buffer}
          * @returns {Promise.<string|Buffer>}
          */
-        w_get(path: string, watchCb: Function): Promise<string | any>;
+        w_get(path: string, watchCb: Function): Promise<string | Buffer>;
         /**
          * @param path {string}
          * @param watch {boolean}
@@ -498,7 +498,7 @@ declare module "zookeeper_promise" {
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
-        set(path: string, data: (string | any), version: number): Promise<stat>;
+        set(path: string, data: (string | Buffer), version: number): Promise<stat>;
         /**
          * @param path {string}
          * @param version {number} an int32 value
