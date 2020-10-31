@@ -1,193 +1,12 @@
-declare module "constants" {
-    export var ZOO_PERM_READ: number;
-    export var ZOO_PERM_WRITE: number;
-    export var ZOO_PERM_CREATE: number;
-    export var ZOO_PERM_DELETE: number;
-    export var ZOO_PERM_ADMIN: number;
-    export var ZOO_PERM_ALL: number;
-    export var ZOO_EXPIRED_SESSION_STATE: number;
-    export var ZOO_AUTH_FAILED_STATE: number;
-    export var ZOO_CONNECTING_STATE: number;
-    export var ZOO_ASSOCIATING_STATE: number;
-    export var ZOO_CONNECTED_STATE: number;
-    export var ZOO_LOG_LEVEL_ERROR: number;
-    export var ZOO_LOG_LEVEL_WARN: number;
-    export var ZOO_LOG_LEVEL_INFO: number;
-    export var ZOO_LOG_LEVEL_DEBUG: number;
-    export var ZOO_EPHEMERAL: number;
-    export var ZOO_SEQUENCE: number;
-    export var ZOK: number;
-    export var ZSYSTEMERROR: number;
-    export var ZRUNTIMEINCONSISTENCY: number;
-    export var ZDATAINCONSISTENCY: number;
-    export var ZCONNECTIONLOSS: number;
-    export var ZMARSHALLINGERROR: number;
-    export var ZUNIMPLEMENTED: number;
-    export var ZOPERATIONTIMEOUT: number;
-    export var ZBADARGUMENTS: number;
-    export var ZINVALIDSTATE: number;
-    export var ZAPIERROR: number;
-    export var ZNONODE: number;
-    export var ZNOAUTH: number;
-    export var ZBADVERSION: number;
-    export var ZNOCHILDRENFOREPHEMERALS: number;
-    export var ZNODEEXISTS: number;
-    export var ZNOTEMPTY: number;
-    export var ZSESSIONEXPIRED: number;
-    export var ZINVALIDCALLBACK: number;
-    export var ZINVALIDACL: number;
-    export var ZAUTHFAILED: number;
-    export var ZCLOSING: number;
-    export var ZNOTHING: number;
-    export var ZSESSIONMOVED: number;
-    export var ZOO_OPEN_ACL_UNSAFE: {
-        perms: number;
-        scheme: string;
-        auth: string;
-    };
-    export var ZOO_READ_ACL_UNSAFE: {
-        perms: number;
-        scheme: string;
-        auth: string;
-    };
-    export var ZOO_CREATOR_ALL_ACL: {
-        perms: number;
-        scheme: string;
-        auth: string;
-    };
-    export var ZOO_CREATED_EVENT: number;
-    export var ZOO_DELETED_EVENT: number;
-    export var ZOO_CHANGED_EVENT: number;
-    export var ZOO_CHILD_EVENT: number;
-    export var ZOO_SESSION_EVENT: number;
-    export var ZOO_NOTWATCHING_EVENT: number;
-    export var ZOOKEEPER_WRITE: number;
-    export var ZOOKEEPER_READ: number;
-    export var on_closed: string;
-    export var on_connected: string;
-    export var on_connecting: string;
-    export var on_event_created: string;
-    export var on_event_deleted: string;
-    export var on_event_changed: string;
-    export var on_event_child: string;
-    export var on_event_notwatching: string;
-}
-declare module "helper" {
-    export function deprecationLog(className: any, methodName: any): void;
-}
-declare module "promise" {
-    export = ZkPromise;
-    /**
-     * @extends Promise
-     */
-    class ZkPromise {
-        /**
-         * @deprecated
-         */
-        get(propertyName: any): any;
-        /**
-         * @deprecated
-         */
-        put(propertyName: any, value: any): any;
-        /**
-         * @deprecated
-         */
-        call(functionName: any, ...args: any[]): any;
-        /**
-         * @deprecated
-         */
-        addCallback(callback: any): any;
-        /**
-         * @deprecated
-         */
-        addErrback(callback: any): any;
-        /**
-         * @deprecated
-         */
-        addBoth(callback: any): any;
-        /**
-         * @deprecated
-         */
-        addCallbacks(callback: any, errback: any): any;
-    }
-}
-/**
- * ACL
- */
-type acl = {
-    perms: number;
-    scheme: string;
-    auth: string;
-};
-/**
- * stat
- */
-type stat = {
-    czxid: number;
-    mzxid: number;
-    ctime: number;
-    mtime: number;
-    version: number;
-    cversion: number;
-    aversion: number;
-    ephemeralOwner: string;
-    dataLength: number;
-    numChildren: number;
-    pzxid: number;
-};
-/**
- * Mkdir callback
- */
-type mkdirCb = (error: Error, success?: boolean) => any;
-/**
- * Connect callback
- */
-type connectCb = (error: Error, client: any) => any;
-/**
- * Path callback
- */
-type pathCb = (rc: number, error: number, path: string) => any;
-/**
- * Stat callback
- */
-type statCb = (rc: number, error: number, stat: stat) => any;
-/**
- * Data callback
- */
-type dataCb = (rc: number, error: number, stat: stat, data: string | any) => any;
-/**
- * Child callback
- */
-type childCb = (rc: number, error: number, children: Array<string>) => any;
-/**
- * Child2 callback
- */
-type child2Cb = (rc: number, error: number, children: Array<string>, stat: stat) => any;
-/**
- * Value callback
- */
-type valueCb = (rc: number, error: number, value: any) => any;
-/**
- * Void callback
- */
-type voidCb = (rc: number, error: number) => any;
-/**
- * Watch callback
- */
-type watchCb = (type: number, state: number, path: string) => any;
-/**
- * ACL callback
- */
-type aclCb = (rc: number, error: number, acl: acl, stat: stat) => any;
+/// <reference types="node" />
 declare module "zookeeper" {
     export = ZooKeeper;
-    const ZooKeeper_base: any;
+    const ZooKeeper_base: typeof import("events").EventEmitter;
     /**
      * @class
      * @extends {EventEmitter}
      */
     class ZooKeeper extends ZooKeeper_base {
-        [x: string]: any;
         /** @deprecated @returns {number} 1 */
         static get ZOO_PERM_READ(): number;
         /** @deprecated @returns {number} 2 */
@@ -304,6 +123,8 @@ declare module "zookeeper" {
         static get ZOOKEEPER_WRITE(): number;
         /** @deprecated @returns {number} 2 */
         static get ZOOKEEPER_READ(): number;
+        static get Promise(): typeof import("zookeeper_promise");
+        static get constants(): typeof import("zookeeper_constants");
         /** @param config {object|string} */
         constructor(config: object | string);
         config: any;
@@ -476,7 +297,122 @@ declare module "zookeeper" {
     var on_event_child: string;
     var on_event_notwatching: string;
 }
-declare module "zk_promise" {
+declare module "zookeeper_constants" {
+    export var ZOO_PERM_READ: number;
+    export var ZOO_PERM_WRITE: number;
+    export var ZOO_PERM_CREATE: number;
+    export var ZOO_PERM_DELETE: number;
+    export var ZOO_PERM_ADMIN: number;
+    export var ZOO_PERM_ALL: number;
+    export var ZOO_EXPIRED_SESSION_STATE: number;
+    export var ZOO_AUTH_FAILED_STATE: number;
+    export var ZOO_CONNECTING_STATE: number;
+    export var ZOO_ASSOCIATING_STATE: number;
+    export var ZOO_CONNECTED_STATE: number;
+    export var ZOO_LOG_LEVEL_ERROR: number;
+    export var ZOO_LOG_LEVEL_WARN: number;
+    export var ZOO_LOG_LEVEL_INFO: number;
+    export var ZOO_LOG_LEVEL_DEBUG: number;
+    export var ZOO_EPHEMERAL: number;
+    export var ZOO_SEQUENCE: number;
+    export var ZOK: number;
+    export var ZSYSTEMERROR: number;
+    export var ZRUNTIMEINCONSISTENCY: number;
+    export var ZDATAINCONSISTENCY: number;
+    export var ZCONNECTIONLOSS: number;
+    export var ZMARSHALLINGERROR: number;
+    export var ZUNIMPLEMENTED: number;
+    export var ZOPERATIONTIMEOUT: number;
+    export var ZBADARGUMENTS: number;
+    export var ZINVALIDSTATE: number;
+    export var ZAPIERROR: number;
+    export var ZNONODE: number;
+    export var ZNOAUTH: number;
+    export var ZBADVERSION: number;
+    export var ZNOCHILDRENFOREPHEMERALS: number;
+    export var ZNODEEXISTS: number;
+    export var ZNOTEMPTY: number;
+    export var ZSESSIONEXPIRED: number;
+    export var ZINVALIDCALLBACK: number;
+    export var ZINVALIDACL: number;
+    export var ZAUTHFAILED: number;
+    export var ZCLOSING: number;
+    export var ZNOTHING: number;
+    export var ZSESSIONMOVED: number;
+    export var ZOO_OPEN_ACL_UNSAFE: {
+        perms: number;
+        scheme: string;
+        auth: string;
+    };
+    export var ZOO_READ_ACL_UNSAFE: {
+        perms: number;
+        scheme: string;
+        auth: string;
+    };
+    export var ZOO_CREATOR_ALL_ACL: {
+        perms: number;
+        scheme: string;
+        auth: string;
+    };
+    export var ZOO_CREATED_EVENT: number;
+    export var ZOO_DELETED_EVENT: number;
+    export var ZOO_CHANGED_EVENT: number;
+    export var ZOO_CHILD_EVENT: number;
+    export var ZOO_SESSION_EVENT: number;
+    export var ZOO_NOTWATCHING_EVENT: number;
+    export var ZOOKEEPER_WRITE: number;
+    export var ZOOKEEPER_READ: number;
+    export var on_closed: string;
+    export var on_connected: string;
+    export var on_connecting: string;
+    export var on_event_created: string;
+    export var on_event_deleted: string;
+    export var on_event_changed: string;
+    export var on_event_child: string;
+    export var on_event_notwatching: string;
+}
+declare module "helper" {
+    export function deprecationLog(className: any, methodName: any): void;
+}
+declare module "zookeeper_deprecated_promise" {
+    export = ZkPromise;
+    /**
+     * @extends Promise
+     * @deprecated
+     */
+    class ZkPromise extends Promise<any> {
+        constructor(executor: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void);
+        /**
+         * @deprecated
+         */
+        get(propertyName: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        put(propertyName: any, value: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        call(functionName: any, ...args: any[]): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addCallback(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addErrback(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addBoth(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addCallbacks(callback: any, errback: any): Promise<any>;
+    }
+}
+declare module "zookeeper_promise" {
     export = ZooKeeperPromise;
     const ZooKeeperPromise_base: typeof import("zookeeper");
     /**
@@ -490,7 +426,7 @@ declare module "zk_promise" {
          * @deprecated
          * returns {ZkPromise}
          */
-        on_connected(): import("promise");
+        on_connected(): import("zookeeper_deprecated_promise");
         /**
          * @param path {string}
          * @param data {(string|Buffer)}
@@ -599,3 +535,75 @@ declare module "zk_promise" {
         export { ZooKeeperPromise as ZK };
     }
 }
+declare module "index" {
+    const _exports: typeof import("zookeeper");
+    export = _exports;
+}
+/**
+ * ACL
+ */
+type acl = {
+    perms: number;
+    scheme: string;
+    auth: string;
+};
+/**
+ * stat
+ */
+type stat = {
+    czxid: number;
+    mzxid: number;
+    ctime: number;
+    mtime: number;
+    version: number;
+    cversion: number;
+    aversion: number;
+    ephemeralOwner: string;
+    dataLength: number;
+    numChildren: number;
+    pzxid: number;
+};
+/**
+ * Mkdir callback
+ */
+type mkdirCb = (error: Error, success?: boolean) => any;
+/**
+ * Connect callback
+ */
+type connectCb = (error: Error, client: any) => any;
+/**
+ * Path callback
+ */
+type pathCb = (rc: number, error: number, path: string) => any;
+/**
+ * Stat callback
+ */
+type statCb = (rc: number, error: number, stat: stat) => any;
+/**
+ * Data callback
+ */
+type dataCb = (rc: number, error: number, stat: stat, data: string | Buffer) => any;
+/**
+ * Child callback
+ */
+type childCb = (rc: number, error: number, children: Array<string>) => any;
+/**
+ * Child2 callback
+ */
+type child2Cb = (rc: number, error: number, children: Array<string>, stat: stat) => any;
+/**
+ * Value callback
+ */
+type valueCb = (rc: number, error: number, value: any) => any;
+/**
+ * Void callback
+ */
+type voidCb = (rc: number, error: number) => any;
+/**
+ * Watch callback
+ */
+type watchCb = (type: number, state: number, path: string) => any;
+/**
+ * ACL callback
+ */
+type aclCb = (rc: number, error: number, acl: acl, stat: stat) => any;
