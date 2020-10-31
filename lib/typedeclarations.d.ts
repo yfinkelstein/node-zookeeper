@@ -1,5 +1,46 @@
 /// <reference types="node" />
-declare module "zookeeper" {
+declare module "helper" {
+    export function deprecationLog(className: any, methodName: any): void;
+}
+declare module "zookeeperDeprecatedPromise" {
+    export = ZkPromise;
+    /**
+     * @extends Promise
+     * @deprecated
+     */
+    class ZkPromise extends Promise<any> {
+        constructor(executor: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void);
+        /**
+         * @deprecated
+         */
+        get(propertyName: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        put(propertyName: any, value: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        call(functionName: any, ...args: any[]): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addCallback(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addErrback(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addBoth(callback: any): Promise<any>;
+        /**
+         * @deprecated
+         */
+        addCallbacks(callback: any, errback: any): Promise<any>;
+    }
+}
+declare module "zookeeperWithCallbacks" {
     export = ZooKeeper;
     const ZooKeeper_base: typeof import("events").EventEmitter;
     /**
@@ -123,8 +164,22 @@ declare module "zookeeper" {
         static get ZOOKEEPER_WRITE(): number;
         /** @deprecated @returns {number} 2 */
         static get ZOOKEEPER_READ(): number;
-        static get Promise(): typeof import("zookeeper_promise");
-        static get constants(): typeof import("zookeeper_constants");
+        /** @deprecated use strings directly */
+        static get on_closed(): string;
+        /** @deprecated use strings directly */
+        static get on_connected(): string;
+        /** @deprecated use strings directly */
+        static get on_connecting(): string;
+        /** @deprecated use strings directly */
+        static get on_event_created(): string;
+        /** @deprecated use strings directly */
+        static get on_event_deleted(): string;
+        /** @deprecated use strings directly */
+        static get on_event_changed(): string;
+        /** @deprecated use strings directly */
+        static get on_event_child(): string;
+        /** @deprecated use strings directly */
+        static get on_event_notwatching(): string;
         /** @param {object|string} config */
         constructor(config: object | string);
         config: any;
@@ -285,19 +340,8 @@ declare module "zookeeper" {
         /** @param {string} value */
         setEncoding(value: string): void;
     }
-    namespace ZooKeeper {
-        export { on_closed, on_connected, on_connecting, on_event_created, on_event_deleted, on_event_changed, on_event_child, on_event_notwatching };
-    }
-    var on_closed: string;
-    var on_connected: string;
-    var on_connecting: string;
-    var on_event_created: string;
-    var on_event_deleted: string;
-    var on_event_changed: string;
-    var on_event_child: string;
-    var on_event_notwatching: string;
 }
-declare module "zookeeper_constants" {
+declare module "zookeeperConstants" {
     export var ZOO_PERM_READ: number;
     export var ZOO_PERM_WRITE: number;
     export var ZOO_PERM_CREATE: number;
@@ -371,63 +415,27 @@ declare module "zookeeper_constants" {
     export var on_event_child: string;
     export var on_event_notwatching: string;
 }
-declare module "helper" {
-    export function deprecationLog(className: any, methodName: any): void;
-}
-declare module "zookeeper_deprecated_promise" {
-    export = ZkPromise;
-    /**
-     * @extends Promise
-     * @deprecated
-     */
-    class ZkPromise extends Promise<any> {
-        constructor(executor: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void);
-        /**
-         * @deprecated
-         */
-        get(propertyName: any): Promise<any>;
-        /**
-         * @deprecated
-         */
-        put(propertyName: any, value: any): Promise<any>;
-        /**
-         * @deprecated
-         */
-        call(functionName: any, ...args: any[]): Promise<any>;
-        /**
-         * @deprecated
-         */
-        addCallback(callback: any): Promise<any>;
-        /**
-         * @deprecated
-         */
-        addErrback(callback: any): Promise<any>;
-        /**
-         * @deprecated
-         */
-        addBoth(callback: any): Promise<any>;
-        /**
-         * @deprecated
-         */
-        addCallbacks(callback: any, errback: any): Promise<any>;
-    }
-}
-declare module "zookeeper_promise" {
+declare module "zookeeper" {
     export = ZooKeeperPromise;
-    const ZooKeeperPromise_base: typeof import("zookeeper");
+    const ZooKeeperPromise_base: typeof import("zookeeperWithCallbacks");
     /**
      * A promisified version of the ZooKeeper class
      * @class
      * @extends {ZooKeeper}
      */
     class ZooKeeperPromise extends ZooKeeperPromise_base {
-        /** @param {object|string} config */
-        constructor(config: object | string);
+        /** @deprecated */
+        static get ZK(): typeof ZooKeeperPromise;
+        static get constants(): typeof import("zookeeperConstants");
+        /** @deprecated */
+        static get ZooKeeper(): typeof import("zookeeperWithCallbacks");
+        static get Promise(): typeof ZooKeeperPromise;
+        constructor(config: any);
         /**
          * @deprecated
          * returns {ZkPromise}
          */
-        on_connected(): import("zookeeper_deprecated_promise");
+        on_connected(): import("zookeeperDeprecatedPromise");
         /**
          * @param {string} path
          * @param {(string|Buffer)} data
@@ -532,13 +540,10 @@ declare module "zookeeper_promise" {
          */
         private promisify;
     }
-    namespace ZooKeeperPromise {
-        export { ZooKeeperPromise as ZK };
-    }
 }
 declare module "index" {
-    const _exports: typeof import("zookeeper");
-    export = _exports;
+    export = ZooKeeper;
+    const ZooKeeper: typeof import("zookeeper");
 }
 /**
  * ACL
