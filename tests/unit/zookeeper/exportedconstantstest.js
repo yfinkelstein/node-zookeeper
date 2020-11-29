@@ -1,5 +1,6 @@
 const test = require('tape');
-const NativeZk = require('../../../build/zookeeper.node').ZooKeeper;
+const { join } = require('path');
+const NativeZk = require('node-gyp-build')(join(__dirname, '../../../')).ZooKeeper;
 const constants = require('../../../lib/constants');
 const ZooKeeper = require('../../../lib/zookeeper');
 

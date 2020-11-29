@@ -32,6 +32,7 @@
         "decompress-targz": "4.1.x",
         "lodash": "4.x",
         "nan": "2.x",
+        "node-gyp-build": "^4.2.3",
         "shelljs": "0.8.x"
     },
     "devDependencies": {
@@ -40,6 +41,8 @@
         "eslint-config-airbnb-base": "14.x",
         "eslint-plugin-import": "2.x",
         "log4js": "6.x",
+        "node-gyp": "^7.1.2",
+        "prebuildify": "^4.1.1",
         "proxyquire": "2.x",
         "sinon": "9.x",
         "tap-spec": "5.x",
@@ -49,7 +52,7 @@
     },
     "main": "./lib/index.js",
     "scripts": {
-        "build": "node-gyp configure build",
+        "build": "node-gyp-build",
         "build-components": "node-gyp configure build --directory=tests/components",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
