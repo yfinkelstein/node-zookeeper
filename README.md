@@ -4,17 +4,23 @@
 
 _node-zookeeper - A Node.js client for Apache Zookeeper._
 
-This module is implemented on top of the ZooKeeper C API; consult the [ZK Reference](http://zookeeper.apache.org/doc/r3.4.13/index.html) for further details on behavior.
+This node module is implemented on top of the official ZooKeeper C Client API. Have a look at the [official docs](https://zookeeper.apache.org/doc/current/index.html) for further details on behavior.
 
 __Latest changes__ are described in the [changelog](./CHANGELOG.md)
 
 ## Installation
 
-(note the name `zookeeper` in lowercase)
-
 ```bash
 npm install zookeeper
 ```
+
+And you're done!
+
+(note the name `zookeeper` in lowercase)
+
+:tada: __New since version 4.7.0__ :tada: The install process is faster than ever. If you are a Mac OS X or Windows user, there is no longer a need to build an AddOn during the install process.
+Everything is already included in the package. Linux user? Don't worry, the installer will quickly build a `Native Node.js AddOn` for the Linux flavor you are running.
+
 
 ## Examples
 
@@ -22,7 +28,7 @@ npm install zookeeper
 const ZooKeeper = require('zookeeper');
 ```
 
-The ZooKeeper client support both callbacks and `async/await`.
+The ZooKeeper client support both callbacks and __Promises__ using the `then` or `async/await` syntax.
 
 ### Documentation
 The source code is documented with `JSDoc` code comments and `TypeScript` type declarations. 
@@ -34,7 +40,7 @@ Also, have a look at the API documentation here:
 
 ### Example: create a client
 
-Create an instance of the ZooKeeper client using `async/await`:
+Create an instance of the ZooKeeper client:
 
 ```javascript
 function createClient(timeoutMs = 5000) {
@@ -63,12 +69,13 @@ client.init(config);
 
 ### Example: create a node
 
-Using the API of the `async/await` enabled client.
+Using the API:
 
 ```javascript
 const path = '/myPath';
 try {
     const createdPath = await client.create(path, data, ZooKeeper.ZOO_EPHEMERAL);
+
     console.log(`(created: ${createdPath})`);
 } catch (error) {
     console.log(`${path} already exists`);
@@ -77,7 +84,7 @@ try {
 
 ### More examples
 
-Check out the code in the [examples](./examples) folder: master,workers, tasks and listeners scenarios.
+Have a look at the code in the [examples](./examples) folder: with __master__, __workers__, __tasks__ and __listeners__ scenarios.
 
 ## API Reference
 
@@ -214,7 +221,9 @@ For more details please refer to ZooKeeper docs.
 
 ## Windows support
 
-Install `CMake` to build a ZooKeeper client on Windows. Install Python.
+Windows 10 is supported out of the box with no additional requirements other than Node.js itself.
+
+Running a different Windows version? Install `CMake` to build a ZooKeeper client on Windows and install Python.
 
 Also, run `npm install` in a Powershell window. For further instructions visit [node-gyp documentation](https://github.com/nodejs/node-gyp/#on-windows).
 
@@ -241,16 +250,16 @@ Remove-Item Env:\ZK_INSTALL_VERBOSE
 
 ## Implementation Notes
 
-* Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZK responses have to be dispatched to the main JS thread.
-* The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZK internal and is not installed into /usr/local/include
-* Multiple simultaneous ZK connections are supported and tested
-* All ZK constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
-* All ZK API methods including watchers are supported.
+* Zookeeper C API library comes in 2 flavours: single-threaded and multi-threaded. For node.js, single-threaded library provides the most sense since all events coming from ZooKeeper responses have to be dispatched to the main JavaScript thread.
+* The C++ code uses the same logging facility that ZK C API uses internally. Hence zk_log.h file checked into this project. The file is considered ZooKeeper internal and is not installed into /usr/local/include
+* Multiple simultaneous ZooKeeper connections are supported and tested
+* All ZooKeeper constants are exposed as read-only properties of the ZooKeeper function, like ZK.ZOO_EPHEMERAL
+* All ZooKeeper API methods including watchers are supported.
 
 ## Known Bugs & Issues
 
 * The lib will segfault if you try to use a ZooKeeper intance after the on_closed event is delivered (possibly as a result of session timeout etc.) YOU MAY NOT re-use the closed ZooKeeper instance. You should allocate a new one and initialize it as a completely new client. Any and all watchers from your first instance are lost, though they may fire (before the on_close) see below.
-* Any established watches may/will be fired once each when/if your client is expired by the ZK server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
+* Any established watches may/will be fired once each when/if your client is expired by the ZooKeeper server, the input arguments are observed to be: type=-1, state=1, path="". Care should be taken to handle this differently than a "real" watch event if that matters to your application.
 
 ## Contribute to the project
 
