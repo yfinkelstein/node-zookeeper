@@ -173,9 +173,12 @@ public:
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
 #ifdef WIN32
-#define ZOO_CONTAINER -1
-#define ZOO_PERSISTENT_WITH_TTL -1
-#define ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL -1
+#define ZOO_PERSISTENT (0)
+#define ZOO_PERSISTENT_SEQUENTIAL (ZOO_PERSISTENT | ZOO_SEQUENCE)
+#define ZOO_EPHEMERAL_SEQUENTIAL (ZOO_EPHEMERAL | ZOO_SEQUENCE)
+#define ZOO_CONTAINER (-1)
+#define ZOO_PERSISTENT_WITH_TTL (-1)
+#define ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL (-1)
 #endif
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
