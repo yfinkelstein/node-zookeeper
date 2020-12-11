@@ -96,6 +96,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `path = await create(path, data, flags)`
 * `mkdirp(path, callback(Error))`
 * `stat = await exists(path, watch)`
+    * rejects if node does not exist
 * `data = await get(path, watch)`
 * `children = await get_children(path, watch)`
 * `[children, stat] = await get_children2( path, watch)`
@@ -113,6 +114,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 *The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
 
 * `stat = await w_exists(path, watch_cb)`
+    * rejects if node does not exist
 * `data = await w_get(path, watch_cb)`
 * `children = await w_get_children(path, watch_cb)`
 * `[children, stat] = await w_get_children2 (path, watch_cb)`
@@ -150,6 +152,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 
 * path_cb : function(rc, error, path)
 * stat_cb : function(rc, error, stat)
+    * Invoked with error set if path does not exist, also for a_exists() calls
 * data_cb : function(rc, error, stat, data)
 * child_cb : function(rc, error, children)
 * child2_cb : function(rc, error, children, stat)
