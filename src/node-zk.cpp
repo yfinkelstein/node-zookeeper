@@ -192,6 +192,7 @@ public:
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_EPHEMERAL);
         NODE_DEFINE_CONSTANT(constructor, ZOO_SEQUENCE);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_CONTAINER);
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);

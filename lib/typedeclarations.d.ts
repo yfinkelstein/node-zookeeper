@@ -82,6 +82,8 @@ declare module "zookeeperWithCallbacks" {
         static get ZOO_EPHEMERAL(): number;
         /** @deprecated @returns {number} 2 */
         static get ZOO_SEQUENCE(): number;
+        /** @deprecated @returns {number} 4 */
+        static get ZOO_CONTAINER(): number;
         /** @deprecated @returns {number} 0 */
         static get ZOK(): number;
         /** @deprecated @returns {number} -1 */
@@ -359,6 +361,7 @@ declare module "zookeeperConstants" {
     export var ZOO_LOG_LEVEL_DEBUG: number;
     export var ZOO_EPHEMERAL: number;
     export var ZOO_SEQUENCE: number;
+    export var ZOO_CONTAINER: number;
     export var ZOK: number;
     export var ZSYSTEMERROR: number;
     export var ZRUNTIMEINCONSISTENCY: number;
