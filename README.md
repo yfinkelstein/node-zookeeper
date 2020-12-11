@@ -163,13 +163,15 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 
 * options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer}
 * path : string
-* data : string, Buffer or null/undefined
+* data : string or Buffer
 * flags : int32. Supported: 
   - `ZOO_PERSISTENT`
   - `ZOO_EPHEMERAL`
   - `ZOO_PERSISTENT_SEQUENTIAL`
   - `ZOO_EPHEMERAL_SEQUENTIAL`
   - `ZOO_CONTAINER`
+  - `ZOO_PERSISTENT_WITH_TTL`
+  - `ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL`
 * version : int32. Pass 'null' or don't pas any to skip version checking.
 * watch : boolean
 * scheme : authorisation scheme (digest, auth)
