@@ -172,6 +172,11 @@ public:
         Nan::DefineOwnProperty(acl_creator, LOCAL_STRING("auth"), LOCAL_STRING(""), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
         Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_CREATOR_ALL_ACL"), acl_creator, static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
+#ifdef WIN32
+#define ZOO_CONTAINER -1
+#define ZOO_PERSISTENT_WITH_TTL -1
+#define ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL -1
+#endif
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);
@@ -651,10 +656,18 @@ public:
         int32_t ttl = toInt(info[3]);
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = toLocalObj(info[1]);
+#ifndef WIN32
             METHOD_EPILOG(zoo_acreate_ttl(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, ttl, string_completion, cb));
+#else
+            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+#endif
         } else {    // other
             Nan::Utf8String _data (toString(info[1]));
+#ifndef WIN32
             METHOD_EPILOG(zoo_acreate_ttl(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, ttl, string_completion, cb));
+#else
+            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+#endif
         }
     }
 
