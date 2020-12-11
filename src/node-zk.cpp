@@ -196,6 +196,8 @@ public:
         NODE_DEFINE_CONSTANT(constructor, ZOO_PERSISTENT_SEQUENTIAL);
         NODE_DEFINE_CONSTANT(constructor, ZOO_EPHEMERAL_SEQUENTIAL);
         NODE_DEFINE_CONSTANT(constructor, ZOO_CONTAINER);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERSISTENT_WITH_TTL);
+        NODE_DEFINE_CONSTANT(constructor, ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL);
 
         NODE_DEFINE_CONSTANT(constructor, ZOO_CREATED_EVENT);
         NODE_DEFINE_CONSTANT(constructor, ZOO_DELETED_EVENT);
@@ -641,17 +643,18 @@ public:
     }
 
     static void ACreate(const Nan::FunctionCallbackInfo<Value>& info) {
-        A_METHOD_PROLOG(4);
+        A_METHOD_PROLOG(5);
 
         Nan::Utf8String _path (toString(info[0]));
         uint32_t flags = toUint(info[2]);
 
+        int32_t ttl = toInt(info[3]);
         if (Buffer::HasInstance(info[1])) { // buffer
             Local<Object> _data = toLocalObj(info[1]);
-            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+            METHOD_EPILOG(zoo_acreate_ttl(zk->zhandle, *_path, BufferData(_data), BufferLength(_data), &ZOO_OPEN_ACL_UNSAFE, flags, ttl, string_completion, cb));
         } else {    // other
             Nan::Utf8String _data (toString(info[1]));
-            METHOD_EPILOG(zoo_acreate(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, string_completion, cb));
+            METHOD_EPILOG(zoo_acreate_ttl(zk->zhandle, *_path, *_data, _data.length(), &ZOO_OPEN_ACL_UNSAFE, flags, ttl, string_completion, cb));
         }
     }
 

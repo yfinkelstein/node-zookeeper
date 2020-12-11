@@ -90,6 +90,10 @@ declare module "zookeeperWithCallbacks" {
         static get ZOO_EPHEMERAL_SEQUENTIAL(): number;
         /** @deprecated @returns {number} 4 */
         static get ZOO_CONTAINER(): number;
+        /** @deprecated @returns {number} 5 */
+        static get ZOO_PERSISTENT_WITH_TTL(): number;
+        /** @deprecated @returns {number} 6 */
+        static get ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL(): number;
         /** @deprecated @returns {number} 0 */
         static get ZOK(): number;
         /** @deprecated @returns {number} -1 */
@@ -371,6 +375,8 @@ declare module "zookeeperConstants" {
     export var ZOO_EPHEMERAL_SEQUENTIAL: number;
     export var ZOO_SEQUENCE: number;
     export var ZOO_CONTAINER: number;
+    export var ZOO_PERSISTENT_WITH_TTL: number;
+    export var ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL: number;
     export var ZOK: number;
     export var ZSYSTEMERROR: number;
     export var ZRUNTIMEINCONSISTENCY: number;

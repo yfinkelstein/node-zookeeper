@@ -93,7 +93,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `init(options)`
 * `connect(options, connect_cb)`
 * `close()`
-* `path = await create(path, data, flags)`
+* `path = await create(path, data, flags, ttl)`
 * `mkdirp(path, callback(Error))`
 * `stat = await exists(path, watch)`
 * `data = await get(path, watch)`
@@ -126,6 +126,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `connect(options, connect_cb)`
 * `close()`
 * `a_create(path, data, flags, path_cb)`
+* `a_createTtl(path, data, flags, path_cb)`
 * `mkdirp(path, callback(Error))`
 * `a_exists(path, watch, stat_cb)`
 * `a_get(path, watch, data_cb)`
@@ -170,8 +171,11 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
   - `ZOO_PERSISTENT_SEQUENTIAL`
   - `ZOO_EPHEMERAL_SEQUENTIAL`
   - `ZOO_CONTAINER`
+  - `ZOO_PERSISTENT_WITH_TTL`
+  - `ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL`
 * version : int32. Pass 'null' or don't pas any to skip version checking.
 * watch : boolean
+* ttl: int32. Must be postive if any of the TTL modes is used; not positive or unspecified otherwise.
 * scheme : authorisation scheme (digest, auth)
 * auth : authorisation credentials (username:password)
 * acl : acls list (same as output parameter, look below) - read only
