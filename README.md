@@ -170,8 +170,6 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
   - `ZOO_PERSISTENT_SEQUENTIAL`
   - `ZOO_EPHEMERAL_SEQUENTIAL`
   - `ZOO_CONTAINER`
-  - `ZOO_PERSISTENT_WITH_TTL`
-  - `ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL`
 * version : int32. Pass 'null' or don't pas any to skip version checking.
 * watch : boolean
 * scheme : authorisation scheme (digest, auth)
