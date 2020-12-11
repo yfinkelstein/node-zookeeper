@@ -78,10 +78,16 @@ declare module "zookeeperWithCallbacks" {
         static get ZOO_LOG_LEVEL_INFO(): number;
         /** @deprecated @returns {number} 4 */
         static get ZOO_LOG_LEVEL_DEBUG(): number;
+        /** @deprecated @returns {number} 0 */
+        static get ZOO_PERSISTENT(): number;
         /** @deprecated @returns {number} 1 */
         static get ZOO_EPHEMERAL(): number;
         /** @deprecated @returns {number} 2 */
         static get ZOO_SEQUENCE(): number;
+        /** @deprecated @returns {number} 2 */
+        static get ZOO_PERSISTENT_SEQUENTIAL(): number;
+        /** @deprecated @returns {number} 3 */
+        static get ZOO_EPHEMERAL_SEQUENTIAL(): number;
         /** @deprecated @returns {number} 4 */
         static get ZOO_CONTAINER(): number;
         /** @deprecated @returns {number} 0 */
@@ -359,7 +365,10 @@ declare module "zookeeperConstants" {
     export var ZOO_LOG_LEVEL_WARN: number;
     export var ZOO_LOG_LEVEL_INFO: number;
     export var ZOO_LOG_LEVEL_DEBUG: number;
+    export var ZOO_PERSISTENT: number;
     export var ZOO_EPHEMERAL: number;
+    export var ZOO_PERSISTENT_SEQUENTIAL: number;
+    export var ZOO_EPHEMERAL_SEQUENTIAL: number;
     export var ZOO_SEQUENCE: number;
     export var ZOO_CONTAINER: number;
     export var ZOK: number;
