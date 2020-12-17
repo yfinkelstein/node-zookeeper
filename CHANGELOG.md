@@ -1,3 +1,10 @@
+#### v 4.7.0 (2020-12-17)
+* feat: include prebuilt binaries for Mac OS X (darwin, x64) and Windows - for node 12 and 14. This will simplify and fasten the install process a lot. Pull request [251](https://github.com/yfinkelstein/node-zookeeper/pull/251) by @davidvujic
+* fix: note about rejecting/erroring when path does not exist in exists() calls. Pull request [256](https://github.com/yfinkelstein/node-zookeeper/pull/256) by @dreusel
+
+#### v 4.7.0-beta.0 (2020-11-29)
+* feat: include prebuilt binaries for Mac OS X (darwin, x64) and Windows - for node 12 and 14. This will simplify and fasten the install process a lot. Pull request [252](https://github.com/yfinkelstein/node-zookeeper/pull/252) by @davidvujic
+
 #### v 4.6.0 (2020-10-31)
 * feat: The default API from the library is the async/await enabled client (containing both callbacks and promisified methods)
 * fix: add TypeScript declarations.
