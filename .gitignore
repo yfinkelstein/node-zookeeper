@@ -2,8 +2,6 @@ build
 node_modules
 npm-debug.log
 .idea
-*.tgz
-deps/zookeeper*
-deps/apache-zookeeper-*/
+deps/zookeeper-client-c/
 .DS_Store
 package-lock.json

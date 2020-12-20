@@ -64,7 +64,7 @@
         "type-declarations": "tsc --outFile ./lib/typedeclarations.d.ts"
     },
     "engines": {
-        "node": ">=8.9.4"
+        "node": ">=10.0.0"
     },
     "types": "./lib/typedeclarations.d.ts"
 }
