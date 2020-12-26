@@ -11,22 +11,6 @@ function exec(action) {
     return res.stdout;
 }
 
-async function retry(func, ...args) {
-    let res;
-
-    try {
-        res = await func(...args);
-    } catch (e) {
-        shell.echo(e.message);
-        shell.echo(`Retrying ${func.name}`);
-
-        res = await func(...args);
-    }
-
-    return res;
-}
-
 module.exports = {
     exec,
-    retry,
 };
