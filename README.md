@@ -4,7 +4,7 @@
 
 _node-zookeeper - A Node.js client for Apache Zookeeper._
 
-This node module is implemented on top of the official ZooKeeper C Client API. Have a look at the [official docs](https://zookeeper.apache.org/doc/current/index.html) for further details on behavior.
+This node module is implemented on top of the __official ZooKeeper C Client API__, supporting ZooKeeper server v3.4.x - v3.6.x. Have a look at the [official docs](https://zookeeper.apache.org/doc/current/index.html) for further details on behavior.
 
 __Latest changes__ are described in the [changelog](./CHANGELOG.md)
 
@@ -18,9 +18,13 @@ And you're done!
 
 (note the name `zookeeper` in lowercase)
 
+#### News
 :tada: __New since version 4.7.0__ :tada: The install process is faster than ever. If you are a Mac OS X or Windows user, there is no longer a need to build an AddOn during the install process.
 Everything is already included in the package. Linux user? Don't worry, the installer will quickly build a `Native Node.js AddOn` for the Linux flavor you are running.
 
+
+#### Next release (work in progress)
+:rocket: Adding support for the new node types introduced in Apache ZooKeeper server v3.5.5: `Container` and `TTL` :rocket:
 
 ## Examples
 
