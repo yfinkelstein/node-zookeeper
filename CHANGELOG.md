@@ -1,3 +1,6 @@
+#### v 4.7.1 (2020-12-27)
+* fix: build an AddOn from the ZooKeeper C Client v3.5.8 in all platforms (Linux, Mac OS X and Windows). Pull request [260](https://github.com/yfinkelstein/node-zookeeper/pull/260) by @davidvujic
+
 #### v 4.7.0 (2020-12-17)
 * feat: include prebuilt binaries for Mac OS X (darwin, x64) and Windows - for node 12 and 14. This will simplify and fasten the install process a lot. Pull request [251](https://github.com/yfinkelstein/node-zookeeper/pull/251) by @davidvujic
 * fix: note about rejecting/erroring when path does not exist in exists() calls. Pull request [256](https://github.com/yfinkelstein/node-zookeeper/pull/256) by @dreusel
