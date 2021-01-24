@@ -264,7 +264,7 @@ public:
 
     void yield () {
         if (is_closed) {
-            LOG_DEBUG("yield: was closed");
+            LOG_DEBUG("yield: was closed.\n");
             return;
         }
 
@@ -329,7 +329,7 @@ public:
     }
 
     static void zk_io_cb (uv_poll_t *w, int status, int revents) {
-        LOG_DEBUG("zk_io_cb fired, status: %d, revents: %d", status, revents);
+        LOG_DEBUG("zk_io_cb fired, status: %d, revents: %d\n", status, revents);
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
 
         int events;
@@ -349,6 +349,12 @@ public:
             LOG_WARN("yield:zookeeper_process has returned no response %d times\n", zk->noResponseCounter);
         } else {
             LOG_ERROR("yield:zookeeper_process returned an error: %d - %s\n", rc, zerror(rc));
+        }
+
+        if (rc == ZCONNECTIONLOSS) {
+            LOG_WARN("yield:zookeeper_process returned connection loss.\n");
+            zk->realClose(ZOO_EXPIRED_SESSION_STATE);
+            return;
         }
 
         if (zk->noResponseCounter > 10) {
@@ -1045,8 +1051,7 @@ public:
     };
 
     virtual ~ZooKeeper() {
-        //realClose ();
-        LOG_INFO("ZooKeeper destructor invoked");
+        LOG_INFO("ZooKeeper destructor invoked.\n");
     }
 
 #ifdef WIN32
