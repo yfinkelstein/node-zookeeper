@@ -288,10 +288,7 @@ public:
         }
 
         if (fd == -1 ) {
-            if (zk_io) {
-                uv_close((uv_handle_t*) zk_io, delete_on_close);
-                zk_io = NULL;
-            }
+            uvCloseZk();
             return;
         }
 
@@ -308,10 +305,7 @@ public:
         // a new uv_poll_t handle needs to be created to watch it.
         if (oldFd != fd) {
             // If there was an existing handle, then clean it up
-            if (zk_io) {
-                uv_close((uv_handle_t*) zk_io, delete_on_close);
-                zk_io = NULL;
-            }
+            uvCloseZk();
 
             LOG_DEBUG("yield: creating a new poll handle for %lp", this);
             zk_io = (uv_poll_t*)malloc(sizeof(uv_poll_t));
@@ -987,6 +981,23 @@ public:
         RETURN_VALUE(info, Nan::New<Integer> (zk->zhandle != 0 ? is_unrecoverable(zk->zhandle) : 0));
     }
 
+    void uvCloseZk() {
+        if (!zk_io) {
+            LOG_INFO("uvCloseZk: zk_io returned false. Will not run uv_close.\n");
+            return;
+        }
+
+        if (uv_is_closing((uv_handle_t*) zk_io)) {
+            LOG_INFO("uvCloseZk: uv_is_closing returned true. Will not run uv_close.\n");
+            return;
+        }
+
+        uv_close((uv_handle_t*) zk_io, delete_on_close);
+        zk_io = NULL;
+
+        LOG_INFO("uvCloseZk: Did run uv_close and set zk_io to NULL.\n");
+    }
+
     void realClose (int code) {
         if (is_closed) {
             return;
@@ -1008,10 +1019,9 @@ public:
             if (zk_io) {
                 int rc = uv_poll_stop(zk_io);
                 LOG_DEBUG("zookeeper_close(%lp) uv_poll_stop result: %d", this, rc);
-
-                uv_close((uv_handle_t*) zk_io, delete_on_close);
-                zk_io = NULL;
             }
+
+            uvCloseZk();
 
             // Close the timer and finally Unref the ZooKeeper instance when it's done
             // Unrefing after is important to avoid memory being freed too early.
