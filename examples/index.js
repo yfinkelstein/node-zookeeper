@@ -1,3 +1,4 @@
+const { getClient } = require('./wrapper.js');
 const { createNodes } = require('./setup.js');
 const { electLeader } = require('./electleader.js');
 const { createWorker } = require('./createworker.js');
@@ -10,7 +11,6 @@ const notifier = require('./notifier.js');
 notifier.on('connect', (message) => logger.log('connect', message));
 notifier.on('createNode', (message) => logger.log('createNode', message));
 notifier.on('addTask', (message) => logger.log('addTask', message));
-notifier.on('close', (message) => logger.log('close', message));
 
 notifier.on('onChildren', (children) => {
     children.forEach((child) => {
@@ -19,21 +19,25 @@ notifier.on('onChildren', (children) => {
 });
 
 async function init() {
-    await createNodes(['/workers', '/assign', '/tasks', '/status']);
+    const client = getClient();
 
-    notifier.on('leader', async (master) => {
-        await listen(master, '/workers');
-        await listen(master, '/assign');
+    client.on('connect', async () => {
+        await createNodes(client, ['/workers', '/assign', '/tasks', '/status']);
 
-        notifier.on('createWorker', async (worker) => {
-            await listen(worker, '/tasks');
+        notifier.on('leader', async () => {
+            await listen(client, '/workers');
+            await listen(client, '/assign');
+
+            notifier.on('createWorker', async () => {
+                await listen(client, '/tasks');
+            });
+
+            await createWorker(client);
+            await addTask(client, 'hello world');
         });
 
-        await createWorker();
-        await addTask('hello world');
+        await electLeader(client, '/master');
     });
-
-    await electLeader('/master');
 }
 
 init().catch(logger.error);
