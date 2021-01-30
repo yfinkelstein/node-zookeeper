@@ -1,31 +1,27 @@
-const { constants, createClient } = require('./wrapper.js');
+const { constants, isClientConnected } = require('./wrapper.js');
 const notifier = require('./notifier.js');
 const logger = require('./logger.js');
 
 function emit(client, path) {
     logger.log(`(${path}) client id: ${client.client_id}`);
-    notifier.emit('createWorker', client);
+    notifier.emit('createWorker');
 }
 
 async function createWorkerPath(client, path) {
     try {
+        if (!isClientConnected()) {
+            throw new Error('createWorkerPath: client is not connected');
+        }
         // eslint-disable-next-line no-bitwise
         const createdPath = await client.create(path, '', constants.ZOO_EPHEMERAL | constants.ZOO_SEQUENCE);
         emit(client, createdPath);
     } catch (error) {
-        logger.error(error);
+        logger.error('createWorkerPath', error.message);
     }
 }
 
-async function createWorker() {
-    const client = createClient();
-
-    client.on('connect', () => {
-        notifier.emit('connect', `createWorker: session established, id=${client.client_id}`);
-        createWorkerPath(client, '/workers/worker-');
-    });
-
-    client.init({});
+async function createWorker(client) {
+    createWorkerPath(client, '/workers/worker-');
 }
 
 module.exports = {

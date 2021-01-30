@@ -1,24 +1,65 @@
 const { constants, Promise: ZooKeeper } = require('../lib/index');
+const logger = require('./logger.js');
 
 const host = process.argv[2] || '127.0.0.1:2181';
+
+let client;
+let isConnected = false;
 
 /**
  * @param timeoutMs {number}
  * @returns {ZooKeeper}
  */
 function createClient(timeoutMs = 5000) {
-    const config = {
-        connect: host,
-        timeout: timeoutMs,
-        debug_level: constants.ZOO_LOG_LEVEL_WARN,
-        host_order_deterministic: false,
-    };
+    if (!client) {
+        isConnected = false;
+        logger.log('creating a client.');
 
-    return new ZooKeeper(config);
+        const config = {
+            connect: host,
+            timeout: timeoutMs,
+            debug_level: constants.ZOO_LOG_LEVEL_WARN,
+            host_order_deterministic: false,
+        };
+
+        client = new ZooKeeper(config);
+
+        client.on('close', () => {
+            isConnected = false;
+            logger.log('close', `session closed, id=${client.client_id}`);
+            client = null;
+        });
+
+        client.on('connecting', () => {
+            isConnected = false;
+            logger.log('connecting', `session connecting, id=${client.client_id}`);
+        });
+
+        client.on('connect', () => {
+            isConnected = true;
+            logger.log('connect', `session connect, id=${client.client_id}`);
+        });
+
+        setTimeout(() => {
+            client.init({});
+        }, 1000);
+    }
+
+    return client;
+}
+
+/** @returns {ZooKeeper} */
+function getClient() {
+    return createClient();
+}
+
+function isClientConnected() {
+    return isConnected;
 }
 
 module.exports = {
     constants,
-    createClient,
     ZooKeeper,
+    getClient,
+    isClientConnected,
 };
