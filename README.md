@@ -19,12 +19,10 @@ And you're done!
 (note the name `zookeeper` in lowercase)
 
 #### News
+:rocket: __New since version 4.7.2__ Support for the new node types introduced in Apache ZooKeeper server v3.5.5: `Container` and `TTL` :rocket:
+
 :tada: __New since version 4.7.0__ :tada: The install process is faster than ever. If you are a Mac OS X or Windows user, there is no longer a need to build an AddOn during the install process.
 Everything is already included in the package. Linux user? Don't worry, the installer will quickly build a `Native Node.js AddOn` for the Linux flavor you are running.
-
-
-#### Next release (work in progress)
-:rocket: Adding support for the new node types introduced in Apache ZooKeeper server v3.5.5: `Container` and `TTL` :rocket:
 
 ## Examples
 
@@ -97,7 +95,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `init(options)`
 * `connect(options, connect_cb)`
 * `close()`
-* `path = await create(path, data, flags)`
+* `path = await create(path, data, flags, ttl)`
+    * `ttl` is optional. Must be positive if a TTL flag is used. See [Input parameters](#input-parameters)
 * `mkdirp(path, callback(Error))`
 * `stat = await exists(path, watch)`
     * rejects if node does not exist
@@ -132,6 +131,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `connect(options, connect_cb)`
 * `close()`
 * `a_create(path, data, flags, path_cb)`
+* `a_createTtl(path, data, flags, ttl, pathCb)`
 * `mkdirp(path, callback(Error))`
 * `a_exists(path, watch, stat_cb)`
 * `a_get(path, watch, data_cb)`
@@ -171,9 +171,17 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer}
 * path : string
 * data : string or Buffer
-* flags : int32
-* version : int32
+* flags : int32. Supported:
+  - `ZOO_PERSISTENT`
+  - `ZOO_EPHEMERAL`
+  - `ZOO_PERSISTENT_SEQUENTIAL`
+  - `ZOO_EPHEMERAL_SEQUENTIAL`
+  - `ZOO_CONTAINER`
+  - `ZOO_PERSISTENT_WITH_TTL`
+  - `ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL`
+* version : int32. `null` or `undefined` will skip version checking.
 * watch : boolean
+* ttl: int32. TTL in milliseconds. Must be positive if any of the TTL modes is used; otherwise `undefined`.
 * scheme : authorisation scheme (digest, auth)
 * auth : authorisation credentials (username:password)
 * acl : acls list (same as output parameter, look below) - read only

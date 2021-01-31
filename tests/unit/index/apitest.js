@@ -3,9 +3,10 @@ const test = require('tape');
 const ZooKeeper = require('../../../lib/index.js');
 
 function assertPublicApi(zk, t) {
-    t.plan(25);
+    t.plan(26);
 
     t.equal(typeof zk.a_create, 'function');
+    t.equal(typeof zk.a_createTtl, 'function');
     t.equal(typeof zk.a_exists, 'function');
     t.equal(typeof zk.a_get, 'function');
     t.equal(typeof zk.a_get_acl, 'function');
