@@ -1,3 +1,7 @@
+#### v 4.8.0 (2021-01-31)
+* feat: add support for TTL and Container nodes. Pull request [255](https://github.com/yfinkelstein/node-zookeeper/pull/255) by @dreusel
+* fix: Example code: use one client, use only when connected  Pull request [264](https://github.com/yfinkelstein/node-zookeeper/pull/264) by @davidvujic
+
 #### v 4.7.1 (2020-12-27)
 * fix: build an AddOn from the ZooKeeper C Client v3.5.8 in all platforms (Linux, Mac OS X and Windows). Pull request [260](https://github.com/yfinkelstein/node-zookeeper/pull/260) by @davidvujic
 
