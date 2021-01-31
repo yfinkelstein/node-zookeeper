@@ -6,14 +6,6 @@ const ZooKeeper = require('../../../lib/zookeeper');
 
 const keys = Object.keys(NativeZk);
 
-test('deprecated native static constants are exported', (t) => {
-    t.plan(keys.length);
-
-    keys.forEach((key) => {
-        t.equal(ZooKeeper[key], NativeZk[key]);
-    });
-});
-
 test('native static constants are exported', (t) => {
     t.plan(keys.length);
 

@@ -221,6 +221,15 @@ declare module "zookeeperWithCallbacks" {
         a_create(path: string, data: string | Buffer, flags: number, pathCb: pathCb): any;
         /**
          * @param {string} path
+         * @param {string|Buffer} data
+         * @param {number} flags - an int32 value
+         * @param {number} ttl - a positive int32 value
+         * @param {pathCb} pathCb
+         * @returns {*}
+         */
+        a_createTtl(path: string, data: string | Buffer, flags: number, ttl: number, pathCb: pathCb): any;
+        /**
+         * @param {string} path
          * @param {boolean} watch
          * @param {statCb} statCb
          * @returns {*}
@@ -357,8 +366,14 @@ declare module "zookeeperConstants" {
     export var ZOO_LOG_LEVEL_WARN: number;
     export var ZOO_LOG_LEVEL_INFO: number;
     export var ZOO_LOG_LEVEL_DEBUG: number;
+    export var ZOO_PERSISTENT: number;
     export var ZOO_EPHEMERAL: number;
     export var ZOO_SEQUENCE: number;
+    export var ZOO_PERSISTENT_SEQUENTIAL: number;
+    export var ZOO_EPHEMERAL_SEQUENTIAL: number;
+    export var ZOO_CONTAINER: number;
+    export var ZOO_PERSISTENT_WITH_TTL: number;
+    export var ZOO_PERSISTENT_SEQUENTIAL_WITH_TTL: number;
     export var ZOK: number;
     export var ZSYSTEMERROR: number;
     export var ZRUNTIMEINCONSISTENCY: number;
@@ -440,10 +455,11 @@ declare module "zookeeper" {
          * @param {string} path
          * @param {(string|Buffer)} data
          * @param {number} flags
+         * @param {number|undefined} [ttl=undefined] ttl - positive integer, use only with a TTL flag
          * @fulfill {string}
          * @returns {Promise.<string>}
          */
-        create(path: string, data: (string | Buffer), flags: number): Promise<string>;
+        create(path: string, data: (string | Buffer), flags: number, ttl?: number | undefined): Promise<string>;
         /**
          * @param {string} path
          * @param {function} watch
