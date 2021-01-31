@@ -1,4 +1,4 @@
-const { getClient } = require('./wrapper.js');
+const { getClient, constants } = require('./wrapper.js');
 const { createNodes } = require('./setup.js');
 const { electLeader } = require('./electleader.js');
 const { createWorker } = require('./createworker.js');
@@ -22,7 +22,8 @@ async function init() {
     const client = getClient();
 
     client.on('connect', async () => {
-        await createNodes(client, ['/workers', '/assign', '/tasks', '/status']);
+        await createNodes(client, ['/workers', '/assign', '/tasks', '/status'], constants.ZOO_CONTAINER);
+        await createNodes(client, ['/myttl'], constants.ZOO_PERSISTENT_WITH_TTL, 5000);
 
         notifier.on('leader', async () => {
             await listen(client, '/workers');

@@ -1,7 +1,5 @@
 const { isClientConnected } = require('./wrapper.js');
 
-const persistentNode = 0;
-
 /**
  * @param client {ZooKeeperPromise}
  * @param path {string}
@@ -9,13 +7,14 @@ const persistentNode = 0;
  * @param data {string|Buffer}
  * @returns {Promise}
  */
-async function createNode(client, path, flags, data = '') {
+async function createNode(client, path, flags, ttl, data = '') {
     try {
         if (!isClientConnected()) {
             throw new Error('createNode: client is not connected');
         }
 
-        const createdPath = await client.create(path, data, flags);
+        const createdPath = await client.create(path, data, flags, ttl);
+
         return `(created: ${createdPath})`;
     } catch (error) {
         return `${path} Error: ${error.message}`;
@@ -24,5 +23,4 @@ async function createNode(client, path, flags, data = '') {
 
 module.exports = {
     createNode,
-    persistentNode,
 };
