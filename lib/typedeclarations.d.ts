@@ -462,7 +462,7 @@ declare module "zookeeper" {
         create(path: string, data: (string | Buffer), flags: number, ttl?: number | undefined): Promise<string>;
         /**
          * @param {string} path
-         * @param {function} watch
+         * @param {boolean} watch
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
