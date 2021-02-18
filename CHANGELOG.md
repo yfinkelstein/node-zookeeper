@@ -1,5 +1,6 @@
 #### v 4.8.1 (2021-02-18)
 * fix: the `watch` param passed in to the exists (the promise based) function is a boolean. Pull request [266](https://github.com/yfinkelstein/node-zookeeper/pull/266) by @davidvujic
+* chore: Node.js LTS 12 and 14 is enough for running in a CI. Pull request [267](https://github.com/yfinkelstein/node-zookeeper/pull/267) by @davidvujic
 
 #### v 4.8.0 (2021-01-31)
 * feat: add support for TTL and Container nodes. Pull request [255](https://github.com/yfinkelstein/node-zookeeper/pull/255) by @dreusel
