@@ -419,6 +419,8 @@ public:
         uv_timer_init(uv_default_loop(), &zk_timer);
         zk_timer.data = this;
 
+        noResponseCounter = 0;
+
         yield();
         return true;
     }
@@ -1039,6 +1041,8 @@ public:
             // Close the timer and finally Unref the ZooKeeper instance when it's done
             // Unrefing after is important to avoid memory being freed too early.
             uv_close((uv_handle_t*) &zk_timer, timer_closed);
+
+            noResponseCounter = 0;
 
             Nan::HandleScope scope;
             DoEmitClose (Nan::New(on_closed), code);
