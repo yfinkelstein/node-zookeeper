@@ -9,8 +9,9 @@ net.createServer((sock) => {
 
     sock.on('data', (data) => {
         console.log(`DATA ${sock.remoteAddress}: ${data}`);
-
-        sock.write(`You said "${data}"`);
+        setInterval(() => {
+            sock.write(`You said "${data}"`);
+        }, 3000);
     });
 
     sock.on('close', (data) => {
