@@ -1,3 +1,6 @@
+#### v 4.8.2 (2021-04-20)
+* fix: set initial value to noResponseCounter on init and reset on close. Pull request [271](https://github.com/yfinkelstein/node-zookeeper/pull/271) by @davidvujic
+
 #### v 4.8.1 (2021-02-18)
 * fix: the `watch` param passed in to the exists (the promise based) function is a boolean. Pull request [266](https://github.com/yfinkelstein/node-zookeeper/pull/266) by @davidvujic
 * chore: Node.js LTS 12 and 14 is enough for running in a CI. Pull request [267](https://github.com/yfinkelstein/node-zookeeper/pull/267) by @davidvujic
