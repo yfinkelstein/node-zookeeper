@@ -144,6 +144,7 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "a_getconfig",  AGetConfig);
         Nan::SetPrototypeMethod(constructor_template,  "aw_getconfig",  AWGetConfig);
         Nan::SetPrototypeMethod(constructor_template,  "set_servers",  SetServers);
+        Nan::SetPrototypeMethod(constructor_template,  "a_reconfig",  AReconfig);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
@@ -931,6 +932,20 @@ public:
         Nan::Utf8String _servers (toString(info[0]));
 
         METHOD_EPILOG(zoo_set_servers(zk->zhandle, *_servers));
+    }
+
+    static void AReconfig(const Nan::FunctionCallbackInfo<Value>& info) {
+        A_METHOD_PROLOG(5);
+
+        Nan::Utf8String _joining (toString(info[0]));
+        Nan::Utf8String _leaving (toString(info[1]));
+        Nan::Utf8String _members (toString(info[2]));
+        int64_t _version = toInt64(info[3]);
+        
+        METHOD_EPILOG(zoo_areconfig(zk->zhandle,
+                        info[0]->IsNullOrUndefined() ? NULL : *_joining,
+                        info[1]->IsNullOrUndefined() ? NULL : *_leaving,
+                        info[2]->IsNullOrUndefined() ? NULL : *_members, _version, &data_completion, cb));
     }
 
     static void AddAuth(const Nan::FunctionCallbackInfo<Value>& info) {
