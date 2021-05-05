@@ -141,6 +141,9 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "a_set_acl",  ASetAcl);
         Nan::SetPrototypeMethod(constructor_template,  "add_auth",  AddAuth);
         Nan::SetPrototypeMethod(constructor_template,  "a_sync",  ASync);
+        Nan::SetPrototypeMethod(constructor_template,  "a_getconfig",  AGetConfig);
+        Nan::SetPrototypeMethod(constructor_template,  "aw_getconfig",  AWGetConfig);
+        Nan::SetPrototypeMethod(constructor_template,  "set_servers",  SetServers);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
         Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
@@ -218,6 +221,7 @@ public:
         NODE_DEFINE_CONSTANT(constructor, ZOO_ASSOCIATING_STATE);
         NODE_DEFINE_CONSTANT(constructor, ZOO_CONNECTED_STATE);
 
+        Nan::DefineOwnProperty(constructor, LOCAL_STRING("ZOO_CONFIG_NODE"), LOCAL_STRING(ZOO_CONFIG_NODE), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
         NODE_DEFINE_CONSTANT(constructor, ZOK);
 
@@ -903,6 +907,30 @@ public:
         Nan::Utf8String _path (toString(info[0]));
 
         METHOD_EPILOG(zoo_async(zk->zhandle, *_path, &string_completion, cb));
+    }
+
+    static void AGetConfig(const Nan::FunctionCallbackInfo<Value>& info) {
+        A_METHOD_PROLOG(2);
+
+        bool watch = toBool(info[0]);
+
+        METHOD_EPILOG(zoo_agetconfig(zk->zhandle, watch, &data_completion, cb));
+    }
+
+    static void AWGetConfig(const Nan::FunctionCallbackInfo<Value>& info) {
+        AW_METHOD_PROLOG(2);
+
+        METHOD_EPILOG(zoo_awgetconfig(zk->zhandle, &watcher_fn, cbw, &data_completion, cb));
+    }
+    
+    static void SetServers(const Nan::FunctionCallbackInfo<Value>& info) {
+        ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
+        assert(zk);
+        THROW_IF_NOT (info.Length() >= 1, "expected at least 1 arguments") 
+
+        Nan::Utf8String _servers (toString(info[0]));
+
+        METHOD_EPILOG(zoo_set_servers(zk->zhandle, *_servers));
     }
 
     static void AddAuth(const Nan::FunctionCallbackInfo<Value>& info) {
