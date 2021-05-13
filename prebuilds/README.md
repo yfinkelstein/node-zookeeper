@@ -16,5 +16,5 @@ Create prebuilds for Windows 10:
 
 ```bash
 npx prebuildify --arch x64 --platform win32 --target 12.20.1
-Npx prebuildify --arch x64 --platform win32 --target 14.15.4
+npx prebuildify --arch x64 --platform win32 --target 14.15.4
 ```
