@@ -19,6 +19,8 @@ And you're done!
 (note the name `zookeeper` in lowercase)
 
 #### News
+:rocket: __New since version 4.9.0__ Support for `Dynamic Reconfiguration`, introduced in Apache ZooKeeper server v3.5.5.
+
 :rocket: __New since version 4.8.0__ Support for the new node types introduced in Apache ZooKeeper server v3.5.5: `Container` and `TTL` :rocket:
 
 :tada: __New since version 4.7.0__ :tada: The install process is faster than ever. If you are a Mac OS X or Windows user, there is no longer a need to build an AddOn during the install process.
