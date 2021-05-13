@@ -164,6 +164,8 @@ declare module "zookeeperWithCallbacks" {
         static get ZOOKEEPER_WRITE(): number;
         /** @deprecated @returns {number} 2 */
         static get ZOOKEEPER_READ(): number;
+        /** @deprecated @returns {string} "/zookeeper/config" */
+        static get ZOO_CONFIG_NODE(): string;
         /** @deprecated use strings directly */
         static get on_closed(): string;
         /** @deprecated use strings directly */
@@ -331,6 +333,32 @@ declare module "zookeeperWithCallbacks" {
          * @returns {*}
          */
         a_sync(path: string, cb: Function): any;
+        /**
+         * @param {boolean} watch
+         * @param {dataCb} dataCb
+         * @returns {*}
+         */
+        a_getconfig(watch: boolean, dataCb: dataCb): any;
+        /**
+         * @param {watchCb} watchCb
+         * @param {dataCb} dataCb
+         * @returns {*}
+         */
+        aw_getconfig(watchCb: watchCb, dataCb: dataCb): any;
+        /**
+         * @param {string|null} joining
+         * @param {string|null} leaving
+         * @param {string|null} members
+         * @param {number} config_version
+         * @param {dataCb} dataCb
+         * @returns {*}
+         */
+        a_reconfig(joining: string | null, leaving: string | null, members: string | null, config_version: number, dataCb: dataCb): any;
+        /**
+         * @param {string} servers
+         * @returns {*}
+         */
+        set_servers(servers: string): any;
         /** @param {number} value */
         set state(arg: number);
         get state(): number;
@@ -466,7 +494,7 @@ declare module "zookeeper" {
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
-        exists(path: string, watch: Function): Promise<stat>;
+        exists(path: string, watch: boolean): Promise<stat>;
         /**
          * @param {string} path
          * @param {function} watchCb
@@ -548,6 +576,26 @@ declare module "zookeeper" {
          * @returns {Promise}
          */
         sync(path: string): Promise<any>;
+        /**
+         * @param {boolean} watch
+         * @fulfill {string|Buffer}
+         * @returns {Promise.<string|Buffer>}
+         */
+        getconfig(watch: boolean): Promise<string | Buffer>;
+        /**
+         * @param {function} watchCb
+         * @fulfill {string|Buffer}
+         * @returns {Promise.<string|Buffer>}
+         */
+        w_getconfig(watchCb: Function): Promise<string | Buffer>;
+        /**
+         * @param {string|null} joining
+         * @param {string|null} leaving
+         * @param {string|null} members
+         * @param {number} config_version
+         * @returns {*}
+         */
+        reconfig(joining: string | null, leaving: string | null, members: string | null, config_version: number): any;
         /**
          * @private
          * @param {function} fn
