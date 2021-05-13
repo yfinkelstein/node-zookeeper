@@ -1,3 +1,6 @@
+#### v 4.9.0 (2021-05-13)
+* feat: Dynamic Reconfiguration. Pull request [273](https://github.com/yfinkelstein/node-zookeeper/pull/273) by @bhack-onshape
+
 #### v 4.8.2 (2021-04-20)
 * fix: set initial value to noResponseCounter on init and reset on close. Pull request [271](https://github.com/yfinkelstein/node-zookeeper/pull/271) by @davidvujic
 
