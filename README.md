@@ -110,6 +110,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `val = await sync(path)`
 * `delete_ (path, version)`
   * (note the trailing `_`)
+* `config = getconfig(watch)`
+* `reconfig(joining, leaving, members, config_version)`
 * `set_acl(path, version, acl)`
 * `acl = await get_acl(path)`
 * `add_auth(scheme, auth)`
@@ -124,6 +126,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
     * return value types:
         * children is an array of strings
         * stat is an object
+* `config = w_getconfig(watch_cb)`
 
 ### Methods: callbacks based client methods
 
@@ -141,6 +144,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `a_sync(path, value_cb)`
 * `a_delete_ (path, version, void_cb)`
   * (note the trailing `_`)
+* `a_getconfig(watch, data_cb)`
+* `a_reconfig(joining, leaving, members, version, data_cb)`  
 * `a_set_acl(path, version, acl, void_cb)`
 * `a_get_acl(path, acl_cb)`
 * `add_auth(scheme, auth, void_cb)`
@@ -151,6 +156,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * `aw_get(path, watch_cb, data_cb)`
 * `aw_get_children(path, watch_cb, child_cb)`
 * `aw_get_children2(path, watch_cb, child2_cb)`
+* `aw_getconfig(watch_cb, data_cb)`
 
 ### Callback Signatures
 
@@ -183,6 +189,10 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 * watch : boolean
 * ttl: int32. TTL in milliseconds. Must be positive if any of the TTL modes is used; otherwise `undefined`.
 * scheme : authorisation scheme (digest, auth)
+* joining : string. Comma separated list of servers to be added. `null` for non-incremental reconfiguration.
+* leaving : string. Comma separated list of servers to be removed. `null` for non-incremental reconfiguration.
+* members : string. Comma separated list of new membership. `null` for incremental reconfiguration.
+* config_version : int64. `-1` to skip version checking
 * auth : authorisation credentials (username:password)
 * acl : acls list (same as output parameter, look below) - read only
 
@@ -309,3 +319,4 @@ with awesome contributions from:
 * Matt Lavin (mdlavin)
 * David Vujic (davidvujic)
 * Jakub Bieńkowski (jbienkowski311)
+* Brendan Hack (bhack-onshape)

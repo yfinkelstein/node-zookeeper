@@ -19,6 +19,12 @@ namespace nodezk {
         return val;
     }
 
+    int64_t toInt64(Local<Value> val_local) {
+        int64_t val = static_cast<int64_t>(val_local->NumberValue(Nan::GetCurrentContext()).FromJust());
+
+        return val;
+    }
+
     int32_t toInt(Local<Object> arg, Local<String> propertyName) {
         Local<Value> val_local = toLocalVal(arg, propertyName);
 

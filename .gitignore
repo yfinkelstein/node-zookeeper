@@ -5,3 +5,4 @@ npm-debug.log
 deps/zookeeper-client-c/
 .DS_Store
 package-lock.json
+.vscode
