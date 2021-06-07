@@ -114,6 +114,8 @@ struct completion_data {
     void *data;
 };
 
+int32_t RESPONSE_COUNTER_LIMIT = 10;
+
 class ZooKeeper: public Nan::ObjectWrap {
 public:
     static void Initialize (Local<Object> target) {
@@ -369,7 +371,7 @@ public:
             LOG_ERROR("yield:zookeeper_process returned an error: %d - %s\n", rc, zerror(rc));
         }
 
-        if (zk->noResponseCounter > 10) {
+        if (zk->noResponseCounter > RESPONSE_COUNTER_LIMIT) {
             LOG_ERROR("yield:zookeeper_process returned no response too many times: %d\n", zk->noResponseCounter);
             zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             return;
@@ -445,6 +447,11 @@ public:
         int32_t session_timeout = toInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
+        }
+
+        int32_t response_counter_limit = toInt(arg, LOCAL_STRING("response_counter_limit"));
+        if (response_counter_limit > 0) {
+            RESPONSE_COUNTER_LIMIT = response_counter_limit;
         }
 
         clientid_t local_client;
