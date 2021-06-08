@@ -176,7 +176,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 
 ### Input Parameters
 
-* options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer}
+* options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer, response_counter_limit }
 * path : string
 * data : string or Buffer
 * flags : int32. Supported:

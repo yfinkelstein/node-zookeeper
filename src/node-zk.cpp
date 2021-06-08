@@ -369,7 +369,7 @@ public:
             LOG_ERROR("yield:zookeeper_process returned an error: %d - %s\n", rc, zerror(rc));
         }
 
-        if (zk->noResponseCounter > 10) {
+        if (zk->noResponseCounter > zk->responseCounterLimit) {
             LOG_ERROR("yield:zookeeper_process returned no response too many times: %d\n", zk->noResponseCounter);
             zk->realClose(ZOO_EXPIRED_SESSION_STATE);
             return;
@@ -465,6 +465,11 @@ public:
 
         ZooKeeper *zk = ObjectWrap::Unwrap<ZooKeeper>(info.This());
         assert(zk);
+
+        int32_t response_counter_limit = toInt(arg, LOCAL_STRING("response_counter_limit"));
+        if (response_counter_limit > 0) {
+            zk->responseCounterLimit = response_counter_limit;
+        }
 
         if (!zk->realInit(*_hostPort, session_timeout, &local_client)) {
             RETURN_VALUE(info, Nan::ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__));
@@ -1119,6 +1124,7 @@ public:
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
         is_closed = false;
+        responseCounterLimit = 10;
     }
 private:
     zhandle_t *zhandle;
@@ -1138,6 +1144,7 @@ private:
     int64_t last_activity; // time of last zookeeper event loop activity
     bool is_closed;
     int noResponseCounter;
+    int responseCounterLimit;
 };
 
 } // namespace "zk"
