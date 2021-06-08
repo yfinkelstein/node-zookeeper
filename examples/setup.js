@@ -1,5 +1,5 @@
-const notifier = require('./notifier.js');
-const { createNode } = require('./createnode.js');
+const notifier = require('./notifier');
+const { createNode } = require('./createnode');
 
 async function createAllNodes(client, paths, flags, ttl) {
     const promises = [];

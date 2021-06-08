@@ -1,6 +1,6 @@
 const test = require('tape');
 
-const ZooKeeper = require('../../../lib/zookeeper.js');
+const ZooKeeper = require('../../../lib/zookeeper');
 
 test('native zookeeper proxy properties are added to the ZooKeeper instance', (t) => {
     t.plan(5);

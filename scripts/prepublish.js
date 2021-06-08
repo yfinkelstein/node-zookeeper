@@ -1,7 +1,7 @@
 const shell = require('shelljs');
 const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
-const env = require('./env.js');
+const env = require('./env');
 
 function clearPath() {
     if (!shell.test('-d', env.sourceFolder)) {

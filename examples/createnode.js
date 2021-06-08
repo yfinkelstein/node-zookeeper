@@ -1,4 +1,4 @@
-const { isClientConnected } = require('./wrapper.js');
+const { isClientConnected } = require('./wrapper');
 
 /**
  * @param client {ZooKeeperPromise}

@@ -1,5 +1,5 @@
 const { constants, Promise: ZooKeeper } = require('../lib/index');
-const logger = require('./logger.js');
+const logger = require('./logger');
 
 const host = process.argv[2] || '127.0.0.1:2181';
 
