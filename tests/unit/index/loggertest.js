@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const test = require('tape');
-const ZooKeeper = require('../../../lib/index.js');
+const ZooKeeper = require('../../../lib/index');
 
 test('Inject custom logger', (t) => {
     t.plan(1);

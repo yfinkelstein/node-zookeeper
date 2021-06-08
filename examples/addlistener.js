@@ -1,6 +1,6 @@
-const { isClientConnected } = require('./wrapper.js');
-const notifier = require('./notifier.js');
-const logger = require('./logger.js');
+const { isClientConnected } = require('./wrapper');
+const notifier = require('./notifier');
+const logger = require('./logger');
 
 function emit(client, path, children) {
     logger.log(`client id: "${client.client_id}" path: "${path}"`);

@@ -1,6 +1,6 @@
 const shell = require('shelljs');
-const env = require('./env.js');
-const { exec } = require('./helper.js');
+const env = require('./env');
+const { exec } = require('./helper');
 
 if (env.isAlreadyBuilt) {
     shell.echo('Zookeeper has already been built');

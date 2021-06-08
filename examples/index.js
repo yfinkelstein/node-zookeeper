@@ -1,12 +1,12 @@
-const { getClient, constants } = require('./wrapper.js');
-const { createNodes } = require('./setup.js');
-const { electLeader } = require('./electleader.js');
-const { createWorker } = require('./createworker.js');
-const { listen } = require('./addlistener.js');
-const { addTask } = require('./addtask.js');
+const { getClient, constants } = require('./wrapper');
+const { createNodes } = require('./setup');
+const { electLeader } = require('./electleader');
+const { createWorker } = require('./createworker');
+const { listen } = require('./addlistener');
+const { addTask } = require('./addtask');
 
-const logger = require('./logger.js');
-const notifier = require('./notifier.js');
+const logger = require('./logger');
+const notifier = require('./notifier');
 
 notifier.on('connect', (message) => logger.log('connect', message));
 notifier.on('createNode', (message) => logger.log('createNode', message));

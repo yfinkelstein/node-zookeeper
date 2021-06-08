@@ -1,6 +1,6 @@
-const { constants } = require('./wrapper.js');
-const notifier = require('./notifier.js');
-const { createNode } = require('./createnode.js');
+const { constants } = require('./wrapper');
+const notifier = require('./notifier');
+const { createNode } = require('./createnode');
 
 async function createTask(client, data) {
     // eslint-disable-next-line no-bitwise
