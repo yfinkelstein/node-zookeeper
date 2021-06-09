@@ -1,3 +1,6 @@
+#### v 4.10.0 (2021-06-09)
+* feat: ability to overwrite default response counter limit. Pull request [278](https://github.com/yfinkelstein/node-zookeeper/pull/278) by @wareczek
+
 #### v 4.9.0 (2021-05-13)
 * feat: Dynamic Reconfiguration. Pull request [273](https://github.com/yfinkelstein/node-zookeeper/pull/273) by @bhack-onshape
 
