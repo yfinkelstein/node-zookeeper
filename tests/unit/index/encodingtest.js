@@ -1,4 +1,4 @@
-const test = require('tape');
+const test = require('ava');
 const ZooKeeper = require('../../../lib/index');
 
 test('inject encoding will set data as buffer to false', (t) => {
@@ -9,6 +9,6 @@ test('inject encoding will set data as buffer to false', (t) => {
     const zk = new ZooKeeper();
     zk.setEncoding(expected);
 
-    t.equal(zk.encoding, expected);
-    t.equal(zk.data_as_buffer, false);
+    t.is(zk.encoding, expected);
+    t.is(zk.data_as_buffer, false);
 });

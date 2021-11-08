@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@types/node": "^14.14.6",
+        "ava": "^3.15.0",
         "eslint": "7.x",
         "eslint-config-airbnb-base": "14.x",
         "eslint-plugin-import": "2.x",
@@ -47,8 +48,6 @@
         "prebuildify": "^4.1.1",
         "proxyquire": "2.x",
         "sinon": "9.x",
-        "tap-spec": "5.x",
-        "tape": "5.x",
         "typescript": "^4.0.5",
         "webworker": "0.x"
     },
@@ -59,9 +58,9 @@
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
         "test": "npm run lint && npm run test-unit",
-        "test-components": "npm run build-components && tape ./tests/components/**/*.js | tap-spec",
+        "test-components": "npm run build-components && ava ./tests/components/**/*.js",
         "test-integration": "node ./tests/integration/index",
-        "test-unit": "tape ./tests/unit/**/*.js | tap-spec",
+        "test-unit": "ava ./tests/unit/**/*.js",
         "type-declarations": "tsc --outFile ./lib/typedeclarations.d.ts"
     },
     "engines": {
