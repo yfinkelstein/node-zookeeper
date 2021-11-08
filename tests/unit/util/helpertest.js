@@ -1,5 +1,5 @@
 const sinon = require('sinon');
-const test = require('tape');
+const test = require('ava');
 const { deprecationLog } = require('../../../lib/helper');
 
 class Test {
@@ -14,9 +14,9 @@ test('deprecation log is called with proper arguments', (t) => {
 
     deprecationLogStub(Test.name, 'method');
 
-    t.equal(deprecationLogStub.callCount, 1);
-    t.equal(deprecationLogStub.getCall(0).args[0], 'Test');
-    t.equal(deprecationLogStub.getCall(0).args[1], 'method');
+    t.is(deprecationLogStub.callCount, 1);
+    t.is(deprecationLogStub.getCall(0).args[0], 'Test');
+    t.is(deprecationLogStub.getCall(0).args[1], 'method');
 });
 
 test('deprecation log gives proper message', (t) => {
@@ -25,8 +25,8 @@ test('deprecation log gives proper message', (t) => {
 
     Test.method();
 
-    t.equal(consoleStub.callCount, 1);
-    t.equal(consoleStub.getCall(0).args[0], 'ZOOKEEPER LOG: Test::method is being deprecated!');
+    t.is(consoleStub.callCount, 1);
+    t.is(consoleStub.getCall(0).args[0], 'ZOOKEEPER LOG: Test::method is being deprecated!');
 
     consoleStub.restore();
 });

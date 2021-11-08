@@ -1,4 +1,4 @@
-const test = require('tape');
+const test = require('ava');
 const { join } = require('path');
 const NativeZk = require('node-gyp-build')(join(__dirname, '../../../')).ZooKeeper;
 const ZooKeeper = require('../../../lib/zookeeper');
@@ -16,17 +16,16 @@ test('native object is extended with an emit function', (t) => {
 
     const zk = new ZooKeeper({});
 
-    t.equal(typeof zk.native.emit, 'function');
+    t.is(typeof zk.native.emit, 'function');
 });
 
 test('native object emit triggers a ZooKeeper emit', (t) => {
     const zk = new ZooKeeper({});
 
     zk.on('helloworld', (a, b, c) => {
-        t.equal(a, 1);
-        t.equal(b, 2);
-        t.equal(c, 3);
-        t.end();
+        t.is(a, 1);
+        t.is(b, 2);
+        t.is(c, 3);
     });
 
     zk.native.emit('helloworld', 1, 2, 3);
@@ -37,9 +36,8 @@ test('native object emits connect and pass an instance of the current ZooKeeper'
 
     zk.on('connect', (a, b, c) => {
         t.true(a instanceof ZooKeeper);
-        t.equal(b, 2);
-        t.equal(c, 3);
-        t.end();
+        t.is(b, 2);
+        t.is(c, 3);
     });
 
     zk.native.emit('connect', 1, 2, 3);
@@ -50,9 +48,8 @@ test('native object emits close and pass an instance of the current ZooKeeper', 
 
     zk.on('close', (a, b, c) => {
         t.true(a instanceof ZooKeeper);
-        t.equal(b, 2);
-        t.equal(c, 3);
-        t.end();
+        t.is(b, 2);
+        t.is(c, 3);
     });
 
     zk.native.emit('close', 1, 2, 3);
@@ -63,7 +60,7 @@ test('native zookeeper add_auth', (t) => {
 
     const zk = new ZooKeeper({});
 
-    t.throws(() => zk.native.add_auth('digest'), 'expected 3 arguments');
-    t.throws(() => zk.native.add_auth('digest', 'user:'), 'expected 3 arguments');
-    t.doesNotThrow(() => zk.native.add_auth('digest', 'user:', () => {}), 'expected 3 arguments');
+    t.throws(() => zk.native.add_auth('digest'), undefined, 'expected 3 arguments');
+    t.throws(() => zk.native.add_auth('digest', 'user:'), undefined, 'expected 3 arguments');
+    t.notThrows(() => zk.native.add_auth('digest', 'user:', () => {}), undefined, 'expected 3 arguments');
 });

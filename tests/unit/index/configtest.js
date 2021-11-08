@@ -1,4 +1,4 @@
-const test = require('tape');
+const test = require('ava');
 const ZooKeeper = require('../../../lib/index');
 
 test('inject config', (t) => {
@@ -8,7 +8,7 @@ test('inject config', (t) => {
 
     const zk = new ZooKeeper({ connect: expected });
 
-    t.equal(zk.config.connect, expected);
+    t.is(zk.config.connect, expected);
 });
 
 test('inject connection config as a string', (t) => {
@@ -18,6 +18,6 @@ test('inject connection config as a string', (t) => {
 
     const zk = new ZooKeeper(expected);
 
-    t.equal(zk.config.connect, expected);
-    t.equal(Object.keys(zk.config).length, 1);
+    t.is(zk.config.connect, expected);
+    t.is(Object.keys(zk.config).length, 1);
 });
