@@ -3,6 +3,8 @@
 Currently, there are prebuilt Node.js AddOns for Mac OS X and Windows. 
 Each platform has prebuilds for Node.js 12 and 14.
 
+Windows has also prebuild for Node.js 16.
+
 
 #### Creating prebuilds
 Create prebuilds for Mac OS X:
@@ -17,4 +19,5 @@ Create prebuilds for Windows 10:
 ```bash
 npx prebuildify --arch x64 --platform win32 --target 12.20.1
 npx prebuildify --arch x64 --platform win32 --target 14.15.4
+npx prebuildify --arch x64 --platform win32 --target 16.13.1
 ```
