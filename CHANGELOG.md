@@ -1,6 +1,6 @@
 #### v 5.0.0 (2021-12-06)
 * feat: add Node.js 16 prebuilds for Windows. Pull request [284](https://github.com/yfinkelstein/node-zookeeper/pull/284) by @miroslavpokorny
-* feat: add Node.js 16  prebuilds for Mac OS X, and drop support for Node.js 12. Pull request [285](https://github.com/yfinkelstein/node-zookeeper/pull/285) by @davidvujic
+* feat: add Node.js 16 prebuilds for Mac OS X (`x64` arch), and drop support for Node.js 12. Pull request [285](https://github.com/yfinkelstein/node-zookeeper/pull/285) by @davidvujic
 
 
 #### v 4.10.1 (2021-11-08)
