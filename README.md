@@ -19,6 +19,8 @@ And you're done!
 (note the name `zookeeper` in lowercase)
 
 #### News
+:rocket: __New since version 5.1.0__ Support for `SSL`, that was introduced in Apache ZooKeeper C Client v3.6.0.
+
 :rocket: __New since version 4.9.0__ Support for `Dynamic Reconfiguration`, introduced in Apache ZooKeeper server v3.5.5.
 
 :rocket: __New since version 4.8.0__ Support for the new node types introduced in Apache ZooKeeper server v3.5.5: `Container` and `TTL` :rocket:
