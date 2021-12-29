@@ -1,7 +1,13 @@
+#### v 5.1.0 (2021-12-29)
+* feat: build native addon from the ZooKeeper C client v3.6.3. Pull request [289](https://github.com/yfinkelstein/node-zookeeper/pull/289) by @davidvujic
+* fix: Using a newer client solves issue [270](https://github.com/yfinkelstein/node-zookeeper/issues/270) (warnings on close).
+* feat: Using the client with v3.6.2 enables SSL support for Linux, as described in the pull request [289](https://github.com/yfinkelstein/node-zookeeper/pull/289)
+* dev: using CircleCI instead of TravisCI. Pull request [288](https://github.com/yfinkelstein/node-zookeeper/pull/288) by @davidvujic
+* breaking change: removed custom addon build for the `solaris` OS. This has not been tested for years and most likely not working.
+
 #### v 5.0.0 (2021-12-06)
 * feat: add Node.js 16 prebuilds for Windows. Pull request [284](https://github.com/yfinkelstein/node-zookeeper/pull/284) by @miroslavpokorny
 * feat: add Node.js 16 prebuilds for Mac OS X (`x64` arch), and drop support for Node.js 12. Pull request [285](https://github.com/yfinkelstein/node-zookeeper/pull/285) by @davidvujic
-
 
 #### v 4.10.1 (2021-11-08)
 * fix: replace the `tape` unit test library with `ava`. Pull request [282](https://github.com/yfinkelstein/node-zookeeper/pull/282) by @davidvujic
