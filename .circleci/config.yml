@@ -1,0 +1,50 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+parameters:
+  nodeversion:
+    type: string
+    default: "16.13.1"
+
+commands:
+  nvminstall:
+    steps:
+      - run: nvm install << pipeline.parameters.nodeversion >>
+      - run: nvm use << pipeline.parameters.nodeversion >>
+  deps:
+    steps:
+      - run: npm install
+  unittests:
+    steps:
+      - run: npm test
+  componenttests:
+    steps:
+      - run: npm run test-components
+
+jobs:
+  run-in-docker:
+    docker:
+      - image: cimg/node:<< pipeline.parameters.nodeversion >>
+    steps:
+      - checkout
+      - deps
+      - unittests
+      - componenttests
+
+  run-on-windows:
+    executor: win/default
+    steps:
+      - checkout
+      - nvminstall
+      - deps
+      - unittests
+      - componenttests
+
+workflows:
+ version: 2
+ zookeeper_workflow:
+   jobs:
+     - run-in-docker
+     - run-on-windows
