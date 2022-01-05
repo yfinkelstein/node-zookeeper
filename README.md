@@ -103,7 +103,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
     * `ttl` is optional. Must be positive if a TTL flag is used. See [Input parameters](#input-parameters)
 * `mkdirp(path, callback(Error))`
 * `stat = await exists(path, watch)`
-    * rejects if node does not exist
+    * rejects if node does not exist. There's also a `pathExists` as an alternative.
+* `trueOrFalseValue = await pathExists(path, watch)`
 * `data = await get(path, watch)`
 * `children = await get_children(path, watch)`
 * `[children, stat] = await get_children2( path, watch)`
@@ -123,7 +124,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 *The watcher methods are forward-looking subscriptions that can recieve multiple callbacks whenever a matching event occurs.*
 
 * `stat = await w_exists(path, watch_cb)`
-    * rejects if node does not exist
+    * rejects if node does not exist. There's also a `w_pathExists` as an alternative.
+* `trueOrFalseValue = await w_pathExists(path, watch)`
 * `data = await w_get(path, watch_cb)`
 * `children = await w_get_children(path, watch_cb)`
 * `[children, stat] = await w_get_children2 (path, watch_cb)`
