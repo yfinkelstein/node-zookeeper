@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const test = require('ava');
-const { deprecationLog } = require('../../../lib/helper');
+const zkConstants = require('../../../lib/constants');
+const { deprecationLog, findZkConstantByCode } = require('../../../lib/helper');
 
 class Test {
     static method() {
@@ -29,4 +30,24 @@ test('deprecation log gives proper message', (t) => {
     t.is(consoleStub.getCall(0).args[0], 'ZOOKEEPER LOG: Test::method is being deprecated!');
 
     consoleStub.restore();
+});
+
+test('finds the BAD ARGUMENTS constant', (t) => {
+    t.plan(2);
+    const expected = -8;
+
+    const res = findZkConstantByCode(expected, zkConstants);
+
+    t.is(res[0], 'ZBADARGUMENTS');
+    t.is(res[1], expected);
+});
+
+test('finds constants with fallback', (t) => {
+    t.plan(2);
+    const expected = 4711;
+
+    const res = findZkConstantByCode(expected, zkConstants);
+
+    t.is(res[0], 'unknown');
+    t.is(res[1], expected);
 });

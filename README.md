@@ -96,6 +96,8 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 
 ### Methods: async/await enabled client methods
 
+:green_circle: New since 5.2.1: :red_circle: the async functions will reject, when the underlying client returns an error code. This is a bug fix. Before this, errors were failing silently.
+
 * `init(options)`
 * `connect(options, connect_cb)`
 * `close()`

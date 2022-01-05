@@ -4,7 +4,7 @@ const { createNode } = require('./createnode');
 
 async function createTask(client, data) {
     // eslint-disable-next-line no-bitwise
-    const message = await createNode(client, '/tasks/task-', constants.ZOO_PERSISTENT | constants.ZOO_PERSISTENT_SEQUENTIAL, data);
+    const message = await createNode(client, '/tasks/task-', constants.ZOO_PERSISTENT | constants.ZOO_PERSISTENT_SEQUENTIAL, undefined, data);
     notifier.emit('addTask', message);
 }
 
