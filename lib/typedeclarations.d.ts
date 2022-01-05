@@ -497,11 +497,25 @@ declare module "zookeeper" {
         exists(path: string, watch: boolean): Promise<stat>;
         /**
          * @param {string} path
+         * @param {boolean} watch
+         * @fulfill {boolean}
+         * @returns {Promise.<boolean>}
+         */
+        pathExists(path: string, watch: boolean): Promise<boolean>;
+        /**
+         * @param {string} path
          * @param {function} watchCb
          * @fulfill {stat}
          * @returns {Promise.<stat>}
          */
         w_exists(path: string, watchCb: Function): Promise<stat>;
+        /**
+         * @param {string} path
+         * @param {function} watchCb
+         * @fulfill {boolean}
+         * @returns {Promise.<boolean>}
+         */
+        w_pathExists(path: string, watchCb: Function): Promise<boolean>;
         /**
          * @param {string} path
          * @param {boolean} watch

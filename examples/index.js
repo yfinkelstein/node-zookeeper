@@ -4,6 +4,7 @@ const { electLeader } = require('./electleader');
 const { createWorker } = require('./createworker');
 const { listen } = require('./addlistener');
 const { addTask } = require('./addtask');
+const { verifyTheNodeExistsFeature } = require('./exists');
 
 const logger = require('./logger');
 const notifier = require('./notifier');
@@ -38,6 +39,8 @@ async function init() {
         });
 
         await electLeader(client, '/master');
+
+        await verifyTheNodeExistsFeature(client);
     });
 }
 
