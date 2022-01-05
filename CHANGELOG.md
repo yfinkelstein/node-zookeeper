@@ -1,3 +1,6 @@
+#### v 5.2.1 (2022-01-05)
+* fix: explicitly handle async JavaScript failures. Pull request [293](https://github.com/yfinkelstein/node-zookeeper/pull/293) by @davidvujic
+
 #### v 5.2.0 (2022-01-05)
 * feat: add a boolean "path exists" function, wrapping the "exists" function. Pull request [291](https://github.com/yfinkelstein/node-zookeeper/pull/291) by @davidvujic
 
