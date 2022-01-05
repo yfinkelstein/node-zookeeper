@@ -1,3 +1,6 @@
+#### v 5.2.0 (2022-01-05)
+* feat: add a boolean "path exists" function, wrapping the "exists" function. Pull request [291](https://github.com/yfinkelstein/node-zookeeper/pull/291) by @davidvujic
+
 #### v 5.1.0 (2021-12-29)
 * feat: build native addon from the ZooKeeper C client v3.6.3. Pull request [289](https://github.com/yfinkelstein/node-zookeeper/pull/289) by @davidvujic
 * fix: Using a newer client solves issue [270](https://github.com/yfinkelstein/node-zookeeper/issues/270) (warnings on close).
