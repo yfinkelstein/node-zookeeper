@@ -1,6 +1,5 @@
 var { constants, ZooKeeper: ZK } = require ('../../lib/index');
 var assert = require('assert');
-var log4js = require('log4js');
 var async = require('async');
 
 var connect  = (process.argv[2] || 'localhost:2181');
@@ -15,32 +14,24 @@ function startZK(options, callback) {
     throw new TypeError('options (Object) required');
   if(typeof(options.zookeeper) !== 'string')
     throw new TypeError('options.zookeeper (String) required');
-  if(typeof(options.log4js) !== 'object')
-    throw new TypeError('options.log4js (Object) required');
   if(options.timeout && typeof(options.timeout) !== 'number')
     throw new TypeError('options.timeout (Number) required');
   if(typeof(callback) !== 'function')
     throw new TypeError('callback (Function) required');
 
-  var log = options.log4js.getLogger('mkdirp-test');
-  var zkLogLevel = constants.ZOO_LOG_LEVEL_WARNING;
-
-  if(log.isTraceEnabled())
-    zkLogLevel = constants.ZOO_LOG_LEVEL_DEBUG;
-
   var zk = new ZK({
     connect: options.zookeeper,
     timeout: options.timeout || 1000,
-    debug_level: zkLogLevel,
+    debug_level: constants.ZOO_LOG_LEVEL_WARN,
     host_order_deterministic: false
   });
 
-  log.debug('connecting to zookeeper');
+  console.log('connecting to zookeeper');
   return zk.connect(function(err) {
     if(err)
       return callback(err);
 
-    log.debug('connected to zookeeper.');
+    console.log('connected to zookeeper.');
     return callback && callback(null, zk);
   });
 }
@@ -48,13 +39,12 @@ function startZK(options, callback) {
 if (require.main === module) {
   var options = {
     zookeeper: connect,
-    log4js: log4js
   };
 
   var PATH = '/mkdirp/test/path/of/death/n/destruction';
   var con = null;
   startZK(options, function(err, connection) {
-    if(err) return console.log(err);
+    if(err) return console.error(err);
     con = connection;
     return con.mkdirp(PATH, onMkdir);
   });

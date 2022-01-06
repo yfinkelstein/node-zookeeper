@@ -43,7 +43,6 @@
         "eslint": "8.x",
         "eslint-config-airbnb-base": "15.x",
         "eslint-plugin-import": "2.x",
-        "log4js": "6.x",
         "node-gyp": "8.4.1",
         "prebuildify": "5.0.0",
         "proxyquire": "2.x",
