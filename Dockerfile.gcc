@@ -2,13 +2,13 @@ FROM gcc
 
 RUN gcc --version
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 WORKDIR /app
 
 COPY . /app
 
-RUN npm install --unsafe-perm
+RUN npm install
 
 CMD ["npm", "run", "test-integration", "--", "zookeeper:2181"]

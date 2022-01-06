@@ -1,7 +1,7 @@
-FROM node:12
+FROM node:16
 
 WORKDIR /app
 
 COPY . /app
 
-RUN npm install --unsafe-perm
+RUN npm install
