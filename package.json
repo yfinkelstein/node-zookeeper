@@ -42,6 +42,7 @@
         "ava": "4.0.0",
         "eslint": "8.x",
         "eslint-config-airbnb-base": "15.x",
+        "eslint-plugin-ava": "13.x",
         "eslint-plugin-import": "2.x",
         "node-gyp": "8.4.1",
         "prebuildify": "5.0.0",
