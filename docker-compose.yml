@@ -1,4 +1,4 @@
-version: '3'
+version: "3.9"
 
 services:
   examples:
@@ -31,4 +31,4 @@ services:
       - zookeeper
 
   zookeeper:
-    image: zookeeper:3.5
+    image: zookeeper:latest
