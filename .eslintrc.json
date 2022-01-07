@@ -1,6 +1,6 @@
 {
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": "latest"
     },
     "env": {
         "node": true
@@ -10,7 +10,6 @@
     ],
     "rules": {
         "indent": ["error", 4],
-        "no-console": ["error", { "allow": ["info", "warn", "error"] }],
-        "no-multi-assign": 0
+        "no-console": ["error", { "allow": ["info", "warn", "error"] }]
     }
 }

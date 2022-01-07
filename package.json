@@ -39,9 +39,10 @@
     },
     "devDependencies": {
         "@types/node": "17.x",
-        "ava": "^3.15.0",
+        "ava": "4.0.0",
         "eslint": "8.x",
         "eslint-config-airbnb-base": "15.x",
+        "eslint-plugin-ava": "13.x",
         "eslint-plugin-import": "2.x",
         "node-gyp": "8.4.1",
         "prebuildify": "5.0.0",
@@ -55,14 +56,16 @@
         "build-components": "node-gyp configure build --directory=tests/components",
         "install": "node ./scripts/prepublish.js && npm run build",
         "lint": "eslint .",
-        "test": "npm run lint && npm run test-unit",
-        "test-components": "npm run build-components && ava ./tests/components/**/*.js",
+        "test": "ava ./tests/unit/**/*.js",
+        "test-components": "ava ./tests/components/**/*.js",
         "test-integration": "node ./tests/integration/index",
-        "test-unit": "ava ./tests/unit/**/*.js",
         "type-declarations": "tsc --outFile ./lib/typedeclarations.d.ts"
     },
     "engines": {
         "node": ">=14.15.4"
     },
-    "types": "./lib/typedeclarations.d.ts"
+    "types": "./lib/typedeclarations.d.ts",
+    "ava": {
+        "workerThreads": false
+    }
 }
