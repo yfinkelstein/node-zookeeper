@@ -1,3 +1,8 @@
+#### v 5.2.2 (2022-01-08)
+* fix(testing): replace the existing integration test scripts (that has become an unwanted and rarely used legacy), with new ones using the Ava test tool. Pull request [297](https://github.com/yfinkelstein/node-zookeeper/pull/297) by @davidvujic
+* fix(testing): Use Ava v4. Pull request [296](https://github.com/yfinkelstein/node-zookeeper/pull/296) by @davidvujic
+* fix: Bump dependencies, remove unused integration test, remove unused dependencies. Pull request [295](https://github.com/yfinkelstein/node-zookeeper/pull/295) by @davidvujic
+
 #### v 5.2.1 (2022-01-05)
 * fix: explicitly handle async JavaScript failures. Pull request [293](https://github.com/yfinkelstein/node-zookeeper/pull/293) by @davidvujic
 
