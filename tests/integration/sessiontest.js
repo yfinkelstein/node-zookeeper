@@ -1,18 +1,5 @@
 const test = require('ava');
-const { constants, Promise: ZooKeeper } = require('../../lib/index');
-
-function createClient(client_id, client_password) {
-    const config = {
-        connect: '127.0.0.1:2181',
-        timeout: 5000,
-        debug_level: constants.ZOO_LOG_LEVEL_INFO,
-        host_order_deterministic: false,
-        client_id,
-        client_password,
-    };
-
-    return new ZooKeeper(config);
-}
+const { constants, createClient } = require('./helpers/createClient');
 
 test('can init and close more than one client', async (t) => {
     t.plan(3);

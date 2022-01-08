@@ -12,7 +12,7 @@ You can use `docker-compose` setup that is provided with the project. To run the
 
 Make sure you have a ZooKeeper server running.
 
-Run `npm run test-integration -- 127.0.0.1:2181` (the last argument is the url to the ZooKeeper server). The script will try to connect to `localhost:2181` by default.
+Run `npm run test-integration`. The tests expect a running ZooKeeper server at `localhost:2181`. Attach your custom url by: `npm run test-integration -- my-ip:my-port`.
 
 Pro tip: Check out the ZooKeeper [Docker image](https://hub.docker.com/_/zookeeper) and guidelines on how to run a local server.
 

@@ -1,16 +1,5 @@
 const test = require('ava');
-const { constants, Promise: ZooKeeper } = require('../../lib/index');
-
-function createClient() {
-    const config = {
-        connect: '127.0.0.1:2181',
-        timeout: 5000,
-        debug_level: constants.ZOO_LOG_LEVEL_INFO,
-        host_order_deterministic: false,
-    };
-
-    return new ZooKeeper(config);
-}
+const { constants, createClient } = require('./helpers/createClient');
 
 test('can create and delete a node containing sub nodes', async (t) => {
     t.plan(8);
