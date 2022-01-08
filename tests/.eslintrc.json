@@ -1,0 +1,6 @@
+{
+    "rules": {
+        "import/no-unresolved": ["error", {}],
+        "no-underscore-dangle": ["error", { "allow": ["delete_"] }]
+    }
+}

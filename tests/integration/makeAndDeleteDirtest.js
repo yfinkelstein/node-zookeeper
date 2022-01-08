@@ -1,5 +1,5 @@
 const test = require('ava');
-const { constants, createClient } = require('./helpers/createClient');
+const { createClient } = require('./helpers/createClient');
 
 test('can create and delete a node containing sub nodes', async (t) => {
     t.plan(8);
@@ -26,7 +26,7 @@ test('can create and delete a node containing sub nodes', async (t) => {
                 await client.delete_(twoStepPath, 0);
                 t.is(await client.pathExists(twoStepPath, false), false);
                 t.is(await client.pathExists(topPath, false), true);
-                
+
                 await client.delete_(topPath, 0);
                 t.is(await client.pathExists(topPath, false), false);
 

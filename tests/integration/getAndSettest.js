@@ -13,7 +13,7 @@ test('can create an node with data and get data from the node', async (t) => {
         client.on('connect', async () => {
             await client.create(nodeName, data, constants.ZOO_EPHEMERAL);
 
-            const [stat, dataAsBuffer] = await client.get(nodeName, false);
+            const [, dataAsBuffer] = await client.get(nodeName, false);
 
             t.is(dataAsBuffer.toString(), data);
 
@@ -39,7 +39,7 @@ test('can create an node, set and get data from the node', async (t) => {
 
             await client.set(nodeName, data, 0);
 
-            const [stat, dataAsBuffer] = await client.get(nodeName, false);
+            const [, dataAsBuffer] = await client.get(nodeName, false);
 
             t.is(dataAsBuffer.toString(), data);
 
@@ -62,7 +62,7 @@ test('can create a node with data as buffer and get data as a buffer from the no
     await new Promise((resolve) => {
         client.on('connect', async () => {
             await client.create(nodeName, data, constants.ZOO_EPHEMERAL);
-            const [stat, dataAsBuffer] = await client.get(nodeName, false);
+            const [, dataAsBuffer] = await client.get(nodeName, false);
 
             t.deepEqual(dataAsBuffer, data);
 
@@ -87,7 +87,7 @@ test('can set data as buffer and get data as a buffer from the node', async (t) 
             await client.create(nodeName, undefined, constants.ZOO_EPHEMERAL);
             await client.set(nodeName, data, 0);
 
-            const [stat, dataAsBuffer] = await client.get(nodeName, false);
+            const [, dataAsBuffer] = await client.get(nodeName, false);
 
             t.deepEqual(dataAsBuffer, data);
 

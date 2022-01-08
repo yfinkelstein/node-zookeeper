@@ -25,7 +25,6 @@ test('can init and close more than one client', async (t) => {
 
         client.init({});
     });
-
 });
 
 test('two connected clients can create and fetch nodes', async (t) => {
@@ -63,7 +62,6 @@ test('two connected clients can create and fetch nodes', async (t) => {
 
         client.init({});
     });
-
 });
 
 test('closed client cannot create node', async (t) => {

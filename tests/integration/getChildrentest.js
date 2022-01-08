@@ -14,7 +14,7 @@ test('can create and get children', async (t) => {
         client.on('connect', async () => {
             await client.create(parentNode, 'data', constants.ZOO_CONTAINER);
             await client.create(childNode, 'data', constants.ZOO_EPHEMERAL);
- 
+
             const children = await client.get_children(parentNode, false);
 
             t.is(children[0], expected);
@@ -28,7 +28,6 @@ test('can create and get children', async (t) => {
         client.on('close', () => resolve());
         client.init({});
     });
-
 });
 
 test('can create and get children (the get_children2 function) with stat', async (t) => {
@@ -44,7 +43,7 @@ test('can create and get children (the get_children2 function) with stat', async
         client.on('connect', async () => {
             await client.create(parentNode, 'data', constants.ZOO_CONTAINER);
             await client.create(childNode, 'data', constants.ZOO_EPHEMERAL);
- 
+
             const [children, stat] = await client.get_children2(parentNode, false);
 
             t.is(children[0], expected);
@@ -59,7 +58,6 @@ test('can create and get children (the get_children2 function) with stat', async
         client.on('close', () => resolve());
         client.init({});
     });
-
 });
 
 test('returns empty when no children', async (t) => {
@@ -72,7 +70,7 @@ test('returns empty when no children', async (t) => {
     await new Promise((resolve) => {
         client.on('connect', async () => {
             await client.create(parentNode, 'data', constants.ZOO_CONTAINER);
- 
+
             const children = await client.get_children(parentNode, false);
 
             t.deepEqual(children, []);
@@ -85,7 +83,6 @@ test('returns empty when no children', async (t) => {
         client.on('close', () => resolve());
         client.init({});
     });
-
 });
 
 test('returns empty when no node', async (t) => {
@@ -98,10 +95,10 @@ test('returns empty when no node', async (t) => {
     await new Promise((resolve) => {
         client.on('connect', async () => {
             try {
-                const children = await client.get_children(parentNode, false);
+                await client.get_children(parentNode, false);
                 t.fail('Cannot get children from a non existing node.');
             } catch (e) {
-                t.true(e.message.includes("no node"));
+                t.true(e.message.includes('no node'));
             } finally {
                 client.close();
             }
@@ -110,5 +107,4 @@ test('returns empty when no node', async (t) => {
         client.on('close', () => resolve());
         client.init({});
     });
-
 });
