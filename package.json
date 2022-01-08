@@ -58,7 +58,7 @@
         "lint": "eslint .",
         "test": "ava ./tests/unit/**/*.js",
         "test-components": "ava ./tests/components/**/*.js",
-        "test-integration": "node ./tests/integration/index",
+        "test-integration": "ava ./tests/integration/*.js --",
         "type-declarations": "tsc --outFile ./lib/typedeclarations.d.ts"
     },
     "engines": {
