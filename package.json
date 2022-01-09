@@ -38,7 +38,7 @@
     },
     "devDependencies": {
         "@types/node": "17.x",
-        "ava": "4.0.0",
+        "ava": "4.0.1",
         "eslint": "8.x",
         "eslint-config-airbnb-base": "15.x",
         "eslint-plugin-import": "2.x",
