@@ -2,8 +2,6 @@ const test = require('ava');
 const { constants, createClient } = require('./helpers/createClient');
 
 test('can create and get children', async (t) => {
-    t.plan(1);
-
     const expected = 'child';
     const parentNode = '/parent';
     const childNode = `${parentNode}/${expected}`;
@@ -31,8 +29,6 @@ test('can create and get children', async (t) => {
 });
 
 test('can create and get children (the get_children2 function) with stat', async (t) => {
-    t.plan(2);
-
     const expected = 'child';
     const parentNode = '/parent-with-stat';
     const childNode = `${parentNode}/${expected}`;
@@ -61,8 +57,6 @@ test('can create and get children (the get_children2 function) with stat', async
 });
 
 test('returns empty when no children', async (t) => {
-    t.plan(1);
-
     const parentNode = '/the-parent-node-without-children';
 
     const client = createClient();
@@ -86,8 +80,6 @@ test('returns empty when no children', async (t) => {
 });
 
 test('returns empty when no node', async (t) => {
-    t.plan(1);
-
     const parentNode = '/this-is-a-non-existing-node';
 
     const client = createClient();

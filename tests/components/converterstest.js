@@ -2,7 +2,6 @@ const test = require('ava');
 const converters = require('./build/Release/converters.node');
 
 test('Integer is converted to string', (t) => {
-    t.plan(2);
     const expected = 4711;
     const res = converters.toStrTest(expected);
 
@@ -11,7 +10,6 @@ test('Integer is converted to string', (t) => {
 });
 
 test('Unix time is converted to date', (t) => {
-    t.plan(1);
     const now = Date.now();
 
     const d = new Date(now);
@@ -27,7 +25,6 @@ test('Unix time is converted to date', (t) => {
 });
 
 test('Object value is converted to bool', (t) => {
-    t.plan(2);
     const expected = true;
     const res = converters.toBoolTest({ val: 'true' });
 
@@ -36,7 +33,6 @@ test('Object value is converted to bool', (t) => {
 });
 
 test('Object value is converted to integer', (t) => {
-    t.plan(2);
     const expected = 4711;
     const expectedNeg = -1;
     const res = converters.toIntTest({ val: '4711' });
@@ -47,7 +43,6 @@ test('Object value is converted to integer', (t) => {
 });
 
 test('Object value is converted to unsigned integer', (t) => {
-    t.plan(1);
     const expected = 4711;
     const res = converters.toUintTest('4711');
 

@@ -3,8 +3,6 @@ const test = require('ava');
 const ZooKeeper = require('../../../lib/index');
 
 function assertPublicApi(zk, t) {
-    t.plan(26);
-
     t.is(typeof zk.a_create, 'function');
     t.is(typeof zk.a_createTtl, 'function');
     t.is(typeof zk.a_exists, 'function');

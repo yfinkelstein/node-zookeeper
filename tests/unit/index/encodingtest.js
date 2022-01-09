@@ -2,8 +2,6 @@ const test = require('ava');
 const ZooKeeper = require('../../../lib/index');
 
 test('inject encoding will set data as buffer to false', (t) => {
-    t.plan(2);
-
     const expected = 'utf-8';
 
     const zk = new ZooKeeper();
