@@ -1,7 +1,12 @@
 const sinon = require('sinon');
 const test = require('ava');
 const zkConstants = require('../../../lib/constants');
-const { deprecationLog, findZkConstantByCode } = require('../../../lib/helper');
+const {
+    deprecationLog,
+    findZkConstantByCode,
+    isString,
+    isFunction,
+} = require('../../../lib/helper');
 
 class Test {
     static method() {
@@ -50,4 +55,22 @@ test('finds constants with fallback', (t) => {
 
     t.is(res[0], 'unknown');
     t.is(res[1], expected);
+});
+
+test('identifies data as strings', (t) => {
+    t.true(isString('data'));
+    t.true(isString(''));
+
+    t.true(isString(new String('data'))); // eslint-disable-line no-new-wrappers
+
+    t.false(isString(1));
+    t.false(isString({ key: 'value' }));
+});
+
+test('identifies data as functions', (t) => {
+    t.true(isFunction(() => {}));
+    t.true(isFunction(Test.method));
+
+    t.false(isFunction('data'));
+    t.false(isFunction(null));
 });
