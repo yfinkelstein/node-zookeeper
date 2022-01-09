@@ -4,16 +4,12 @@ const NativeZk = require('node-gyp-build')(join(__dirname, '../../../')).ZooKeep
 const ZooKeeper = require('../../../lib/zookeeper');
 
 test('ZooKeeper instance creates an instance of the native object', (t) => {
-    t.plan(1);
-
     const zk = new ZooKeeper({});
 
     t.true(zk.native instanceof NativeZk);
 });
 
 test('native object is extended with an emit function', (t) => {
-    t.plan(1);
-
     const zk = new ZooKeeper({});
 
     t.is(typeof zk.native.emit, 'function');
@@ -56,8 +52,6 @@ test('native object emits close and pass an instance of the current ZooKeeper', 
 });
 
 test('native zookeeper add_auth', (t) => {
-    t.plan(3);
-
     const zk = new ZooKeeper({});
 
     t.throws(() => zk.native.add_auth('digest'), undefined, 'expected 3 arguments');

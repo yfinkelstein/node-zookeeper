@@ -2,8 +2,6 @@ const test = require('ava');
 const { constants, createClient } = require('./helpers/createClient');
 
 test('can init and close more than one client', async (t) => {
-    t.plan(3);
-
     const client = createClient();
     const secondClient = createClient();
 
@@ -28,8 +26,6 @@ test('can init and close more than one client', async (t) => {
 });
 
 test('two connected clients can create and fetch nodes', async (t) => {
-    t.plan(6);
-
     const pathOne = '/first';
     const pathTwo = '/second';
 
@@ -65,8 +61,6 @@ test('two connected clients can create and fetch nodes', async (t) => {
 });
 
 test('closed client cannot create node', async (t) => {
-    t.plan(1);
-
     const pathOne = '/first';
     const firstClient = createClient();
     const secondClient = createClient(firstClient.client_id, firstClient.client_password);

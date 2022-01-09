@@ -16,8 +16,6 @@ class Test {
 
 test('deprecation log is called with proper arguments', (t) => {
     const deprecationLogStub = sinon.stub();
-    t.plan(3);
-
     deprecationLogStub(Test.name, 'method');
 
     t.is(deprecationLogStub.callCount, 1);
@@ -27,8 +25,6 @@ test('deprecation log is called with proper arguments', (t) => {
 
 test('deprecation log gives proper message', (t) => {
     const consoleStub = sinon.stub(console, 'warn');
-    t.plan(2);
-
     Test.method();
 
     t.is(consoleStub.callCount, 1);
@@ -38,7 +34,6 @@ test('deprecation log gives proper message', (t) => {
 });
 
 test('finds the BAD ARGUMENTS constant', (t) => {
-    t.plan(2);
     const expected = -8;
 
     const res = findZkConstantByCode(expected, zkConstants);
@@ -48,7 +43,6 @@ test('finds the BAD ARGUMENTS constant', (t) => {
 });
 
 test('finds constants with fallback', (t) => {
-    t.plan(2);
     const expected = 4711;
 
     const res = findZkConstantByCode(expected, zkConstants);

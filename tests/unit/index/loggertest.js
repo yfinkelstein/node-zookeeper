@@ -3,8 +3,6 @@ const test = require('ava');
 const ZooKeeper = require('../../../lib/index');
 
 test('Inject custom logger', (t) => {
-    t.plan(1);
-
     const zk = new ZooKeeper();
     zk.setLogger(console.log);
 
@@ -12,8 +10,6 @@ test('Inject custom logger', (t) => {
 });
 
 test('Use default logger', (t) => {
-    t.plan(1);
-
     const zk = new ZooKeeper();
     zk.setLogger(true);
 
@@ -21,8 +17,6 @@ test('Use default logger', (t) => {
 });
 
 test('Explicit set use no logger', (t) => {
-    t.plan(1);
-
     const zk = new ZooKeeper();
     zk.setLogger(false);
 

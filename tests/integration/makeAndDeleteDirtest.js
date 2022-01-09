@@ -2,8 +2,6 @@ const test = require('ava');
 const { createClient } = require('./helpers/createClient');
 
 test('can create and delete a node containing sub nodes', async (t) => {
-    t.plan(8);
-
     const path = ['/one', '/two', '/three'];
     const fullPath = path.join('');
     const twoStepPath = path.slice(0, 2).join('');

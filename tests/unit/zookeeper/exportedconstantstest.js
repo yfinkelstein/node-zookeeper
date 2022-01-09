@@ -7,16 +7,12 @@ const ZooKeeper = require('../../../lib/zookeeper');
 const keys = Object.keys(NativeZk);
 
 test('native static constants are exported', (t) => {
-    t.plan(keys.length);
-
     keys.forEach((key) => {
         t.is(constants[key], NativeZk[key]);
     });
 });
 
 test('deprecated legacy event constants are exported', (t) => {
-    t.plan(8);
-
     t.is(ZooKeeper.on_closed, 'close');
     t.is(ZooKeeper.on_connected, 'connect');
     t.is(ZooKeeper.on_connecting, 'connecting');
@@ -29,8 +25,6 @@ test('deprecated legacy event constants are exported', (t) => {
 });
 
 test('legacy event constants are exported', (t) => {
-    t.plan(8);
-
     t.is(constants.on_closed, 'close');
     t.is(constants.on_connected, 'connect');
     t.is(constants.on_connecting, 'connecting');

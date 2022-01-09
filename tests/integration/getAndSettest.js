@@ -2,8 +2,6 @@ const test = require('ava');
 const { constants, createClient } = require('./helpers/createClient');
 
 test('can create an node with data and get data from the node', async (t) => {
-    t.plan(1);
-
     const nodeName = '/my-get-and-set-node';
     const data = 'data as a string';
 
@@ -26,8 +24,6 @@ test('can create an node with data and get data from the node', async (t) => {
 });
 
 test('can create an node, set and get data from the node', async (t) => {
-    t.plan(1);
-
     const nodeName = '/my-node-to-be-set';
     const data = 'data as a string';
 
@@ -52,8 +48,6 @@ test('can create an node, set and get data from the node', async (t) => {
 });
 
 test('can create a node with data as buffer and get data as a buffer from the node', async (t) => {
-    t.plan(1);
-
     const nodeName = '/my-node-to-create-with-buffer-data';
     const data = Buffer.from('data as a string');
 
@@ -75,8 +69,6 @@ test('can create a node with data as buffer and get data as a buffer from the no
 });
 
 test('can set data as buffer and get data as a buffer from the node', async (t) => {
-    t.plan(1);
-
     const nodeName = '/my-node-to-be-set-with-buffer-data';
     const data = Buffer.from('data as a string');
 

@@ -3,8 +3,6 @@ const test = require('ava');
 const ZooKeeper = require('../../../lib/zookeeper');
 
 test('native zookeeper proxy properties are added to the ZooKeeper instance', (t) => {
-    t.plan(5);
-
     const zk = new ZooKeeper({});
 
     t.is(zk.state, 0);

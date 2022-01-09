@@ -4,8 +4,6 @@ const test = require('ava');
 const ZkPromise = require('../../../lib/promise');
 
 test('ZkPromise get', (t) => {
-    t.plan(1);
-
     const expected = 'value';
     const promise = ZkPromise.resolve({
         property: expected,
@@ -17,8 +15,6 @@ test('ZkPromise get', (t) => {
 });
 
 test('ZkPromise put', (t) => {
-    t.plan(1);
-
     const expected = 'value';
     const promise = ZkPromise.resolve({});
 
@@ -28,8 +24,6 @@ test('ZkPromise put', (t) => {
 });
 
 test('ZkPromise call', (t) => {
-    t.plan(1);
-
     const promise = ZkPromise.resolve({
         multiply: (a, b) => a * b,
     });
@@ -40,8 +34,6 @@ test('ZkPromise call', (t) => {
 });
 
 test('ZkPromise addCallback', (t) => {
-    t.plan(3);
-
     const callback = sinon.stub().callsFake((value) => value * 2);
     const promise = ZkPromise.resolve(10);
 
@@ -53,8 +45,6 @@ test('ZkPromise addCallback', (t) => {
 });
 
 test('ZkPromise addErrback', (t) => {
-    t.plan(3);
-
     const callback = sinon.stub().callsFake((value) => value * 2);
     const promise = ZkPromise.reject(10);
 
@@ -66,8 +56,6 @@ test('ZkPromise addErrback', (t) => {
 });
 
 test('ZkPromise addBoth', (t) => {
-    t.plan(7);
-
     const callback = sinon.stub().callsFake((value) => value * 2);
     const errback = sinon.stub().callsFake(() => {
         throw new Error('errback!');
@@ -91,8 +79,6 @@ test('ZkPromise addBoth', (t) => {
 });
 
 test('ZkPromise addCallbacks', (t) => {
-    t.plan(9);
-
     const callback = sinon.stub().callsFake((value) => value * 2);
     const errback = sinon.stub().callsFake(() => {
         throw new Error('errback!');
