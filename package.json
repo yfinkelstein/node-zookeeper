@@ -44,7 +44,6 @@
         "eslint-plugin-import": "2.x",
         "node-gyp": "8.4.1",
         "prebuildify": "5.0.0",
-        "proxyquire": "2.x",
         "sinon": "12.x",
         "typescript": "^4.0.5"
     },
