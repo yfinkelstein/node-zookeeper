@@ -1,3 +1,16 @@
+#### v 5.3.0 (2022-01-09)
+* feat: Add Mac OS X M1 prebuild for Node.js 16.13.1. Pull request [302](https://github.com/yfinkelstein/node-zookeeper/pull/302) by @davidvujic
+* fix: node-gyp is already included in npm. Pull request [301](https://github.com/yfinkelstein/node-zookeeper/pull/301) by @davidvujic
+* fix: replace lodash with vanilla js, remove unused dependencies, remove unnecessary usage of t.plan() in Ava tests.
+
+    __NOTE:__
+
+    the `_.defaults` lodash function is replaced with `Object.assign` (with `src` and `target` flipped) to have a similar behaviour as the lodash function.
+
+    But it isn't 100% the same thing. If the original object has a key with an __undefined__ value, it will behave differently than with the lodash defaults fn.
+
+    Pull request [300](https://github.com/yfinkelstein/node-zookeeper/pull/300) by @davidvujic
+
 #### v 5.2.2 (2022-01-08)
 * fix(testing): replace the existing integration test scripts (that has become an unwanted and rarely used legacy), with new ones using the Ava test tool. Pull request [297](https://github.com/yfinkelstein/node-zookeeper/pull/297) by @davidvujic
 * fix(testing): Use Ava v4. Pull request [296](https://github.com/yfinkelstein/node-zookeeper/pull/296) by @davidvujic
