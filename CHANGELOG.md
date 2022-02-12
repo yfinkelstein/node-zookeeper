@@ -1,3 +1,6 @@
+#### v 5.3.1 (2022-02-12)
+* fix: get and w_get returns an array of [stat, string|Buffer]. Pull request [306](https://github.com/yfinkelstein/node-zookeeper/pull/306) by @davidvujic
+
 #### v 5.3.0 (2022-01-09)
 * feat: Add Mac OS X M1 prebuild for Node.js 16.13.1. Pull request [302](https://github.com/yfinkelstein/node-zookeeper/pull/302) by @davidvujic
 * fix: node-gyp is already included in npm. Pull request [301](https://github.com/yfinkelstein/node-zookeeper/pull/301) by @davidvujic
