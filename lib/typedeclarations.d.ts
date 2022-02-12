@@ -519,17 +519,17 @@ declare module "zookeeper" {
         /**
          * @param {string} path
          * @param {boolean} watch
-         * @fulfill {string|Buffer}
-         * @returns {Promise.<string|Buffer>}
+         * @fulfill {Array} [stat, data] - stat: object, data: string|Buffer
+         * @returns {Promise.<Array>} [stat, data] - stat: object, data: string|Buffer
          */
-        get(path: string, watch: boolean): Promise<string | Buffer>;
+        get(path: string, watch: boolean): Promise<any[]>;
         /**
          * @param {string} path
          * @param {function} watchCb
-         * @fulfill {string|Buffer}
-         * @returns {Promise.<string|Buffer>}
+         * @fulfill {Array} [stat, data] - stat: object, data: string|Buffer
+         * @returns {Promise.<Array>} [stat, data] - stat: object, data: string|Buffer
          */
-        w_get(path: string, watchCb: Function): Promise<string | Buffer>;
+        w_get(path: string, watchCb: Function): Promise<any[]>;
         /**
          * @param {string} path
          * @param {boolean} watch
