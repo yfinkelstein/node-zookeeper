@@ -1,3 +1,6 @@
+#### v 5.3.2 (2022-02-16)
+* fix: handle normalize path with slashes in all platforms. Pull request [305](https://github.com/yfinkelstein/node-zookeeper/pull/305) by @hufeng
+
 #### v 5.3.1 (2022-02-12)
 * fix: get and w_get returns an array of [stat, string|Buffer]. Pull request [306](https://github.com/yfinkelstein/node-zookeeper/pull/306) by @davidvujic
 
