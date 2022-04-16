@@ -4,7 +4,7 @@ const { createNodes } = require('./setup');
 const logger = require('./logger');
 
 async function verifyResultCodeCheckInAsyncCall(client) {
-    const tempNode = '/my-temporary-node-to-verify-async-call';
+    const tempNode = `/my-temporary-node-to-verify-async-call-${Date.now()}`;
     const data = 'HELLOWORLD';
     const version = 0;
 
@@ -19,7 +19,7 @@ async function verifyResultCodeCheckInAsyncCall(client) {
 }
 
 async function verifyNonExisting(client) {
-    const tempNode = '/my-temporary-node';
+    const tempNode = `/my-temporary-node-${Date.now()}`;
 
     const doesExist = await client.w_pathExists(tempNode, (data) => logger.log(`Node created with data: ${data}`));
     logger.log(`Does ${tempNode} exist? ${doesExist}`);
