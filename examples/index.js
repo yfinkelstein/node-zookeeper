@@ -44,4 +44,6 @@ async function init() {
     });
 }
 
-init().catch(logger.error);
+if (require.main === module) {
+    init().catch(logger.error);
+}
