@@ -280,7 +280,7 @@ public:
             return;
         }
 
-        last_activity = uv_now(uv_default_loop());
+        last_activity = uv_now(Nan::GetCurrentEventLoop());
 
         #ifdef WIN32
             SOCKET oldFd = fd;
@@ -334,9 +334,9 @@ public:
 
              zk_io->data = this;
              #ifdef WIN32
-             	uv_poll_init_socket(uv_default_loop(), zk_io, fd);
+             	uv_poll_init_socket(Nan::GetCurrentEventLoop(), zk_io, fd);
              #else
-             	uv_poll_init(uv_default_loop(), zk_io, fd);
+             	uv_poll_init(Nan::GetCurrentEventLoop(), zk_io, fd);
              #endif
         }
 
@@ -387,7 +387,7 @@ public:
         LOG_DEBUG("zk_timer_cb fired");
 
         ZooKeeper *zk = static_cast<ZooKeeper*>(w->data);
-        int64_t now = uv_now(uv_default_loop());
+        int64_t now = uv_now(Nan::GetCurrentEventLoop());
         int64_t timeout = zk->last_activity + zk->tv.tv_sec * 1000 + zk->tv.tv_usec / 1000.;
 
         // if last_activity + tv.tv_sec is older than now, we did time out
@@ -421,7 +421,7 @@ public:
         }
         Ref();
 
-        uv_timer_init(uv_default_loop(), &zk_timer);
+        uv_timer_init(Nan::GetCurrentEventLoop(), &zk_timer);
         zk_timer.data = this;
 
         noResponseCounter = 0;
