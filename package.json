@@ -1,7 +1,7 @@
 {
     "name": "zookeeper",
     "description": "apache zookeeper client (zookeeper async API v3.4.x - v3.7.x)",
-    "version": "5.3.2",
+    "version": "5.4.0",
     "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
     "license": "MIT",
     "contributors": [

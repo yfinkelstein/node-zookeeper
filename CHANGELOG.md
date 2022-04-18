@@ -1,3 +1,6 @@
+#### v 5.4.0 (2022-04-18)
+* feat: starting the zookeeper client in a Node.js Worker thread Pull request [310](https://github.com/yfinkelstein/node-zookeeper/pull/310) by @deepcoldy
+
 #### v 5.3.2 (2022-02-16)
 * fix: handle normalize path with slashes in all platforms. Pull request [305](https://github.com/yfinkelstein/node-zookeeper/pull/305) by @hufeng
 
