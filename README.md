@@ -19,6 +19,8 @@ And you're done!
 (note the name `zookeeper` in lowercase)
 
 #### News
+:rocket: __New since version 5.4.0__ It is possible to start the zookeeper client in a Node.js Worker thread.
+
 :rocket: __New since version 5.1.0__ Support for `SSL`, that was introduced in Apache ZooKeeper C Client v3.6.0.
 
 :rocket: __New since version 4.9.0__ Support for `Dynamic Reconfiguration`, introduced in Apache ZooKeeper server v3.5.5.
