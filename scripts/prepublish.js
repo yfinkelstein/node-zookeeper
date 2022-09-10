@@ -18,6 +18,8 @@ function applyPatches() {
         shell.sed('-i', '#include "zookeeper_log.h"', '#include "zookeeper_log.h"\n#include "winport.h"\n', `${destination}/zk_log.c`);
         shell.sed('-i', '#include "zookeeper.h"', '#include "winport.h"\n#include "zookeeper.h"\n', `${destination}/zk_adaptor.h`);
         shell.sed('-i', '#include "zk_adaptor.h"', '#include "zk_adaptor.h"\n#include "winport.h"\n', `${destination}/zookeeper.c`);
+    } else if (env.isLinux) {
+        shell.exec(`patch -d ${env.rootFolder} -p0 --forward < ${env.workFolder}/no-fipsmode.patch`);
     }
 }
 

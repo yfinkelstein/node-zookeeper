@@ -1,0 +1,9 @@
+diff -ur -p0 deps/zookeeper-client-c/src/zookeeper.c deps-patched/zookeeper-client-c/src/zookeeper.c
+--- deps/zookeeper-client-c/src/zookeeper.c	2022-09-10 16:36:21.122958700 +0200
++++ deps-patched/zookeeper-client-c/src/zookeeper.c	2022-09-10 16:32:05.092796200 +0200
+@@ -2595,5 +2594,0 @@ static int init_ssl_for_socket(zsock_t *
+-        if (FIPS_mode() == 0) {
+-            LOG_INFO(LOGCALLBACK(zh), "FIPS mode is OFF ");
+-        } else {
+-            LOG_INFO(LOGCALLBACK(zh), "FIPS mode is ON ");
+-        }
