@@ -1,3 +1,6 @@
+#### v 5.5.1 (2022-09-17)
+* fix: set the correct supported version of Apache ZooKeeper server (docs and package description). Pull request [322](https://github.com/yfinkelstein/node-zookeeper/pull/322) by @davidvujic
+
 #### v 5.5.0 (2022-09-17)
 * fix: Remove the OpenSSSL FIPS_mode check for Linux, Mac OS X and Windows.
 
