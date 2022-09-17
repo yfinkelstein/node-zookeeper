@@ -34,7 +34,6 @@ const variables = {
     sourceFolder: `${rootFolder}/deps/zookeeper-client-c`,
     downloadedFileName,
     isWindows,
-    isLinux: process.platform === 'linux',
     isVerbose: !!process.env.ZK_INSTALL_VERBOSE,
 };
 
