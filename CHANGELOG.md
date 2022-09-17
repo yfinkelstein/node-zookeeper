@@ -1,5 +1,15 @@
+#### v 5.5.0 (2022-10-17)
+* fix: Remove the OpenSSSL FIPS_mode check for Linux, Mac OS X and Windows.
+
+  feat: Rebuild the prebuilds for Mac OS X and Windows, using Node.js 16.17.0.
+
+  feat: Remove the prebuilds for Node.js 14.
+
+  Pull request [321](https://github.com/yfinkelstein/node-zookeeper/pull/321) by @davidvujic
+* fix: remove code using FIPS_mode which is not available on all distros. Pull request [318](https://github.com/yfinkelstein/node-zookeeper/pull/319) by @dreusel
+
 #### v 5.4.0 (2022-04-18)
-* feat: starting the zookeeper client in a Node.js Worker thread Pull request [310](https://github.com/yfinkelstein/node-zookeeper/pull/310) by @deepcoldy
+* feat: starting the zookeeper client in a Node.js Worker thread. Pull request [310](https://github.com/yfinkelstein/node-zookeeper/pull/310) by @deepcoldy
 
 #### v 5.3.2 (2022-02-16)
 * fix: handle normalize path with slashes in all platforms. Pull request [305](https://github.com/yfinkelstein/node-zookeeper/pull/305) by @hufeng
