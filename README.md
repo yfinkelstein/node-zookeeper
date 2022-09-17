@@ -4,7 +4,7 @@
 
 _node-zookeeper - A Node.js client for Apache Zookeeper._
 
-This node module is implemented on top of the __official ZooKeeper C Client API__, supporting ZooKeeper server v3.4.x - v3.6.x. Have a look at the [official docs](https://zookeeper.apache.org/doc/current/index.html) for further details on behavior.
+This node module is implemented on top of the __official ZooKeeper C Client API__, supporting ZooKeeper server v3.4.x - v3.8.x. Have a look at the [official docs](https://zookeeper.apache.org/doc/current/index.html) for further details on behavior.
 
 __Latest changes__ are described in the [changelog](./CHANGELOG.md)
 
