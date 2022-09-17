@@ -1,4 +1,4 @@
-#### v 5.5.0 (2022-10-17)
+#### v 5.5.0 (2022-09-17)
 * fix: Remove the OpenSSSL FIPS_mode check for Linux, Mac OS X and Windows.
 
   feat: Rebuild the prebuilds for Mac OS X and Windows, using Node.js 16.17.0.
