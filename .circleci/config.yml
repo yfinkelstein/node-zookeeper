@@ -41,6 +41,7 @@ jobs:
   run-on-windows:
     executor: win/default
     steps:
+      - run: choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
       - checkout
       - nvminstall
       - deps
