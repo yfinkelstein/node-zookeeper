@@ -1,3 +1,8 @@
+#### v 5.6.0 (2022-11-03)
+* feat: add prebuilds for Node.js v.18 (Mac OS X intel and M1, and Windows)
+
+  Pull request [324](https://github.com/yfinkelstein/node-zookeeper/pull/324) by @davidvujic
+
 #### v 5.5.1 (2022-09-17)
 * fix: set the correct supported version of Apache ZooKeeper server (docs and package description). Pull request [322](https://github.com/yfinkelstein/node-zookeeper/pull/322) by @davidvujic
 
