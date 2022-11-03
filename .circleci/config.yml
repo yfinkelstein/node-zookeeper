@@ -6,7 +6,7 @@ orbs:
 parameters:
   nodeversion:
     type: string
-    default: "16.13.1"
+    default: "18.12.0"
 
 commands:
   nvminstall:
