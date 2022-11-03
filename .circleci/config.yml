@@ -1,12 +1,12 @@
 version: 2.1
 
 orbs:
-  win: circleci/windows@2.2.0
+  win: circleci/windows@5.0
 
 parameters:
   nodeversion:
     type: string
-    default: "16.13.1"
+    default: "18.12.0"
 
 commands:
   nvminstall:
