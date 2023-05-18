@@ -18,7 +18,6 @@ function startTimer() {
     }, 10000);
 }
 
-
 /**
  * @param timeoutMs {number}
  * @returns {ZooKeeper}
@@ -70,7 +69,6 @@ function createClient(timeoutMs = 15000) {
 function getClient() {
     return createClient();
 }
-
 
 module.exports = {
     constants,
