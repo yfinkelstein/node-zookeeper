@@ -1,4 +1,4 @@
-const { constants, isClientConnected } = require('./wrapper');
+const { constants } = require('./wrapper');
 const notifier = require('./notifier');
 const logger = require('./logger');
 
@@ -27,9 +27,6 @@ async function checkMaster(client, path, retryFunc) {
     const watchFunc = watcher.bind(null, client, path, checkMaster, retryFunc);
 
     try {
-        if (!isClientConnected()) {
-            throw new Error('is not connected');
-        }
         const res = await client.w_get(path, watchFunc);
         onData(client, path, res.rc, res.error, res.stat, res.data);
     } catch (error) {
@@ -41,9 +38,6 @@ async function runForLeader(client, path) {
     const clientId = client.client_id;
 
     try {
-        if (!isClientConnected()) {
-            throw new Error('is not connected');
-        }
         await client.create(path, `${clientId}`, constants.ZOO_EPHEMERAL);
         emit(client, path);
     } catch (error) {

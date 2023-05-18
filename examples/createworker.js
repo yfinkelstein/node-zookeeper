@@ -1,4 +1,4 @@
-const { constants, isClientConnected } = require('./wrapper');
+const { constants } = require('./wrapper');
 const notifier = require('./notifier');
 const logger = require('./logger');
 
@@ -9,9 +9,6 @@ function emit(client, path) {
 
 async function createWorkerPath(client, path) {
     try {
-        if (!isClientConnected()) {
-            throw new Error('createWorkerPath: client is not connected');
-        }
         // eslint-disable-next-line no-bitwise
         const createdPath = await client.create(path, '', constants.ZOO_EPHEMERAL | constants.ZOO_SEQUENCE);
         emit(client, createdPath);

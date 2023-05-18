@@ -1,4 +1,3 @@
-const { isClientConnected } = require('./wrapper');
 const notifier = require('./notifier');
 const logger = require('./logger');
 
@@ -19,9 +18,6 @@ async function listen(client, path) {
     const watchFunc = watcher.bind(null, client, listen);
 
     try {
-        if (!isClientConnected()) {
-            throw new Error('listen: client is not connected');
-        }
         const children = await client.w_get_children(path, watchFunc);
         emit(client, path, children);
     } catch (error) {
