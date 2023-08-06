@@ -44,8 +44,7 @@ jobs:
       - run:
           command: |
                     choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-                    echo 'export PATH=$PATH:"/c/Program Files/CMake/bin"' >> $BASH_ENV
-                    refreshenv
+                    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
       - checkout
       - nvminstall
       - deps
