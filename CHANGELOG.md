@@ -1,3 +1,10 @@
+#### v 6.0.0 (2023-08-07)
+* feat: use ZooKeeper C Client v3.8.2 and add prebuilds for Node.js v.18 (Mac OS X intel and M1, and Windows)
+
+  Drop support for Node.js 16 prebuilds.
+
+  Pull request [330](https://github.com/yfinkelstein/node-zookeeper/pull/330) by @davidvujic
+
 #### v 5.6.0 (2022-11-03)
 * feat: add prebuilds for Node.js v.18 (Mac OS X intel and M1, and Windows)
 
