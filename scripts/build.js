@@ -16,7 +16,7 @@ shell.cd(`${env.sourceFolder}`);
 
 if (env.isWindows) {
     const output = env.isVerbose ? '' : ' > NUL';
-    exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .${output}`);
+    exec(`cmake -DWANT_SYNCAPI=OFF -DCMAKE_GENERATOR_PLATFORM=${process.arch} .${output} -DWITH_OPENSSL=OFF -DWITH_CYRUS_SASL=OFF`);
     exec(`cmake --build .${output}`);
 } else {
     const flags = '-w';
