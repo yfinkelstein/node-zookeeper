@@ -1,5 +1,5 @@
-const test = require('ava');
 const { join } = require('path');
+const test = require('ava');
 const NativeZk = require('node-gyp-build')(join(__dirname, '../../../')).ZooKeeper;
 const ZooKeeper = require('../../../lib/zookeeper');
 
