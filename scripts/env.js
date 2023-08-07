@@ -21,7 +21,6 @@ function checkIfAlreadyBuilt(env) {
 const isWindows = process.platform.toLowerCase().includes('win32');
 const rootFolder = setRoot({ isWindows });
 
-const zookeeperVersion = '3.5.8';
 const downloadedFolderName = 'zookeeper-client-c';
 const downloadedFileName = 'zookeeper-client-c.tar.gz';
 
@@ -29,7 +28,6 @@ const variables = {
     rootFolder,
     workFolder: `${rootFolder}/deps`,
     buildFolder: `${rootFolder}/build/zk`,
-    zookeeperVersion,
     downloadedFolderName,
     sourceFolder: `${rootFolder}/deps/zookeeper-client-c`,
     downloadedFileName,
