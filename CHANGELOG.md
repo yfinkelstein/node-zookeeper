@@ -1,3 +1,12 @@
+#### v 6.1.0 (2023-12-26)
+* feat: Add prebuilds for Node.js v.20 for Mac OS X x86 and arm, Windows.
+
+  Pull requests:
+  [333](https://github.com/yfinkelstein/node-zookeeper/pull/333)
+  [334](https://github.com/yfinkelstein/node-zookeeper/pull/334)
+  [335](https://github.com/yfinkelstein/node-zookeeper/pull/335)
+  by @davidvujic
+
 #### v 6.0.0 (2023-08-07)
 * feat: use ZooKeeper C Client v3.8.2 and add prebuilds for Node.js v.18 (Mac OS X intel and M1, and Windows)
 
