@@ -16,8 +16,8 @@ Prebuilds for Mac OS X with the M1 processor:
 npx prebuildify --arch arm64 --platform darwin --target 20.10.0
 ```
 
-Create prebuilds for Windows 10:
+Create prebuilds for Windows:
 
 ```bash
-npx prebuildify --arch x64 --platform win32 --target 18.17.0
+npx prebuildify --arch x64 --platform win32 --target 20.10.0
 ```
