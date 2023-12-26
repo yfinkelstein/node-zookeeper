@@ -8,7 +8,7 @@ Each platform has prebuilds for Node.js 12 and 14.
 Create prebuilds for Mac OS X:
 
 ```bash
-npx prebuildify --arch x64 --platform darwin --target 18.17.0
+npx prebuildify --arch x64 --platform darwin --target 20.10.0
 ```
 
 Prebuilds for Mac OS X with the M1 processor:
