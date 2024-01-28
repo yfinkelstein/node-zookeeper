@@ -1,3 +1,8 @@
+#### v 6.1.1 (2024-01-28)
+* fix: return an invalid state error code (previously segfault) when client not properly initialized.
+
+  Pull request [338](https://github.com/yfinkelstein/node-zookeeper/pull/333) by @davidvujic
+
 #### v 6.1.0 (2023-12-26)
 * feat: Add prebuilds for Node.js v.20 for Mac OS X x86 and arm, Windows.
 
