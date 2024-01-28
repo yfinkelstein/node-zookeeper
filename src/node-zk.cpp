@@ -406,7 +406,7 @@ public:
         }
     }
 
-    inline bool realInit (const char* hostPort, int session_timeout, clientid_t *client_id) {
+    inline bool realInit (const char* hostPort, const char* cert, int session_timeout, clientid_t *client_id) {
         if (zhandle) {
             // In case this is not the first call to realInit,
             // stop the current timer and skip re-initializing the timer
@@ -414,7 +414,16 @@ public:
         }
 
         myid = *client_id;
+
+#ifdef HAVE_OPENSSL_H
+        if (!*cert) {
+            zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
+        } else {
+            zhandle = zookeeper_init_ssl(hostPort, cert, main_watcher, session_timeout, &myid, this, 0);
+        }
+#else
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
+#endif
         if (!zhandle) {
             LOG_ERROR("zookeeper_init returned 0!");
             return false;
@@ -442,6 +451,7 @@ public:
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (toString(toLocalVal(arg, LOCAL_STRING("connect"))));
+        Nan::Utf8String _cert (toString(toLocalVal(arg, LOCAL_STRING("cert"))));
         int32_t session_timeout = toInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
@@ -471,7 +481,7 @@ public:
             zk->responseCounterLimit = response_counter_limit;
         }
 
-        if (!zk->realInit(*_hostPort, session_timeout, &local_client)) {
+        if (!zk->realInit(*_hostPort, *_cert, session_timeout, &local_client)) {
             RETURN_VALUE(info, Nan::ErrnoException(errno, "zookeeper_init", "failed to init", __FILE__));
         } else {
             RETURN_THIS(info);
