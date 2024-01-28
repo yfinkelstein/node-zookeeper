@@ -609,7 +609,7 @@ public:
         Nan::SetPrivate(cb->GetFunction(), Nan::New(PRIVATE_PROP_ZK), zk->handle()); \
 
 #define METHOD_EPILOG(call) \
-        int ret = (call); \
+        int ret = (zk->zhandle ? (call) : ZINVALIDSTATE); \
         RETURN_VALUE(info, Nan::New<Int32>(ret))
 
 #define WATCHER_PROLOG(info) \
