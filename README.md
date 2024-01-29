@@ -22,7 +22,7 @@ And you're done!
 #### News
 :rocket: __New since version 5.4.0__ It is possible to start the zookeeper client in a Node.js Worker thread.
 
-:rocket: __New since version 5.1.0__ Support for `SSL`, that was introduced in Apache ZooKeeper C Client v3.6.0.
+:rocket: __New since version 5.1.0__ Support for `SSL` (Linux only), that was introduced in Apache ZooKeeper C Client v3.6.0.
 
 :rocket: __New since version 4.9.0__ Support for `Dynamic Reconfiguration`, introduced in Apache ZooKeeper server v3.5.5.
 
@@ -185,7 +185,18 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
 
 ### Input Parameters
 
-* options : object. valid keys: { connect, timeout, debug_level, host_order_deterministic, data_as_buffer, response_counter_limit }
+* options : object
+  - connect: string
+  - timeout: number
+  - debug_level: number
+  - host_order_deterministic: boolean
+  - data_as_buffer: boolean
+  - response_counter_limit: number
+  - ssl: string
+
+NOTE: the options `ssl` value is a string containing comma separated parameters to initiate SSL connection.
+e.g.: server_cert.crt,client_cert.crt,client_priv_key.pem,passwd
+
 * path : string
 * data : string or Buffer
 * flags : int32. Supported:

@@ -451,7 +451,7 @@ public:
         zoo_deterministic_conn_order(order); // enable deterministic order
 
         Nan::Utf8String _hostPort (toString(toLocalVal(arg, LOCAL_STRING("connect"))));
-        Nan::Utf8String _cert (toString(toLocalVal(arg, LOCAL_STRING("cert"))));
+        Nan::Utf8String _cert (toString(toLocalVal(arg, LOCAL_STRING("ssl"))));
         int32_t session_timeout = toInt(arg, LOCAL_STRING("timeout"));
         if (session_timeout == 0) {
             session_timeout = 20000;
