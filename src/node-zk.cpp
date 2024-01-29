@@ -415,7 +415,7 @@ public:
 
         myid = *client_id;
 
-#ifdef HAVE_OPENSSL_H
+#ifdef WITH_SSL
         if (!*cert) {
             zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         } else {

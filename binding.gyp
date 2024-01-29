@@ -36,6 +36,8 @@
         [
           "OS==\"linux\"",
           {
+            "variables": {"with_ssl": "<!(if [[ $(openssl version -v | tr '[:upper:]' '[:lower:]') = openssl* ]]; then echo 'WITH_SSL'; else echo 'WITHOUT_SSL'; fi)"},
+            "defines": ["<(with_ssl)"],
             "include_dirs": [
               "<(module_root_dir)/deps/zookeeper-client-c/include",
               "<(module_root_dir)/deps/zookeeper-client-c/generated",
