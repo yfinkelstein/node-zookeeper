@@ -417,11 +417,14 @@ public:
 
 #ifdef WITH_SSL
         if (!*cert) {
+            LOG_INFO("Initializing with SSL");
             zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
         } else {
+            LOG_INFO("Initializing without SSL");
             zhandle = zookeeper_init_ssl(hostPort, cert, main_watcher, session_timeout, &myid, this, 0);
         }
 #else
+        LOG_INFO("Initializing");
         zhandle = zookeeper_init(hostPort, main_watcher, session_timeout, &myid, this, 0);
 #endif
         if (!zhandle) {
