@@ -147,11 +147,11 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "a_reconfig",  AReconfig);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_id"), ClientidPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), PROHIBITS_OVERWRITING, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_id"), ClientidPropertyGetter, 0, Local<Value>(), DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), DEFAULT, ReadOnly);
 
 
         Local<Function> constructor = constructor_template->GetFunction(Nan::GetCurrentContext()).ToLocalChecked();
