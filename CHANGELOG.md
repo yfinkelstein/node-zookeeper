@@ -1,3 +1,8 @@
+#### v 6.2.0 (2024-05-25)
+* fix: build error in Node.js 22 caused by removed V8 AccessControl property
+
+  Pull request [344](https://github.com/yfinkelstein/node-zookeeper/pull/344) by @davidvujic
+
 #### v 6.1.1 (2024-01-28)
 * fix: return an invalid state error code (previously segfault) when client not properly initialized.
 
