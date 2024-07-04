@@ -217,7 +217,7 @@ Have a look at the code in the [examples](./examples) folder: with __master__, _
   * int numChildren         // number of children of this node
   * long pzxid              // last modified children
 * acl is an array of acls objects, single acl object has following key
-  * int perms               // permisions
+  * int perm                // permisions
   * string scheme           // authorisation scheme (digest, auth)
   * string auth             // authorisation credentials (username:hashed_password)
 * zookeeper is the ZooKeeper instance on which connect was called

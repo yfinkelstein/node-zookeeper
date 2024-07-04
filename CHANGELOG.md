@@ -1,3 +1,8 @@
+#### v 6.2.1 (2024-07-04)
+* fix: ACL type, should be an array of objects. Also, fix typo in permissions key.
+
+  Pull request [346](https://github.com/yfinkelstein/node-zookeeper/pull/346) by @davidvujic
+
 #### v 6.2.0 (2024-05-25)
 * fix: build error in Node.js 22 caused by removed V8 AccessControl property
 

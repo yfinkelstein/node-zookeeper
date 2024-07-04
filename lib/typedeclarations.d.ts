@@ -624,13 +624,17 @@ declare module "index" {
     const ZooKeeper: typeof import("zookeeper");
 }
 /**
- * ACL
+ * ACL object
  */
-type acl = {
-    perms: number;
+type aclObject = {
+    perm: number;
     scheme: string;
     auth: string;
 };
+/**
+ * ACL
+ */
+type acl = Array<aclObject>;
 /**
  * stat
  */
