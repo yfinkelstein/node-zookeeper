@@ -10,27 +10,27 @@ async function init() {
     const client = getClient();
 
     client.on('connect', async () => {
-        const path = "/acl-testing";
-        const data = "";
+        const path = '/acl-testing';
+        const data = '';
         const flags = constants.ZOO_EPHEMERAL;
         const version = 0;
 
         await client.create(path, data, flags);
 
-        const [aclBefore,] = await client.get_acl(path);
+        const before = await client.get_acl(path);
 
         const updatedAcl = [{
-            perm: constants.ZOO_PERM_READ | constants.ZOO_PERM_WRITE,
-            scheme: "world",
-            auth: "anyone",
+            perm: constants.ZOO_PERM_READ,
+            scheme: 'world',
+            auth: 'anyone',
         }];
 
         await client.set_acl(path, version, updatedAcl);
 
-        const [aclAfter,] = await client.get_acl(path);
+        const after = await client.get_acl(path);
 
-        console.log("before:", aclBefore);
-        console.log("after:", aclAfter);
+        logger.log('before:', before[0]);
+        logger.log('after:', after[0]);
     });
 }
 
