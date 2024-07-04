@@ -19,7 +19,7 @@ async function init() {
 
         const [aclBefore,] = await client.get_acl(path);
 
-        updatedAcl = [{
+        const updatedAcl = [{
             perm: constants.ZOO_PERM_READ | constants.ZOO_PERM_WRITE,
             scheme: "world",
             auth: "anyone",
