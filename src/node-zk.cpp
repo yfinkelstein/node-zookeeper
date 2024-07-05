@@ -999,7 +999,9 @@ public:
 
             Nan::Utf8String _scheme (toString(toLocalVal(obj, LOCAL_STRING("scheme"))));
             Nan::Utf8String _auth (toString(toLocalVal(obj, LOCAL_STRING("auth"))));
-            uint32_t _perms = toUint(toLocalVal(obj, LOCAL_STRING("perm")));
+            // check if perm or perms exists, later can be changed to accept just 'perms' on next major release
+            bool _hasPerm = Nan::HasOwnProperty(obj, LOCAL_STRING("perm")).FromMaybe(false);
+            uint32_t _perms = toUint(toLocalVal(obj, _hasPerm ? LOCAL_STRING("perm") : LOCAL_STRING("perms")));
 
             struct Id id;
             struct ACL *acl = &aclv->data[i];
