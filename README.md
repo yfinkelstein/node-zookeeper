@@ -44,7 +44,7 @@ function createClient(timeoutMs = 5000) {
     const config = {
         connect: host,
         timeout: timeoutMs,
-        debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
+        debug_level: ZooKeeper.constants.ZOO_LOG_LEVEL_WARN,
         host_order_deterministic: false,
     };
 
@@ -71,7 +71,7 @@ Using the API:
 ```javascript
 const path = '/myPath';
 try {
-    const createdPath = await client.create(path, data, ZooKeeper.ZOO_EPHEMERAL);
+    const createdPath = await client.create(path, data, ZooKeeper.constants.ZOO_EPHEMERAL);
 
     console.log(`(created: ${createdPath})`);
 } catch (error) {
@@ -228,18 +228,18 @@ Session state machine is well described in the [Zookeeper docs](http://zookeeper
 
 The library comes with 3 default ACL levels defined (comes from ZK):
 
-* ZooKeeper.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
-* ZooKeeper.ZOO_READ_ACL_UNSAFE - anyone can read
-* ZooKeeper.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
+* ZooKeeper.constants.ZOO_OPEN_ACL_UNSAFE - anyone can do anything
+* ZooKeeper.constants.ZOO_READ_ACL_UNSAFE - anyone can read
+* ZooKeeper.constants.ZOO_CREATOR_ALL_ACL - gives full rights to authorised user (you have to be authorised first, otherwise it will result with "invalid acl")
 
 If you don't want to use predefined ACLs you can define your own (the ACL object is described above), for limiting permisions you can use:
 
-* ZooKeeper.ZOO_PERM_READ - read permission
-* ZooKeeper.ZOO_PERM_WRITE - write permission
-* ZooKeeper.ZOO_PERM_CREATE - create permission
-* ZooKeeper.ZOO_PERM_DELETE - delete permission
-* ZooKeeper.ZOO_PERM_ADMIN - admin permission
-* ZooKeeper.ZOO_PERM_ALL - all of the above
+* ZooKeeper.constants.ZOO_PERM_READ - read permission
+* ZooKeeper.constants.ZOO_PERM_WRITE - write permission
+* ZooKeeper.constants.ZOO_PERM_CREATE - create permission
+* ZooKeeper.constants.ZOO_PERM_DELETE - delete permission
+* ZooKeeper.constants.ZOO_PERM_ADMIN - admin permission
+* ZooKeeper.constants.ZOO_PERM_ALL - all of the above
 
 For more details please refer to ZooKeeper docs.
 
