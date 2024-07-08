@@ -1,3 +1,8 @@
+#### v 6.2.2 (2024-07-08)
+* docs: access Zookeeper constants from ZooKeeper.constants
+
+  Pull request [347](https://github.com/yfinkelstein/node-zookeeper/pull/347) by @maharjanraj
+
 #### v 6.2.1 (2024-07-04)
 * fix: ACL type, should be an array of objects. Also, fix typo in permissions key.
 
