@@ -6,6 +6,7 @@ const {
     findZkConstantByCode,
     isString,
     isFunction,
+    toCompatibleAcl,
 } = require('../../../lib/helper');
 
 class Test {
@@ -67,4 +68,28 @@ test('identifies data as functions', (t) => {
 
     t.false(isFunction('data'));
     t.false(isFunction(null));
+});
+
+test('converts an ACL object to an AddOn compatible object', (t) => {
+    const original = [{ perms: 1, scheme: 'world', auth: 'anyone' }];
+    const expected = [{ perm: 1, scheme: 'world', auth: 'anyone' }];
+
+    t.deepEqual(toCompatibleAcl(original), expected);
+});
+
+test('leaves an existing ACL object unchanged', (t) => {
+    const original = [{ perm: 1, scheme: 'world', auth: 'anyone' }];
+
+    t.deepEqual(toCompatibleAcl(original), original);
+});
+
+test('overrides the ACL perm key when both are added', (t) => {
+    const original = [{
+        perm: 1, perms: 9, scheme: 'world', auth: 'anyone',
+    }];
+    const expected = [{
+        perm: 1, scheme: 'world', auth: 'anyone',
+    }];
+
+    t.deepEqual(toCompatibleAcl(original), expected);
 });

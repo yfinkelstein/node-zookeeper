@@ -627,6 +627,14 @@ declare module "index" {
  * ACL object
  */
 type aclObject = {
+    perms: number;
+    scheme: string;
+    auth: string;
+};
+/**
+ * ACL object with perm
+ */
+type aclObject2 = {
     perm: number;
     scheme: string;
     auth: string;
@@ -634,7 +642,7 @@ type aclObject = {
 /**
  * ACL
  */
-type acl = Array<aclObject>;
+type acl = Array<aclObject | aclObject2>;
 /**
  * stat
  */
