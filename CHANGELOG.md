@@ -1,3 +1,8 @@
+#### v 6.2.3 (2024-07-14)
+* fix: accept both perm and perms in acl objects
+
+  Pull request [349](https://github.com/yfinkelstein/node-zookeeper/pull/349) by @maharjanraj
+
 #### v 6.2.2 (2024-07-08)
 * docs: access Zookeeper constants from ZooKeeper.constants
 
