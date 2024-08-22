@@ -89,6 +89,8 @@ namespace zk {
 
 DECLARE_STRING (on_closed);
 DECLARE_STRING (on_connected);
+DECLARE_STRING (on_disconnected);
+DECLARE_STRING (on_disconnected_cleared);
 DECLARE_STRING (on_connecting);
 DECLARE_STRING (on_event_created);
 DECLARE_STRING (on_event_deleted);
@@ -275,6 +277,7 @@ public:
     }
 
     void yield () {
+        Nan::HandleScope scope;
         if (is_closed) {
             LOG_DEBUG("yield: was closed");
             return;
@@ -296,7 +299,18 @@ public:
 
         if (rc) {
             LOG_ERROR("yield:zookeeper_interest returned error: %d - %s\n", rc, zerror(rc));
+            if(connection_state == 1 || connection_state == -1) {
+                connection_state = 0;
+                LOG_INFO("yield: disconnected state has been set: %d\n", connection_state);
+                DoEmitClose(Nan::New(on_disconnected), rc);
+            }
             return;
+        } else {
+            if(connection_state == 0 || connection_state == -1) {
+                connection_state = 1;
+                LOG_INFO("yield: disconnected state has been cleared: %d\n", connection_state);
+                DoEmitClose(Nan::New(on_disconnected_cleared), rc);
+            }
         }
 
         if (fd == -1 ) {
@@ -1124,6 +1138,7 @@ public:
         ZERO_MEM (zk_io);
         ZERO_MEM (zk_timer);
         is_closed = false;
+        connection_state = -1;
         responseCounterLimit = 10;
     }
 private:
@@ -1143,6 +1158,7 @@ private:
     timeval tv;
     int64_t last_activity; // time of last zookeeper event loop activity
     bool is_closed;
+    int connection_state; // 1-connected, 0-disconnected
     int noResponseCounter;
     int responseCounterLimit;
 };
@@ -1152,6 +1168,8 @@ private:
 extern "C" void init(Local<Object> target) {
     INITIALIZE_STRING (zk::on_closed,            "close");
     INITIALIZE_STRING (zk::on_connected,         "connect");
+    INITIALIZE_STRING (zk::on_disconnected,      "disconnect");
+    INITIALIZE_STRING (zk::on_disconnected_cleared,"disconnect_cleared");
     INITIALIZE_STRING (zk::on_connecting,        "connecting");
     INITIALIZE_STRING (zk::on_event_created,     "created");
     INITIALIZE_STRING (zk::on_event_deleted,     "deleted");
