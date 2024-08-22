@@ -1169,7 +1169,7 @@ extern "C" void init(Local<Object> target) {
     INITIALIZE_STRING (zk::on_closed,            "close");
     INITIALIZE_STRING (zk::on_connected,         "connect");
     INITIALIZE_STRING (zk::on_disconnected,      "disconnect");
-    INITIALIZE_STRING (zk::on_disconnected_cleared,"disconnect_cleared");
+    INITIALIZE_STRING (zk::on_disconnected_cleared, "disconnect_cleared");
     INITIALIZE_STRING (zk::on_connecting,        "connecting");
     INITIALIZE_STRING (zk::on_event_created,     "created");
     INITIALIZE_STRING (zk::on_event_deleted,     "deleted");
