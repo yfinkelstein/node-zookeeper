@@ -1165,4 +1165,4 @@ extern "C" void init(Local<Object> target) {
     zk::ZooKeeper::Initialize(target);
 }
 
-NODE_MODULE(zookeeper, init)
+NAN_MODULE_WORKER_ENABLED(zookeeper, init)
