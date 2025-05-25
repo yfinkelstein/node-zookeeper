@@ -1,3 +1,8 @@
+#### v 7.0.0 (2025-05-25)
+* fix: enable workers
+
+  Pull request [354](https://github.com/yfinkelstein/node-zookeeper/pull/354) by @davidvujic
+
 #### v 6.2.3 (2024-07-14)
 * fix: accept both perm and perms in acl objects
 
