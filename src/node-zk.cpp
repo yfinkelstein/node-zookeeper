@@ -66,7 +66,6 @@ namespace zk {
 #else
 	#define ZERO_MEM(member) bzero(&(member), sizeof(member))
 #endif
-#define _LL_CAST_ (long long)
 #define _LLP_CAST_ (long long *)
 
 #define THROW_IF_NOT(condition, text) if (!(condition)) { \
@@ -514,7 +513,7 @@ public:
     static Local<String> idAsString (int64_t id) {
         Nan::EscapableHandleScope scope;
         char idbuff [128] = {0};
-        sprintf(idbuff, "%llx", _LL_CAST_ id);
+        snprintf(idbuff, sizeof(idbuff), "%llx", (unsigned long long) id);
         return scope.Escape(LOCAL_STRING(idbuff));
     }
 
