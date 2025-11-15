@@ -1,3 +1,8 @@
+#### v 7.1.0 (2025-11-15)
+* feat: Node js 24 and v8 compatibility fixes
+
+  Pull request [357](https://github.com/yfinkelstein/node-zookeeper/pull/357) by @davidvujic
+
 #### v 7.0.0 (2025-05-25)
 * fix: enable workers
 
