@@ -6,7 +6,7 @@ orbs:
 parameters:
   nodeversion:
     type: string
-    default: "20.10.0"
+    default: "24.12.0"
 
 commands:
   nvminstall:
