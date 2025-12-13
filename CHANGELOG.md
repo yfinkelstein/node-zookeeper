@@ -1,3 +1,8 @@
+#### v 7.2.0 (2025-12-13)
+* feat(windows): add prebuild for Node.js 24
+
+  Pull request [359](https://github.com/yfinkelstein/node-zookeeper/pull/359) by @davidvujic
+
 #### v 7.1.0 (2025-11-15)
 * feat: Node js 24 and v8 compatibility fixes
 
