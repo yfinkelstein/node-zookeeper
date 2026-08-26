@@ -1,6 +1,6 @@
-const { constants, Promise: ZooKeeper } = require('../../../lib/index');
+const { constants, Promise: ZooKeeper } = require("../../../lib/index");
 
-const host = process.argv[2] || '127.0.0.1:2181';
+const host = process.argv[2] || "127.0.0.1:2181";
 
 function createClient(id, password) {
     const config = {

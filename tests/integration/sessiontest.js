@@ -1,16 +1,16 @@
-const test = require('ava');
-const { constants, createClient } = require('./helpers/createClient');
+const { default: test } = require("ava");
+const { constants, createClient } = require("./helpers/createClient");
 
-test('can init and close more than one client', async (t) => {
+test("can init and close more than one client", async (t) => {
     const client = createClient();
     const secondClient = createClient();
 
     await new Promise((resolve) => {
-        client.on('connect', () => {
+        client.on("connect", () => {
             secondClient.init({});
         });
 
-        secondClient.on('connect', () => {
+        secondClient.on("connect", () => {
             t.is(client.state, constants.ZOO_CONNECTED_STATE);
             t.is(secondClient.state, constants.ZOO_CONNECTED_STATE);
             t.not(client.client_id, secondClient.client_id);
@@ -18,28 +18,36 @@ test('can init and close more than one client', async (t) => {
             client.close();
         });
 
-        client.on('close', () => secondClient.close());
-        secondClient.on('close', () => resolve());
+        client.on("close", () => secondClient.close());
+        secondClient.on("close", () => resolve());
 
         client.init({});
     });
 });
 
-test('two connected clients can create and fetch nodes', async (t) => {
-    const pathOne = '/first';
-    const pathTwo = '/second';
+test("two connected clients can create and fetch nodes", async (t) => {
+    const pathOne = "/first";
+    const pathTwo = "/second";
 
     const client = createClient();
     const secondClient = createClient();
 
     await new Promise((resolve) => {
-        client.on('connect', () => {
+        client.on("connect", () => {
             secondClient.init({});
         });
 
-        secondClient.on('connect', async () => {
-            const first = await client.create(pathOne, 'one', constants.ZOO_EPHEMERAL);
-            const second = await secondClient.create(pathTwo, 'two', constants.ZOO_EPHEMERAL);
+        secondClient.on("connect", async () => {
+            const first = await client.create(
+                pathOne,
+                "one",
+                constants.ZOO_EPHEMERAL,
+            );
+            const second = await secondClient.create(
+                pathTwo,
+                "two",
+                constants.ZOO_EPHEMERAL,
+            );
 
             t.is(first, pathOne);
             t.is(second, pathTwo);
@@ -53,29 +61,36 @@ test('two connected clients can create and fetch nodes', async (t) => {
             client.close();
         });
 
-        client.on('close', () => secondClient.close());
-        secondClient.on('close', () => resolve());
+        client.on("close", () => secondClient.close());
+        secondClient.on("close", () => resolve());
 
         client.init({});
     });
 });
 
-test('closed client cannot create node', async (t) => {
-    const pathOne = '/first';
+test("closed client cannot create node", async (t) => {
+    const pathOne = "/first";
     const firstClient = createClient();
-    const secondClient = createClient(firstClient.client_id, firstClient.client_password);
+    const secondClient = createClient(
+        firstClient.client_id,
+        firstClient.client_password,
+    );
 
     await new Promise((resolve) => {
-        firstClient.on('connect', () => {
+        firstClient.on("connect", () => {
             secondClient.init({});
 
             firstClient.close();
         });
 
-        secondClient.on('connect', async () => {
+        secondClient.on("connect", async () => {
             try {
-                await firstClient.create(pathOne, 'should not be possible, because client is closed', constants.ZOO_EPHEMERAL);
-                t.fail('closed client should not be able to create a node');
+                await firstClient.create(
+                    pathOne,
+                    "should not be possible, because client is closed",
+                    constants.ZOO_EPHEMERAL,
+                );
+                t.fail("closed client should not be able to create a node");
             } catch (e) {
                 t.pass(e);
             }
@@ -83,7 +98,7 @@ test('closed client cannot create node', async (t) => {
             secondClient.close();
         });
 
-        secondClient.on('close', () => resolve());
+        secondClient.on("close", () => resolve());
 
         firstClient.init({});
     });

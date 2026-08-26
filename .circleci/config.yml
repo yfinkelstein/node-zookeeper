@@ -49,8 +49,8 @@ jobs:
       - componenttests
 
 workflows:
- version: 2
- zookeeper_workflow:
-   jobs:
-     - run-in-docker
-     - run-on-windows
+  version: 2
+  zookeeper_workflow:
+    jobs:
+      - run-in-docker
+      - run-on-windows

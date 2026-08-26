@@ -1,5 +1,5 @@
-const notifier = require('./notifier');
-const { createNode } = require('./createnode');
+const notifier = require("./notifier");
+const { createNode } = require("./createnode");
 
 async function createAllNodes(client, paths, flags, ttl) {
     const promises = [];
@@ -9,7 +9,7 @@ async function createAllNodes(client, paths, flags, ttl) {
 
     const messages = await Promise.all(promises);
     messages.forEach((message) => {
-        notifier.emit('createNode', message);
+        notifier.emit("createNode", message);
     });
 }
 

@@ -5,7 +5,7 @@
  * @param data {string|Buffer}
  * @returns {Promise}
  */
-async function createNode(client, path, flags, ttl, data = '') {
+async function createNode(client, path, flags, ttl, data = "") {
     try {
         const createdPath = await client.create(path, data, flags, ttl);
 

@@ -1,9 +1,9 @@
-const notifier = require('./notifier');
-const logger = require('./logger');
+const notifier = require("./notifier");
+const logger = require("./logger");
 
 function emit(client, path, children) {
     logger.log(`client id: "${client.client_id}" path: "${path}"`);
-    notifier.emit('onChildren', children);
+    notifier.emit("onChildren", children);
 }
 
 async function watcher(client, func, type, state, path) {
@@ -21,7 +21,7 @@ async function listen(client, path) {
         const children = await client.w_get_children(path, watchFunc);
         emit(client, path, children);
     } catch (error) {
-        logger.error('listen', error.message);
+        logger.error("listen", error.message);
     }
 }
 

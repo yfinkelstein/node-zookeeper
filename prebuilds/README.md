@@ -1,9 +1,9 @@
 ### Prebuilds
 
-Currently, there are prebuilt Node.js AddOns for Mac OS X and Windows. 
-
+Currently, there are prebuilt Node.js AddOns for Mac OS X and Windows.
 
 #### Creating prebuilds
+
 Create prebuilds for Mac OS X:
 
 ```bash
@@ -11,6 +11,7 @@ npx prebuildify --napi false --arch x64 --platform darwin --target 24.12.0
 ```
 
 Prebuilds for Mac OS X with the M1/M2/M3 processor:
+
 ```bash
 npx prebuildify --napi false --arch arm64 --platform darwin --target 24.12.0
 ```
