@@ -1,8 +1,5 @@
 {
-    "include": [
-        "lib/index.js",
-        "lib/typedefs.js"
-    ],
+    "include": ["lib/index.js", "lib/typedefs.js"],
     "compilerOptions": {
         "declaration": true,
         "emitDeclarationOnly": true,

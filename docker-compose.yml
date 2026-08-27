@@ -19,7 +19,7 @@ services:
       - zookeeper
     links:
       - zookeeper
-  
+
   integration-tests:
     build:
       context: .

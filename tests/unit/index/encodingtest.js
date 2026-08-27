@@ -1,8 +1,8 @@
-const test = require('ava');
-const ZooKeeper = require('../../../lib/index');
+const { default: test } = require("ava");
+const ZooKeeper = require("../../../lib/index");
 
-test('inject encoding will set data as buffer to false', (t) => {
-    const expected = 'utf-8';
+test("inject encoding will set data as buffer to false", (t) => {
+    const expected = "utf-8";
 
     const zk = new ZooKeeper();
     zk.setEncoding(expected);

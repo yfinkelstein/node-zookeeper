@@ -7,5 +7,5 @@ and the as of today unresolved issue about outdated docs: https://issues.apache.
 2. Navigate to the `zookeeper-jute` folder and run `mvn compile`
 3. Navigate to the zookeeper-client-c folder: run autoreconf -if
 4. compress the entire zookeeper-client-c folder and name it `zookeeper-client-c.tar.gz`
-   * On Mac OS X: `COPYFILE_DISABLE=1 tar -czvf zookeeper-client-c.tar.gz zookeeper-client-c`
+    - On Mac OS X: `COPYFILE_DISABLE=1 tar -czvf zookeeper-client-c.tar.gz zookeeper-client-c`
 5. replace the existing compressed file in the deps folder

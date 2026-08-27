@@ -1,16 +1,16 @@
-const test = require('ava');
-const { createClient } = require('./helpers/createClient');
+const { default: test } = require("ava");
+const { createClient } = require("./helpers/createClient");
 
-test('can create and delete a node containing sub nodes', async (t) => {
-    const path = ['/one', '/two', '/three'];
-    const fullPath = path.join('');
-    const twoStepPath = path.slice(0, 2).join('');
-    const topPath = path.slice(0, 1).join('');
+test("can create and delete a node containing sub nodes", async (t) => {
+    const path = ["/one", "/two", "/three"];
+    const fullPath = path.join("");
+    const twoStepPath = path.slice(0, 2).join("");
+    const topPath = path.slice(0, 1).join("");
 
     const client = createClient();
 
     await new Promise((resolve) => {
-        client.on('connect', async () => {
+        client.on("connect", async () => {
             client.mkdirp(fullPath, async (err, success) => {
                 t.is(err, null);
                 t.is(success, true);
@@ -32,7 +32,7 @@ test('can create and delete a node containing sub nodes', async (t) => {
             });
         });
 
-        client.on('close', () => resolve());
+        client.on("close", () => resolve());
         client.init({});
     });
 });

@@ -1,9 +1,9 @@
-const fs = require('fs');
+const fs = require("fs");
 
 function setRoot(env) {
     if (env.isWindows) {
-        if (process.cwd().endsWith('build')) {
-            process.chdir('../');
+        if (process.cwd().endsWith("build")) {
+            process.chdir("../");
         }
     }
 
@@ -18,11 +18,11 @@ function checkIfAlreadyBuilt(env) {
     return fs.existsSync(`${env.buildFolder}/lib/libzookeeper_st.la`);
 }
 
-const isWindows = process.platform.toLowerCase().includes('win32');
+const isWindows = process.platform.toLowerCase().includes("win32");
 const rootFolder = setRoot({ isWindows });
 
-const downloadedFolderName = 'zookeeper-client-c';
-const downloadedFileName = 'zookeeper-client-c.tar.gz';
+const downloadedFolderName = "zookeeper-client-c";
+const downloadedFileName = "zookeeper-client-c.tar.gz";
 
 const variables = {
     rootFolder,

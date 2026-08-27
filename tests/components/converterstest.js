@@ -1,15 +1,15 @@
-const test = require('ava');
-const converters = require('./build/Release/converters.node');
+const { default: test } = require("ava");
+const converters = require("./build/Release/converters.node");
 
-test('Integer is converted to string', (t) => {
+test("Integer is converted to string", (t) => {
     const expected = 4711;
     const res = converters.toStrTest(expected);
 
     t.deepEqual(res, `${expected}`);
-    t.deepEqual(typeof res, typeof '');
+    t.deepEqual(typeof res, typeof "");
 });
 
-test('Unix time is converted to date', (t) => {
+test("Unix time is converted to date", (t) => {
     const now = Date.now();
 
     const d = new Date(now);
@@ -24,27 +24,27 @@ test('Unix time is converted to date', (t) => {
     t.deepEqual(res, expected);
 });
 
-test('Object value is converted to bool', (t) => {
+test("Object value is converted to bool", (t) => {
     const expected = true;
-    const res = converters.toBoolTest({ val: 'true' });
+    const res = converters.toBoolTest({ val: "true" });
 
     t.deepEqual(res, expected);
     t.deepEqual(typeof res, typeof true);
 });
 
-test('Object value is converted to integer', (t) => {
+test("Object value is converted to integer", (t) => {
     const expected = 4711;
     const expectedNeg = -1;
-    const res = converters.toIntTest({ val: '4711' });
-    const resNeg = converters.toIntTest({ val: '-1' });
+    const res = converters.toIntTest({ val: "4711" });
+    const resNeg = converters.toIntTest({ val: "-1" });
 
     t.deepEqual(res, expected);
     t.deepEqual(resNeg, expectedNeg);
 });
 
-test('Object value is converted to unsigned integer', (t) => {
+test("Object value is converted to unsigned integer", (t) => {
     const expected = 4711;
-    const res = converters.toUintTest('4711');
+    const res = converters.toUintTest("4711");
 
     t.deepEqual(res, expected);
 });

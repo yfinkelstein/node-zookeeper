@@ -1,7 +1,7 @@
-const { constants, Promise: ZooKeeper } = require('../lib/index');
-const logger = require('./logger');
+const { constants, Promise: ZooKeeper } = require("../lib/index");
+const logger = require("./logger");
 
-const host = process.argv[2] || '127.0.0.1:2181';
+const host = process.argv[2] || "127.0.0.1:2181";
 
 let client;
 let timeoutId;
@@ -14,7 +14,7 @@ function startTimer() {
     stopTimer();
 
     timeoutId = setTimeout(() => {
-        throw new Error('ZooKeeper connection timeout');
+        throw new Error("ZooKeeper connection timeout");
     }, 10000);
 }
 
@@ -24,7 +24,7 @@ function startTimer() {
  */
 function createClient(timeoutMs = 15000) {
     if (!client) {
-        logger.log('creating a client.');
+        logger.log("creating a client.");
 
         const config = {
             connect: host,
@@ -35,24 +35,27 @@ function createClient(timeoutMs = 15000) {
 
         client = new ZooKeeper(config);
 
-        client.on('close', () => {
+        client.on("close", () => {
             stopTimer();
 
-            logger.log('close', `session closed, id=${client.client_id}`);
+            logger.log("close", `session closed, id=${client.client_id}`);
 
             client = null;
         });
 
-        client.on('connecting', () => {
+        client.on("connecting", () => {
             startTimer();
 
-            logger.log('connecting', `session connecting, id=${client.client_id}`);
+            logger.log(
+                "connecting",
+                `session connecting, id=${client.client_id}`,
+            );
         });
 
-        client.on('connect', () => {
+        client.on("connect", () => {
             stopTimer();
 
-            logger.log('connect', `session connect, id=${client.client_id}`);
+            logger.log("connect", `session connect, id=${client.client_id}`);
         });
 
         setTimeout(() => {

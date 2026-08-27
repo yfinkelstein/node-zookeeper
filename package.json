@@ -1,7 +1,7 @@
 {
     "name": "zookeeper",
     "description": "apache zookeeper client (zookeeper async API v3.5.x - v3.8.x)",
-    "version": "7.2.0",
+    "version": "7.3.0",
     "author": "Yuri Finkelstein <yurif2003@yahoo.com>",
     "license": "MIT",
     "contributors": [
@@ -30,21 +30,20 @@
     ],
     "dependencies": {
         "async": "3.2.x",
-        "decompress": "4.2.x",
-        "decompress-targz": "4.1.x",
         "nan": "2.x",
         "node-gyp-build": "^4.2.3",
-        "shelljs": "0.10.x"
+        "shelljs": "0.10.x",
+        "tar": "^7.5.22"
     },
     "devDependencies": {
-        "@types/node": "24.x",
-        "ava": "6.x",
-        "eslint": "8.x",
-        "eslint-config-airbnb-base": "15.x",
-        "eslint-plugin-import": "2.x",
+        "@eslint/js": "^10.0.1",
+        "@types/node": "26.x",
+        "ava": "8.x",
+        "eslint": "^10.9.1",
+        "globals": "^17.11.0",
         "prebuildify": "6.0.1",
-        "sinon": "21.x",
-        "typescript": "5.x"
+        "sinon": "22.x",
+        "typescript": "7.x"
     },
     "main": "./lib/index.js",
     "scripts": {

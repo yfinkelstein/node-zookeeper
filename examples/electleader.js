@@ -1,10 +1,10 @@
-const { constants } = require('./wrapper');
-const notifier = require('./notifier');
-const logger = require('./logger');
+const { constants } = require("./wrapper");
+const notifier = require("./notifier");
+const logger = require("./logger");
 
 function emit(client, path) {
     logger.log(`Elect leader: (${path}) ${client.client_id}`);
-    notifier.emit('leader');
+    notifier.emit("leader");
 }
 
 function onData(client, path, rc, error, stat, data) {
@@ -30,7 +30,7 @@ async function checkMaster(client, path, retryFunc) {
         const res = await client.w_get(path, watchFunc);
         onData(client, path, res.rc, res.error, res.stat, res.data);
     } catch (error) {
-        logger.error('checkMaster:', error.message);
+        logger.error("checkMaster:", error.message);
     }
 }
 
@@ -41,7 +41,7 @@ async function runForLeader(client, path) {
         await client.create(path, `${clientId}`, constants.ZOO_EPHEMERAL);
         emit(client, path);
     } catch (error) {
-        logger.error('runForLeader:', error.message);
+        logger.error("runForLeader:", error.message);
         await checkMaster(client, path, runForLeader);
     }
 }
