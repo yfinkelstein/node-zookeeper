@@ -1,3 +1,13 @@
+#### v 7.4.0 (2026-11-03)
+- feat: add support for node 26
+
+  Pull request [364](https://github.com/yfinkelstein/node-zookeeper/pull/364)
+
+#### v 7.3.0 (2026-08-27)
+- fix: replace the decompress third-party library with the tar library
+
+  Pull request [362](https://github.com/yfinkelstein/node-zookeeper/pull/362)
+
 #### v 7.2.0 (2025-12-13)
 
 - feat(windows): add prebuild for Node.js 24

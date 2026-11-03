@@ -6,7 +6,7 @@ orbs:
 parameters:
   nodeversion:
     type: string
-    default: "24.12.0"
+    default: "26.13.0"
 
 commands:
   nvminstall:
@@ -42,6 +42,15 @@ jobs:
     executor: win/default
     steps:
       - checkout
+      - run:
+          name: Install CMake
+          command: |
+            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+      - run:
+          name: Add CMake to PATH
+          shell: powershell.exe
+          command: |
+            '$env:PATH = "C:\Program Files\CMake\bin;" + $env:PATH' | Out-File -FilePath $env:BASH_ENV -Append -Encoding ascii
       - nvminstall
       - deps
       - lint
