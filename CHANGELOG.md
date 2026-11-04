@@ -1,12 +1,17 @@
+ (2026-11-04)
+ - fix: incompatible v8 changes from latest node 26 - #365
+
+  Pull request [365](https://github.com/yfinkelstein/node-zookeeper/pull/365) by @davidvujic
+
 #### v 7.4.0 (2026-11-03)
 - feat: add support for node 26
 
-  Pull request [364](https://github.com/yfinkelstein/node-zookeeper/pull/364)
+  Pull request [364](https://github.com/yfinkelstein/node-zookeeper/pull/364) by @davidvujic
 
 #### v 7.3.0 (2026-08-27)
 - fix: replace the decompress third-party library with the tar library
 
-  Pull request [362](https://github.com/yfinkelstein/node-zookeeper/pull/362)
+  Pull request [362](https://github.com/yfinkelstein/node-zookeeper/pull/362) by @davidvujic
 
 #### v 7.2.0 (2025-12-13)
 
