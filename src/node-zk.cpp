@@ -83,6 +83,15 @@ namespace zk {
 
 #define LOCAL_STRING(str) Nan::New<String>(str).ToLocalChecked()
 
+// V8 14.2 removed v8::DEFAULT; nan provides Nan::DEFAULT from that version on.
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 14 \
+    || (V8_MAJOR_VERSION == 14 && defined(V8_MINOR_VERSION) \
+    && V8_MINOR_VERSION >= 2))
+#define ZK_ACCESS_DEFAULT Nan::DEFAULT
+#else
+#define ZK_ACCESS_DEFAULT DEFAULT
+#endif
+
 #define DECLARE_STRING(ev) static Nan::Persistent<String> ev;
 #define INITIALIZE_STRING(ev, str) ev.Reset(LOCAL_STRING(str));
 
@@ -146,11 +155,11 @@ public:
         Nan::SetPrototypeMethod(constructor_template,  "a_reconfig",  AReconfig);
 
         //what's the advantage of using constructor_template->PrototypeTemplate()->SetAccessor ?
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), Nan::DEFAULT, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_id"), ClientidPropertyGetter, 0, Local<Value>(), Nan::DEFAULT, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), Nan::DEFAULT, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), Nan::DEFAULT, ReadOnly);
-        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), Nan::DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("state"), StatePropertyGetter, 0, Local<Value>(), ZK_ACCESS_DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_id"), ClientidPropertyGetter, 0, Local<Value>(), ZK_ACCESS_DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("client_password"), ClientPasswordPropertyGetter, 0, Local<Value>(), ZK_ACCESS_DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("timeout"), SessionTimeoutPropertyGetter, 0, Local<Value>(), ZK_ACCESS_DEFAULT, ReadOnly);
+        Nan::SetAccessor(constructor_template->InstanceTemplate(), LOCAL_STRING("is_unrecoverable"), IsUnrecoverablePropertyGetter, 0, Local<Value>(), ZK_ACCESS_DEFAULT, ReadOnly);
 
 
         Local<Function> constructor = constructor_template->GetFunction(Nan::GetCurrentContext()).ToLocalChecked();
